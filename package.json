@@ -1,0 +1,28 @@
+{
+  "name": "ho-ecommerce-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "dev": "turbo dev",
+    "dev:h5": "turbo dev --filter=@app/h5",
+    "dev:admin": "turbo dev --filter=@app/admin",
+    "build": "turbo build",
+    "build:h5": "turbo build --filter=@app/h5",
+    "build:admin": "turbo build --filter=@app/admin",
+    "type-check": "turbo type-check",
+    "lint": "oxlint .",
+    "format": "oxfmt .",
+    "format:check": "oxfmt --check .",
+    "clean": "turbo clean"
+  },
+  "devDependencies": {
+    "turbo": "^2.4.0",
+    "oxlint": "^1.0.0",
+    "oxfmt": "^0.1.0",
+    "typescript": "^5.7.0",
+    "unocss": "^66.0.0"
+  },
+  "packageManager": "bun@1.2.0"
+}

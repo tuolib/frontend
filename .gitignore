@@ -1,0 +1,29 @@
+# dependencies
+node_modules
+
+# output
+dist
+.turbo
+
+# env files
+.env
+.env.local
+.env.development
+.env.production
+!.env.example
+
+# caches
+.eslintcache
+*.tsbuildinfo
+
+# IDE
+.idea
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# OS
+.DS_Store
+
+# logs
+*.log
