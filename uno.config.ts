@@ -42,22 +42,16 @@ export default defineConfig({
   safelist: [],
   postprocess: [
     util => {
-      // implement postcss-pxtorem
-      const pxRE = /(-?[.\d]+)rem/g;
-      util.entries.forEach(entry => {
+      // UnoCSS 默认 1rem = 0.25rem * n（preset-wind），但 H5 设计稿约定
+      // 1rem = 100px，所以需要将 UnoCSS 产出的 rem 值重新换算：
+      //   原始 rem 值 × 4（还原为 UnoCSS 内部 unit 数）÷ 100（设计稿 rootValue）
+      //   即 n × 4 / 100 = n × 0.04
+      const pxRE = /(-?[\d.]+)rem/g;
+      for (const entry of util.entries) {
         const value = entry[1];
-        // @ts-ignore
-        if (typeof value === "string" && pxRE.test(value) && isNum(value)) {
-          // console.log(entry);
-          // console.log(entry[0]);
-          // console.log(value);
-          // 比如 mt-37.5 设计稿上边距为37.5px, 会转化成0.375rem, 和我们postcss 插件转化比例一致
-          // 100 is [rootValue] of postcss-pxtorem in my project
-          // eslint-disable-next-line no-param-reassign
-          // @ts-ignore
-          entry[1] = value.replace(pxRE, (_, pixelValue) => `${pxToRem(pixelValue)}rem`);
-        }
-      });
+        if (typeof value !== 'string' || !value.includes('rem')) continue;
+        entry[1] = value.replace(pxRE, (_, n) => `${((Number(n) * 4) / 100).toFixed(3)}rem`);
+      }
     },
   ],
   content: {
@@ -71,23 +65,3 @@ export default defineConfig({
     },
   },
 });
-
-
-function pxToRem (num: number) {
-  if (isNum(num)) {
-    // if (Number(num) < 1) {
-    //   return num;
-    // }
-    // @ts-ignore
-    return ((Number(num) * 4) / 100).toFixed(3);
-  }
-  return num;
-}
-
-function isNum(value) {
-  // const reg = /^\d+(\.\d{1,2})?$/;
-  // const reg = /^-?[0-9]*.?[0-9]*$/;
-  const reg = /^[-+]?\d+(?:\.\d+)?/;
-  // @ts-ignore
-  return reg.test(value);
-}

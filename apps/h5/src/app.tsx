@@ -1,9 +1,8 @@
 import { useEffect, Suspense } from 'react';
 import { RouterProvider } from 'react-router';
-import { ToastProvider } from '@fe/ui';
+import { ToastProvider, ErrorBoundary, Spinner } from '@fe/ui';
 import { useAuthStore } from '@fe/hooks';
 import { router } from './router';
-import { Spinner } from '@fe/ui';
 
 function LoadingFallback() {
   return (
@@ -22,9 +21,11 @@ export function App() {
 
   return (
     <ToastProvider>
-      <Suspense fallback={<LoadingFallback />}>
-        <RouterProvider router={router} />
-      </Suspense>
+      <ErrorBoundary>
+        <Suspense fallback={<LoadingFallback />}>
+          <RouterProvider router={router} />
+        </Suspense>
+      </ErrorBoundary>
     </ToastProvider>
   );
 }

@@ -1,5 +1,7 @@
 import { createBrowserRouter } from 'react-router';
 import { lazy } from 'react';
+import RequireAuth from '@/components/require-auth';
+import GuestOnly from '@/components/guest-only';
 
 const RootLayout = lazy(() => import('./layouts/root-layout'));
 const AuthLayout = lazy(() => import('./layouts/auth-layout'));
@@ -20,31 +22,49 @@ const Register = lazy(() => import('./pages/auth/register'));
 const NotFound = lazy(() => import('./pages/error/not-found'));
 
 export const router = createBrowserRouter([
+  // 公开路由
   {
     element: <RootLayout />,
     children: [
       { index: true, element: <Home /> },
       { path: 'product', element: <ProductList /> },
-      { path: 'cart', element: <Cart /> },
-      { path: 'me', element: <Profile /> },
     ],
   },
   {
     children: [
       { path: 'product/:id', element: <ProductDetail /> },
       { path: 'search', element: <Search /> },
+    ],
+  },
+  // 需要登录
+  {
+    element: <RequireAuth />,
+    children: [
+      {
+        element: <RootLayout />,
+        children: [
+          { path: 'cart', element: <Cart /> },
+          { path: 'me', element: <Profile /> },
+        ],
+      },
+      { path: 'me/address', element: <Address /> },
       { path: 'order/create', element: <OrderCreate /> },
       { path: 'order', element: <OrderList /> },
       { path: 'order/:id', element: <OrderDetail /> },
       { path: 'order/:id/pay', element: <OrderPayment /> },
-      { path: 'me/address', element: <Address /> },
     ],
   },
+  // 仅游客
   {
-    element: <AuthLayout />,
+    element: <GuestOnly />,
     children: [
-      { path: 'login', element: <Login /> },
-      { path: 'register', element: <Register /> },
+      {
+        element: <AuthLayout />,
+        children: [
+          { path: 'login', element: <Login /> },
+          { path: 'register', element: <Register /> },
+        ],
+      },
     ],
   },
   { path: '*', element: <NotFound /> },

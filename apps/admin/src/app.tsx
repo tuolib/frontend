@@ -2,7 +2,7 @@ import { useEffect, Suspense } from 'react';
 import { RouterProvider } from 'react-router';
 import { ConfigProvider, App as AntdApp, Spin } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
-import { ToastProvider } from '@fe/ui';
+import { ToastProvider, ErrorBoundary } from '@fe/ui';
 import { useAuthStore } from '@fe/hooks';
 import { router } from './router';
 
@@ -32,9 +32,11 @@ export function App() {
     <ConfigProvider locale={zhCN} theme={theme}>
       <AntdApp>
         <ToastProvider>
-          <Suspense fallback={<LoadingFallback />}>
-            <RouterProvider router={router} />
-          </Suspense>
+          <ErrorBoundary>
+            <Suspense fallback={<LoadingFallback />}>
+              <RouterProvider router={router} />
+            </Suspense>
+          </ErrorBoundary>
         </ToastProvider>
       </AntdApp>
     </ConfigProvider>

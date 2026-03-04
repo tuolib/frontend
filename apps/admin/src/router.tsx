@@ -1,5 +1,7 @@
 import { createBrowserRouter } from 'react-router';
 import { lazy } from 'react';
+import RequireAuth from '@/components/require-auth';
+import GuestOnly from '@/components/guest-only';
 
 const AdminLayout = lazy(() => import('./layouts/admin-layout'));
 const AuthLayout = lazy(() => import('./layouts/auth-layout'));
@@ -15,23 +17,35 @@ const StockAdjust = lazy(() => import('./pages/stock/adjust'));
 const Login = lazy(() => import('./pages/auth/login'));
 
 export const router = createBrowserRouter([
+  // 需要登录
   {
-    element: <AdminLayout />,
+    element: <RequireAuth />,
     children: [
-      { index: true, element: <Dashboard /> },
-      { path: 'product', element: <ProductList /> },
-      { path: 'product/create', element: <ProductCreate /> },
-      { path: 'product/:id/edit', element: <ProductEdit /> },
-      { path: 'category', element: <CategoryList /> },
-      { path: 'order', element: <OrderList /> },
-      { path: 'order/:id', element: <OrderDetail /> },
-      { path: 'stock', element: <StockAdjust /> },
+      {
+        element: <AdminLayout />,
+        children: [
+          { index: true, element: <Dashboard /> },
+          { path: 'product', element: <ProductList /> },
+          { path: 'product/create', element: <ProductCreate /> },
+          { path: 'product/:id/edit', element: <ProductEdit /> },
+          { path: 'category', element: <CategoryList /> },
+          { path: 'order', element: <OrderList /> },
+          { path: 'order/:id', element: <OrderDetail /> },
+          { path: 'stock', element: <StockAdjust /> },
+        ],
+      },
     ],
   },
+  // 仅游客
   {
-    element: <AuthLayout />,
+    element: <GuestOnly />,
     children: [
-      { path: 'login', element: <Login /> },
+      {
+        element: <AuthLayout />,
+        children: [
+          { path: 'login', element: <Login /> },
+        ],
+      },
     ],
   },
 ]);
