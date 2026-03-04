@@ -28,6 +28,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: 'product', element: <ProductList /> },
+      { path: 'me', element: <Profile /> },
     ],
   },
   {
@@ -44,7 +45,6 @@ export const router = createBrowserRouter([
         element: <RootLayout />,
         children: [
           { path: 'cart', element: <Cart /> },
-          { path: 'me', element: <Profile /> },
         ],
       },
       { path: 'me/address', element: <Address /> },
