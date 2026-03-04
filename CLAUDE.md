@@ -130,6 +130,11 @@ packages/hooks/src/    # 跨 App 共享的 hooks
 - 样式文件使用 `.scss` 格式（sass-embedded）
 - H5 rem 适配：设计稿 375px，1rem = 100px，`clamp(85.33px, calc(100vw / 3.75), 144px)`
   - 换算：设计稿 Npx → 代码 N/100 rem（如 32px → 0.32rem）
+  - UnoCSS postprocess 会自动将 rem 值换算为设计稿对应值
+- **H5 尺寸写法：直接用数字，对应设计稿像素值**
+  - 文字：`text-28`（设计稿 28px）、`text-14`（设计稿 14px）
+  - 间距/尺寸：`mt-32`、`p-16`、`w-100` 等
+  - **禁止使用 `text-xl`、`text-lg`、`text-sm` 等预设大小类**，它们与 rem 适配方案不匹配
 - Admin：Ant Design 组件 + UnoCSS 布局辅助类
 - 禁止内联 style（除动态计算值外）
 

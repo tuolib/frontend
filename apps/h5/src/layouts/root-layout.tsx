@@ -33,8 +33,8 @@ export default function RootLayout() {
                 isActive ? 'text-blue-600' : 'text-gray-500'
               }`}
             >
-              <span className={`${tab.icon} text-xl`} />
-              <span className="text-xs">{tab.label}</span>
+              <span className={`${tab.icon} text-20`} />
+              <span className="text-12">{tab.label}</span>
             </button>
           );
         })}

@@ -1,16 +1,15 @@
-import { defineConfig, type UserConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import UnoCSS from 'unocss/vite';
 import path from 'node:path';
+import type { PluginOption, UserConfig } from 'vite';
 
 interface AppConfigOptions {
   port: number;
   root: string;
+  plugins: PluginOption[];
 }
 
-export function createAppConfig({ port, root }: AppConfigOptions): UserConfig {
-  return defineConfig({
-    plugins: [UnoCSS(), react()],
+export function createAppConfig({ port, root, plugins }: AppConfigOptions): UserConfig {
+  return {
+    plugins,
     server: {
       port,
       proxy: {
@@ -29,5 +28,5 @@ export function createAppConfig({ port, root }: AppConfigOptions): UserConfig {
         '@': path.resolve(root, './src'),
       },
     },
-  });
+  };
 }
