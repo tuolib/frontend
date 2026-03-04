@@ -12,7 +12,10 @@ export const auth = {
     password: string;
     nickname?: string;
   }): Promise<AuthResult> {
-    const result = await post<AuthResult>('api/v1/auth/register', input);
+    const result = await post<AuthResult>('api/v1/auth/register', {
+      ...input,
+      confirmPassword: input.password,
+    });
     setTokens({ accessToken: result.accessToken, refreshToken: result.refreshToken });
     return result;
   },
