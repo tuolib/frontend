@@ -16,6 +16,7 @@ export default defineConfig({
     }),
   ],
   shortcuts: {
+    "flex-cc": "flex justify-center items-center",
     'btn': 'px-4 py-2 rounded-lg inline-flex items-center justify-center cursor-pointer transition-colors',
     'btn-primary': 'btn bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800',
     'btn-secondary': 'btn bg-gray-100 text-gray-700 hover:bg-gray-200 active:bg-gray-300',
@@ -39,4 +40,54 @@ export default defineConfig({
     },
   },
   safelist: [],
+  postprocess: [
+    util => {
+      // implement postcss-pxtorem
+      const pxRE = /(-?[.\d]+)rem/g;
+      util.entries.forEach(entry => {
+        const value = entry[1];
+        // @ts-ignore
+        if (typeof value === "string" && pxRE.test(value) && isNum(value)) {
+          // console.log(entry);
+          // console.log(entry[0]);
+          // console.log(value);
+          // 比如 mt-37.5 设计稿上边距为37.5px, 会转化成0.375rem, 和我们postcss 插件转化比例一致
+          // 100 is [rootValue] of postcss-pxtorem in my project
+          // eslint-disable-next-line no-param-reassign
+          // @ts-ignore
+          entry[1] = value.replace(pxRE, (_, pixelValue) => `${pxToRem(pixelValue)}rem`);
+        }
+      });
+    },
+  ],
+  content: {
+    pipeline: {
+      include: [
+        // the default
+        /\.(vue|svelte|[jt]sx|ts|mdx?|astro|elm|php|phtml|html)($|\?)/,
+        // include js/ts files
+        "src/**/*.{ts}",
+      ],
+    },
+  },
 });
+
+
+function pxToRem (num: number) {
+  if (isNum(num)) {
+    // if (Number(num) < 1) {
+    //   return num;
+    // }
+    // @ts-ignore
+    return ((Number(num) * 4) / 100).toFixed(3);
+  }
+  return num;
+}
+
+function isNum(value) {
+  // const reg = /^\d+(\.\d{1,2})?$/;
+  // const reg = /^-?[0-9]*.?[0-9]*$/;
+  const reg = /^[-+]?\d+(?:\.\d+)?/;
+  // @ts-ignore
+  return reg.test(value);
+}

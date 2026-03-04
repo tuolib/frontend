@@ -153,6 +153,15 @@ try {
 - **AuthLayout** — 登录/注册页面（无 TabBar）
 - 详情/支付等页面 — 无 TabBar，独立页面
 
+### rem 适配方案
+- 设计稿基准：**375px**，1rem = 100px
+- 根 font-size：`clamp(85.33px, calc(100vw / 3.75), 144px)`
+  - 等比缩放区间：320px ~ 540px 屏宽
+  - 低于 320px 锁定 85.33px（防止过小）
+  - 高于 540px 锁定 144px（防止大屏撑爆）
+- 换算规则：设计稿 `Npx` → 代码写 `N/100 rem`（如 32px → 0.32rem）
+- 配置位置：`apps/h5/src/styles/globals.scss`
+
 ### Mobile-first
 - UnoCSS mobile-first 断点
 - 触控友好（最小 44px 点击区域）

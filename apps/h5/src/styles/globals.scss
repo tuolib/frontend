@@ -20,6 +20,12 @@ body {
   padding-bottom: var(--safe-area-bottom);
 }
 
+html {
+  // 设计稿 375px，1rem = 100px
+  // 最小 320px 屏 → 85.33px，最大限制 540px 屏 → 144px
+  font-size: clamp(85.33px, calc(100vw / 3.75), 144px);
+}
+
 /* toast 动画 */
 @keyframes slide-in {
   from {

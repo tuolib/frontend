@@ -18,9 +18,10 @@
     "clean": "turbo clean"
   },
   "devDependencies": {
-    "turbo": "^2.4.0",
-    "oxlint": "^1.0.0",
     "oxfmt": "^0.1.0",
+    "oxlint": "^1.0.0",
+    "sass-embedded": "^1.97.3",
+    "turbo": "^2.4.0",
     "typescript": "^5.7.0",
     "unocss": "^66.0.0"
   },

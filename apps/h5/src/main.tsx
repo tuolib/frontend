@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { App } from './app';
 import '@unocss/reset/tailwind.css';
 import 'virtual:uno.css';
-import './styles/globals.css';
+import './styles/globals.scss';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

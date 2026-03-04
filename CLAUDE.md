@@ -19,7 +19,7 @@
 | 路由 | React Router v7 | SPA 客户端路由 |
 | 状态管理 | Zustand 5 | 按域拆分 store |
 | HTTP 客户端 | ky | Token 拦截 + 刷新 |
-| 原子 CSS | UnoCSS | preset-wind 兼容 Tailwind 语法 |
+| 样式 | UnoCSS + SCSS | 原子类 + SCSS 全局/模块样式 |
 | Admin UI | Ant Design 5 | 中文本地化 |
 | Linter | oxlint 1.0 | Rust 高性能 |
 | Formatter | oxfmt | Rust 高性能 |
@@ -127,7 +127,9 @@ packages/hooks/src/    # 跨 App 共享的 hooks
 ### 样式
 
 - 使用 UnoCSS 原子类（preset-wind 兼容 Tailwind 语法）
-- H5：mobile-first，自定义组件库
+- 样式文件使用 `.scss` 格式（sass-embedded）
+- H5 rem 适配：设计稿 375px，1rem = 100px，`clamp(85.33px, calc(100vw / 3.75), 144px)`
+  - 换算：设计稿 Npx → 代码 N/100 rem（如 32px → 0.32rem）
 - Admin：Ant Design 组件 + UnoCSS 布局辅助类
 - 禁止内联 style（除动态计算值外）
 
