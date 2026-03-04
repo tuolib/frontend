@@ -15,7 +15,7 @@ export function Price({ value, original, className = '' }: PriceProps) {
     <span className={`inline-flex items-baseline gap-1 ${className}`}>
       <span className="text-red-600 font-semibold">{formatPrice(value)}</span>
       {original && (
-        <span className="text-gray-400 text-sm line-through">
+        <span className="text-gray-400 text-14 line-through">
           {formatPrice(original)}
         </span>
       )}

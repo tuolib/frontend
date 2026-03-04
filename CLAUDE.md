@@ -135,6 +135,10 @@ packages/hooks/src/    # 跨 App 共享的 hooks
   - 文字：`text-28`（设计稿 28px）、`text-14`（设计稿 14px）
   - 间距/尺寸：`mt-32`、`p-16`、`w-100` 等
   - **禁止使用 `text-xl`、`text-lg`、`text-sm` 等预设大小类**，它们与 rem 适配方案不匹配
+- **H5 禁止使用所有带 `sm/md/lg/xl/2xl` 等预设尺寸后缀的工具类**，必须用具体数值代替
+  - 包括但不限于：`rounded-lg`、`shadow-md`、`gap-sm`、`space-x-lg`、`border-2xl` 等
+  - ✅ 正确：`rounded-8`、`shadow-[0_2px_8px_rgba(0,0,0,0.1)]`、`gap-12`
+  - ❌ 错误：`rounded-lg`、`rounded-sm`、`shadow-lg`、`shadow-md`
 - Admin：Ant Design 组件 + UnoCSS 布局辅助类
 - 禁止内联 style（除动态计算值外）
 

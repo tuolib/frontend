@@ -36,7 +36,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         {toasts.map((t) => (
           <div
             key={t.id}
-            className={`px-4 py-3 rounded-lg shadow-lg text-sm text-white animate-slide-in ${toastColors[t.type]}`}
+            className={`px-4 py-3 rounded-8 shadow-[0_4px_12px_rgba(0,0,0,0.15)] text-14 text-white animate-slide-in ${toastColors[t.type]}`}
           >
             {t.message}
           </div>

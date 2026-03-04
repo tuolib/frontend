@@ -49,7 +49,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, State> {
 
     return (
       <div className="flex-cc min-h-screen flex-col gap-4">
-        <p className="text-lg text-gray-700">
+        <p className="text-18 text-gray-700">
           {isChunk ? '页面加载失败，请刷新重试' : '页面出现错误'}
         </p>
         <button

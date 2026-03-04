@@ -22,7 +22,7 @@ export function Pagination({ pagination, onChange, className = '' }: PaginationP
       <button
         onClick={() => onChange(page - 1)}
         disabled={page <= 1}
-        className="px-3 py-1.5 rounded text-sm text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
+        className="px-3 py-1.5 rounded text-14 text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
       >
         上一页
       </button>
@@ -35,7 +35,7 @@ export function Pagination({ pagination, onChange, className = '' }: PaginationP
           <button
             key={p}
             onClick={() => onChange(p as number)}
-            className={`px-3 py-1.5 rounded text-sm ${
+            className={`px-3 py-1.5 rounded text-14 ${
               p === page
                 ? 'bg-blue-600 text-white'
                 : 'text-gray-600 hover:bg-gray-100'
@@ -48,7 +48,7 @@ export function Pagination({ pagination, onChange, className = '' }: PaginationP
       <button
         onClick={() => onChange(page + 1)}
         disabled={page >= totalPages}
-        className="px-3 py-1.5 rounded text-sm text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
+        className="px-3 py-1.5 rounded text-14 text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
       >
         下一页
       </button>

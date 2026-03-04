@@ -38,7 +38,7 @@ export default function AdminLayout() {
         className="border-r border-gray-200"
       >
         <div className="h-16 flex items-center justify-center border-b border-gray-200">
-          <span className="text-lg font-bold text-blue-600">
+          <span className="text-18 font-bold text-blue-600">
             {collapsed ? '商' : '商城后台'}
           </span>
         </div>
