@@ -48,3 +48,35 @@ html {
 .animate-slide-in {
   animation: slide-in 0.2s ease-out;
 }
+
+/* 排序栏（SortBar 组件，复用于列表页/搜索页） */
+.amz-sort-bar {
+  display: flex;
+  background: #fff;
+  padding: 0 0.12rem;
+  border-bottom: 1px solid #eaeded;
+  position: sticky;
+  top: 0.44rem;
+  z-index: 49;
+
+  .sort-item {
+    flex: 1;
+    height: 0.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.13rem;
+    color: #565959;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 0;
+    transition: all 0.2s;
+
+    &.active {
+      color: #007185;
+      border-bottom-color: #007185;
+      font-weight: 600;
+    }
+  }
+}
