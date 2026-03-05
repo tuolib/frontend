@@ -12,6 +12,7 @@ export {
   setTokens,
   clearTokens,
   setAuthCallbacks,
+  initProactiveRefresh,
   type AuthTokens,
   type AuthCallbacks,
 } from './auth-manager';

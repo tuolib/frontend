@@ -16,13 +16,13 @@ export const auth = {
       ...input,
       confirmPassword: input.password,
     });
-    setTokens({ accessToken: result.accessToken, refreshToken: result.refreshToken });
+    setTokens(result);
     return result;
   },
 
   async login(input: { email: string; password: string }): Promise<AuthResult> {
     const result = await post<AuthResult>('api/v1/auth/login', input);
-    setTokens({ accessToken: result.accessToken, refreshToken: result.refreshToken });
+    setTokens(result);
     return result;
   },
 

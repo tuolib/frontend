@@ -10,6 +10,7 @@ import {
   getAccessToken,
   setAuthCallbacks,
   clearTokens,
+  initProactiveRefresh,
 } from '@fe/api-client';
 
 interface AuthState {
@@ -61,6 +62,8 @@ export const useAuthStore = create<AuthState>((set) => ({
     const token = getAccessToken();
     if (token) {
       set({ isAuthenticated: true, isLoading: false });
+      // 根据已存储的过期时间启动主动刷新定时器
+      initProactiveRefresh();
     } else {
       set({ isAuthenticated: false, isLoading: false });
     }

@@ -8,8 +8,9 @@ import type { ApiResponse } from './types';
 import type { PaginationMeta } from '@fe/shared';
 import { ApiError } from './errors';
 import {
-  getAccessToken,
+  ensureFreshToken,
   refreshAccessToken,
+  setProactiveRefreshFn,
   type AuthTokens,
 } from './auth-manager';
 
@@ -32,6 +33,24 @@ function getBaseUrl(): string {
   return DEFAULT_BASE_URL;
 }
 
+async function doRefreshCall(refreshToken: string): Promise<AuthTokens> {
+  const resp = await ky
+    .post('api/v1/auth/refresh', {
+      prefixUrl: getBaseUrl(),
+      json: { refreshToken },
+    })
+    .json<ApiResponse<AuthTokens>>();
+
+  if (!resp.success) {
+    throw new ApiError(resp);
+  }
+
+  return resp.data;
+}
+
+// 注册 refresh 函数，供 auth-manager 主动刷新定时器使用
+setProactiveRefreshFn(doRefreshCall);
+
 export const httpClient = ky.create({
   timeout: 15_000,
   headers: {
@@ -39,8 +58,9 @@ export const httpClient = ky.create({
   },
   hooks: {
     beforeRequest: [
-      (request) => {
-        const token = getAccessToken();
+      async (request) => {
+        // 如果 token 即将过期，先等待刷新完成再发请求
+        const token = await ensureFreshToken();
         if (token) {
           request.headers.set('Authorization', `Bearer ${token}`);
         }
@@ -50,6 +70,7 @@ export const httpClient = ky.create({
       async (request, options, response) => {
         if (response.status !== 401) return response;
 
+        // 兜底：万一主动刷新没来得及，收到 401 后再刷一次
         try {
           const tokens = await refreshAccessToken(doRefreshCall);
           request.headers.set('Authorization', `Bearer ${tokens.accessToken}`);
@@ -61,24 +82,6 @@ export const httpClient = ky.create({
     ],
   },
 });
-
-async function doRefreshCall(refreshToken: string): Promise<AuthTokens> {
-  const resp = await ky
-    .post('api/v1/auth/refresh', {
-      prefixUrl: getBaseUrl(),
-      json: { refreshToken },
-    })
-    .json<ApiResponse<{ accessToken: string; refreshToken: string }>>();
-
-  if (!resp.success) {
-    throw new ApiError(resp);
-  }
-
-  return {
-    accessToken: resp.data.accessToken,
-    refreshToken: resp.data.refreshToken,
-  };
-}
 
 /**
  * POST helper — 解包响应信封，失败时抛 ApiError
