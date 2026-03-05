@@ -29,6 +29,7 @@ export { category } from './domains/category';
 export { cart } from './domains/cart';
 export { order } from './domains/order';
 export { payment } from './domains/payment';
+export { banner } from './domains/banner';
 
 // ── admin APIs ──
 export {

@@ -30,6 +30,7 @@ export type {
   PaymentInfo,
   PaymentRecord,
   PaymentStatusResult,
+  BannerItem,
 } from './types';
 
 // ── constants ──

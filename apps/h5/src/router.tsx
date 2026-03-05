@@ -8,6 +8,7 @@ const RootLayout = lazy(() => import('./layouts/root-layout'));
 const AuthLayout = lazy(() => import('./layouts/auth-layout'));
 
 const Home = lazy(() => import('./pages/home'));
+const Menu = lazy(() => import('./pages/menu'));
 const ProductList = lazy(() => import('./pages/product/list'));
 const ProductDetail = lazy(() => import('./pages/product/detail'));
 const Search = lazy(() => import('./pages/product/search'));
@@ -41,17 +42,19 @@ function RouteErrorBoundary({ children }: { children: React.ReactNode }) {
 }
 
 export const router = createBrowserRouter([
-  // 公开路由
+  // Tab 页面（RootLayout 包裹，显示底部导航）
   {
     element: <RootLayout />,
     children: [
       { index: true, element: <Home /> },
-      { path: 'product', element: <ProductList /> },
       { path: 'me', element: <Profile /> },
+      { path: 'menu', element: <Menu /> },
     ],
   },
+  // 独立公开页面（无底部导航）
   {
     children: [
+      { path: 'product', element: <RouteErrorBoundary><ProductList /></RouteErrorBoundary> },
       { path: 'product/:id', element: <RouteErrorBoundary><ProductDetail /></RouteErrorBoundary> },
       { path: 'search', element: <RouteErrorBoundary><Search /></RouteErrorBoundary> },
     ],

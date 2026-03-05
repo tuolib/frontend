@@ -39,3 +39,5 @@ export type {
 } from './order';
 
 export type { PaymentInfo, PaymentRecord, PaymentStatusResult } from './payment';
+
+export type { BannerItem } from './banner';

@@ -36,6 +36,11 @@ packages/hooks/             # @fe/hooks — 共享 React hooks
 docs/                       # 架构文档 + API 参考
 ```
 
+## H5 实现计划
+
+**重要：** H5 Amazon 风格的分步实现计划在 `docs/h5-implementation-plan.md`。
+当用户说"开始 Step N"时，必须先读取该文件，了解对应 Step 的完整规格和当前进度。
+
 ## 后端 API 参考
 
 **重要：** 后端 API 详细文档在 `docs/api-reference.md`。

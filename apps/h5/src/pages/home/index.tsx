@@ -1,85 +1,79 @@
 import { useRef, useEffect, useCallback, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useRequest, usePaginatedRequest } from '@fe/hooks';
-import { product, category } from '@fe/api-client';
+import { product, category, banner as bannerApi } from '@fe/api-client';
 import { Skeleton, Spinner } from '@fe/ui';
-import type { ProductListItem, CategoryNode } from '@fe/shared';
+import type { ProductListItem, CategoryNode, BannerItem } from '@fe/shared';
 import {
   bannerPlaceholder,
   categoryPlaceholder,
   productPlaceholder,
-  flashPlaceholder,
 } from './placeholder';
 import './home.scss';
 
 const PAGE_SIZE = 10;
 
-// ── Mock 数据（无后端 banner/秒杀接口，用占位数据） ──
+// ── 占位 Banner（API 无数据时 fallback） ──
 
-const BANNERS = [
-  { id: '1', title: '新品首发', subtitle: '爆款直降300元', img: bannerPlaceholder('新品首发', '爆款直降300元', '#e4393c', '#c0392b') },
-  { id: '2', title: '超级品牌日', subtitle: '大牌5折起', img: bannerPlaceholder('超级品牌日', '大牌5折起', '#7b68ee', '#5b4bc7') },
-  { id: '3', title: '限时秒杀', subtitle: '全场低至1折', img: bannerPlaceholder('限时秒杀', '全场低至1折', '#ff8c00', '#e67e22') },
-];
-
-const FLASH_ITEMS = [
-  { id: 'f1', title: '无线蓝牙耳机', price: '59.9', originPrice: '199', progress: 78, img: flashPlaceholder('无线蓝牙耳机') },
-  { id: 'f2', title: '纯棉短袖T恤', price: '29.9', originPrice: '89', progress: 65, img: flashPlaceholder('纯棉短袖T恤') },
-  { id: 'f3', title: '不锈钢保温杯', price: '39.9', originPrice: '129', progress: 82, img: flashPlaceholder('不锈钢保温杯') },
-  { id: 'f4', title: '手机充电线', price: '9.9', originPrice: '39', progress: 91, img: flashPlaceholder('手机充电线') },
-  { id: 'f5', title: '运动双肩包', price: '49.9', originPrice: '159', progress: 55, img: flashPlaceholder('运动双肩包') },
+const FALLBACK_BANNERS = [
+  { id: 'fb1', title: 'New Arrivals', subtitle: 'Shop the latest products', imageUrl: bannerPlaceholder('New Arrivals', 'Shop the latest products', '#232f3e', '#37475a'), linkType: 'category', linkValue: null },
+  { id: 'fb2', title: 'Deal of the Day', subtitle: 'Up to 40% off', imageUrl: bannerPlaceholder('Deal of the Day', 'Up to 40% off', '#007185', '#005f73'), linkType: 'category', linkValue: null },
+  { id: 'fb3', title: 'Top Sellers', subtitle: 'Most popular items', imageUrl: bannerPlaceholder('Top Sellers', 'Most popular items', '#131921', '#232f3e'), linkType: 'category', linkValue: null },
 ];
 
 // ── Banner 轮播 ──
 
-function BannerCarousel() {
+function BannerCarousel({ banners }: { banners: Array<Pick<BannerItem, 'id' | 'imageUrl' | 'title' | 'linkType' | 'linkValue'>> }) {
   const [current, setCurrent] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval>>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
+    if (banners.length <= 1) return;
     timerRef.current = setInterval(() => {
-      setCurrent((c) => (c + 1) % BANNERS.length);
+      setCurrent((c) => (c + 1) % banners.length);
     }, 3000);
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, []);
+  }, [banners.length]);
+
+  const handleClick = (b: Pick<BannerItem, 'linkType' | 'linkValue'>) => {
+    if (!b.linkValue) return;
+    if (b.linkType === 'product') {
+      navigate(`/product/${b.linkValue}`);
+    } else if (b.linkType === 'category') {
+      navigate(`/product?categoryId=${b.linkValue}`);
+    }
+  };
 
   return (
-    <div className="jd-banner">
+    <div className="amz-banner">
       <div className="banner-track" style={{ transform: `translateX(-${current * 100}%)` }}>
-        {BANNERS.map((b) => (
-          <div key={b.id} className="banner-slide">
-            <img src={b.img} alt={b.title} className="w-full h-full object-cover" />
+        {banners.map((b) => (
+          <div key={b.id} className="banner-slide" onClick={() => handleClick(b)}>
+            <img src={b.imageUrl} alt={b.title} className="w-full h-full object-cover" />
           </div>
         ))}
       </div>
-      <div className="banner-dots">
-        {BANNERS.map((b, i) => (
-          <div key={b.id} className={`dot ${i === current ? 'active' : ''}`} />
-        ))}
-      </div>
+      {banners.length > 1 && (
+        <div className="banner-dots">
+          {banners.map((b, i) => (
+            <div key={b.id} className={`dot ${i === current ? 'active' : ''}`} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
-// ── 分类宫格 ──
+// ── 分类胶囊横滑 ──
 
-function CategoryGrid({ categories }: { categories: CategoryNode[] }) {
-  // 取前 10 个分类，分两行五列
-  const items = categories.slice(0, 10);
-
+function CategoryPills({ categories }: { categories: CategoryNode[] }) {
   return (
-    <div className="jd-categories">
-      <div className="cat-grid">
-        {items.map((cat) => (
-          <Link key={cat.id} to={`/product?categoryId=${cat.id}`} className="cat-item">
-            <div className="cat-icon">
-              <img
-                src={cat.iconUrl || categoryPlaceholder(cat.name)}
-                alt={cat.name}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <span className="cat-name">{cat.name}</span>
+    <div className="amz-pills">
+      <div className="pills-scroll">
+        {categories.map((cat) => (
+          <Link key={cat.id} to={`/product?categoryId=${cat.id}`} className="pill">
+            {cat.name}
           </Link>
         ))}
       </div>
@@ -87,108 +81,61 @@ function CategoryGrid({ categories }: { categories: CategoryNode[] }) {
   );
 }
 
-function CategorySkeleton() {
+function PillsSkeleton() {
   return (
-    <div className="jd-categories">
-      <div className="cat-grid">
-        {Array.from({ length: 10 }).map((_, i) => (
-          <div key={i} className="cat-item">
-            <Skeleton className="w-44 h-44 rounded-full" />
-            <Skeleton className="w-32 h-10 rounded-4" />
-          </div>
+    <div className="amz-pills">
+      <div className="pills-scroll">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <Skeleton key={i} className="w-60 h-30 rounded-15 flex-shrink-0" />
         ))}
       </div>
     </div>
   );
 }
 
-// ── 秒杀区域 ──
+// ── Deal of the Day（销量 Top） ──
 
-function FlashSale() {
-  const [countdown, setCountdown] = useState({ h: 1, m: 23, s: 45 });
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCountdown((prev) => {
-        let { h, m, s } = prev;
-        s -= 1;
-        if (s < 0) { s = 59; m -= 1; }
-        if (m < 0) { m = 59; h -= 1; }
-        if (h < 0) return { h: 0, m: 0, s: 0 };
-        return { h, m, s };
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const pad = (n: number) => n.toString().padStart(2, '0');
+function DealSection({ items }: { items: ProductListItem[] }) {
+  if (items.length === 0) return null;
 
   return (
-    <div className="jd-flash-sale">
-      <div className="flash-header">
-        <div className="flash-left">
-          <span className="flash-title">京东秒杀</span>
-          <div className="flash-countdown">
-            <span className="cd-block">{pad(countdown.h)}</span>
-            <span>:</span>
-            <span className="cd-block">{pad(countdown.m)}</span>
-            <span>:</span>
-            <span className="cd-block">{pad(countdown.s)}</span>
-          </div>
-        </div>
-        <Link to="/product" className="flash-more">
-          更多秒杀 <span className="i-carbon-chevron-right text-10" />
+    <div className="amz-deals">
+      <div className="deals-header">
+        <span className="deals-title">Deal of the Day</span>
+        <Link to="/product" className="deals-more">
+          See all deals <span className="i-carbon-chevron-right text-12" />
         </Link>
       </div>
-      <div className="flash-list">
-        {FLASH_ITEMS.map((item) => (
-          <Link key={item.id} to="/product" className="flash-item">
-            <div className="flash-img">
-              <img src={item.img} alt={item.title} className="w-full h-full object-cover" />
-            </div>
-            <div className="flash-price">
-              <span className="flash-symbol">¥</span>{item.price}
-            </div>
-            <div className="flash-origin">¥{item.originPrice}</div>
-            <div className="flash-progress">
-              <div
-                className="absolute inset-y-0 left-0 bg-white/20 rounded-6"
-                style={{ width: `${item.progress}%` }}
-              />
-              <span className="progress-text">已抢{item.progress}%</span>
-            </div>
-          </Link>
-        ))}
-      </div>
-    </div>
-  );
-}
+      <div className="deals-scroll">
+        {items.map((item) => {
+          const price = item.minPrice ? Number.parseFloat(item.minPrice) : 0;
+          const comparePrice = item.maxPrice ? Number.parseFloat(item.maxPrice) : 0;
+          const discount = comparePrice > price && price > 0
+            ? Math.round((1 - price / comparePrice) * 100)
+            : 0;
 
-// ── 功能入口 ──
-
-function FeatureCards() {
-  return (
-    <div className="jd-features">
-      <div className="feature-card" style={{ background: 'linear-gradient(135deg, #fff5f5, #fff)' }}>
-        <span className="feature-title">京东超市</span>
-        <span className="feature-desc">大牌聚惠</span>
-        <div className="feature-img flex-cc bg-red-50 rounded-8">
-          <span className="i-carbon-shopping-bag text-24 text-red-400" />
-        </div>
-      </div>
-      <div className="feature-card" style={{ background: 'linear-gradient(135deg, #f0f5ff, #fff)' }}>
-        <span className="feature-title">数码电器</span>
-        <span className="feature-desc">新品直降</span>
-        <div className="feature-img flex-cc bg-blue-50 rounded-8">
-          <span className="i-carbon-laptop text-24 text-blue-400" />
-        </div>
-      </div>
-      <div className="feature-card" style={{ background: 'linear-gradient(135deg, #fff7e6, #fff)' }}>
-        <span className="feature-title">充值缴费</span>
-        <span className="feature-desc">优惠享不停</span>
-        <div className="feature-img flex-cc bg-orange-50 rounded-8">
-          <span className="i-carbon-flash text-24 text-orange-400" />
-        </div>
+          return (
+            <Link key={item.id} to={`/product/${item.id}`} className="deal-item">
+              <div className="deal-img">
+                <img
+                  src={item.primaryImage || productPlaceholder(item.title)}
+                  alt={item.title}
+                  loading="lazy"
+                />
+              </div>
+              {discount > 0 && (
+                <span className="deal-discount">{discount}% off</span>
+              )}
+              <div className="deal-price">
+                <span className="text-11">¥</span>
+                {price.toFixed(0)}
+              </div>
+              <div className="deal-label">
+                {item.totalSales > 0 ? `${item.totalSales}+ bought` : 'New'}
+              </div>
+            </Link>
+          );
+        })}
       </div>
     </div>
   );
@@ -199,7 +146,6 @@ function FeatureCards() {
 function ProductCard({ item }: { item: ProductListItem }) {
   const price = item.minPrice ? Number.parseFloat(item.minPrice).toFixed(1) : '0';
   const [integer, decimal] = price.split('.');
-  const tags = ['京东自营', '满减'];
 
   return (
     <Link to={`/product/${item.id}`} className="product-card">
@@ -207,26 +153,18 @@ function ProductCard({ item }: { item: ProductListItem }) {
         <img
           src={item.primaryImage || productPlaceholder(item.title)}
           alt={item.title}
-          className="w-full h-full object-cover"
           loading="lazy"
         />
       </div>
       <div className="product-info">
         <div className="product-title">{item.title}</div>
-        <div className="product-tags">
-          {tags.map((tag) => (
-            <span key={tag} className="tag">{tag}</span>
-          ))}
+        <div className="product-price">
+          <span className="price-symbol">¥</span>
+          {integer}
+          <span className="text-12">.{decimal}</span>
         </div>
-        <div className="product-bottom">
-          <span className="product-price">
-            <span className="price-symbol">¥</span>
-            {integer}
-            <span className="text-12">.{decimal}</span>
-          </span>
-          <span className="product-sales">
-            {item.totalSales > 0 ? `${item.totalSales}+评论` : '新品'}
-          </span>
+        <div className="product-sales">
+          {item.totalSales > 0 ? `${item.totalSales}+ bought` : 'New'}
         </div>
       </div>
     </Link>
@@ -249,12 +187,23 @@ function ProductSkeleton() {
 // ── 首页主体 ──
 
 export default function Home() {
-  const navigate = useNavigate();
-
+  // 分类数据
   const { data: categories, loading: catLoading } = useRequest(
     (signal) => category.tree({ signal }),
   );
 
+  // Banner 数据（从 API 获取）
+  const { data: bannerData, loading: bannerLoading } = useRequest(
+    (signal) => bannerApi.list({ signal }),
+  );
+
+  // Deal of the Day（销量 Top 10）
+  const { data: dealData } = useRequest(
+    (signal) => product.list({ page: 1, pageSize: 10, sort: 'sales', order: 'desc', signal }),
+  );
+  const dealItems = dealData?.items ?? [];
+
+  // 推荐商品（最新，无限滚动）
   const {
     items: products,
     loading: prodLoading,
@@ -287,75 +236,67 @@ export default function Home() {
     return () => observer.disconnect();
   }, [hasMore, loadingMore, loadMoreFn]);
 
+  // Banner 展示：API 数据优先，无数据用 fallback
+  const banners = bannerData && bannerData.length > 0
+    ? bannerData.map((b) => ({ id: b.id, title: b.title, imageUrl: b.imageUrl, linkType: b.linkType, linkValue: b.linkValue }))
+    : FALLBACK_BANNERS;
+
   return (
-    <div className="jd-home">
-      {/* 顶部搜索栏 */}
-      <div className="jd-header">
-        <div className="jd-search-bar">
-          <span className="i-carbon-scan header-icon" />
-          <div className="search-input" onClick={() => navigate('/search')}>
-            <span className="i-carbon-search text-14 text-gray-400" />
-            <span>搜索商品</span>
-          </div>
-          <span className="i-carbon-notification header-icon" />
-        </div>
-      </div>
-
-      {/* 轮播图 */}
-      <BannerCarousel />
-
-      {/* 分类宫格 */}
+    <div className="amz-home">
+      {/* 分类胶囊横滑 */}
       {catLoading ? (
-        <CategorySkeleton />
+        <PillsSkeleton />
       ) : categories && categories.length > 0 ? (
-        <CategoryGrid categories={categories} />
+        <CategoryPills categories={categories} />
       ) : null}
 
-      {/* 功能入口 */}
-      <FeatureCards />
+      {/* Banner 轮播 */}
+      {bannerLoading ? (
+        <Skeleton className="w-full aspect-[75/28]" />
+      ) : (
+        <BannerCarousel banners={banners} />
+      )}
 
-      {/* 秒杀区域 */}
-      <FlashSale />
+      {/* Deal of the Day */}
+      <DealSection items={dealItems} />
 
-      {/* 推荐商品 */}
-      <div className="jd-recommend-header">
-        <div className="rec-line" />
-        <span className="rec-title">为你推荐</span>
-        <div className="rec-line" />
+      {/* Recommended for you */}
+      <div className="amz-section-header">
+        <span className="section-title">Recommended for you</span>
       </div>
 
       {prodLoading ? (
-        <div className="jd-product-grid">
+        <div className="amz-product-grid">
           {Array.from({ length: 4 }).map((_, i) => (
             <ProductSkeleton key={i} />
           ))}
         </div>
       ) : products.length > 0 ? (
         <>
-          <div className="jd-product-grid">
+          <div className="amz-product-grid">
             {products.map((item) => (
               <ProductCard key={item.id} item={item} />
             ))}
           </div>
 
-          <div ref={loadMoreRef} className="jd-load-more">
+          <div ref={loadMoreRef} className="amz-load-more">
             {hasMore ? (
               loadingMore ? (
                 <>
-                  <Spinner size="sm" className="text-gray-400" />
-                  加载中...
+                  <Spinner size="sm" className="text-[#565959]" />
+                  Loading...
                 </>
               ) : (
-                <span>上滑加载更多</span>
+                <span>Scroll for more</span>
               )
             ) : (
-              <span>- 我是有底线的 -</span>
+              <span>— You've seen it all —</span>
             )}
           </div>
         </>
       ) : null}
 
-      {/* 底部 TabBar 安全距离 */}
+      {/* 底部安全距离 */}
       <div className="h-60" />
     </div>
   );

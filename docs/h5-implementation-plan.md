@@ -76,7 +76,7 @@ Tab 页面（RootLayout 包裹，显示底部导航）:
 
 ---
 
-### Step 1 — 基础框架改造 `[ ]`
+### Step 1 — 基础框架改造 `[x]`
 
 > 改造全局风格和导航框架，后续所有页面在此基础上开发。
 
@@ -105,10 +105,10 @@ Tab 页面（RootLayout 包裹，显示底部导航）:
 - 点击搜索框 → navigate('/search')
 
 **验收标准：**
-- [ ] 4 个 Tab 可切换，路由正确
-- [ ] 搜索栏显示在首页顶部
-- [ ] 整体色调为 Amazon 深蓝+白色
-- [ ] 移动端 rem 适配正常
+- [x] 4 个 Tab 可切换，路由正确
+- [x] 搜索栏显示在首页顶部
+- [x] 整体色调为 Amazon 深蓝+白色
+- [x] 移动端 rem 适配正常
 
 ---
 
@@ -535,9 +535,9 @@ Tab 页面（RootLayout 包裹，显示底部导航）:
 | Register `/register` | ✅ 已实现 | 完整的表单验证 + API |
 | Profile `/me` | ✅ 已实现 | 需重写为 Amazon 风格 (Step 7) |
 | Home `/` | ⚠️ 京东风格 | 需重写为 Amazon 风格 (Step 2) |
-| RootLayout | ⚠️ 京东风格 | 需重写 (Step 1) |
+| RootLayout | ✅ 已实现 | Amazon 风格 4-Tab (Step 1) |
 | Search `/search` | ❌ 占位 | Step 3 |
-| Menu `/menu` | ❌ 不存在 | Step 4 新建 |
+| Menu `/menu` | ⚠️ 占位 | Step 1 创建占位, Step 4 实现 |
 | ProductList `/product` | ❌ 占位 | Step 5a |
 | ProductDetail `/product/:id` | ❌ 占位 | Step 5b |
 | Cart `/cart` | ❌ 占位 | Step 6 |

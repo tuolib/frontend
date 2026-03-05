@@ -1,50 +1,50 @@
-/* 京东风格首页样式 */
+/* Amazon 风格首页样式 */
 
-.jd-home {
-  background: #f5f5f5;
+.amz-home {
+  background: #eaeded;
   min-height: 100vh;
 }
 
-/* 搜索栏 */
-.jd-header {
-  background: linear-gradient(135deg, #e93b3d 0%, #e4393c 50%, #d42a2a 100%);
-  padding: 0.08rem 0.12rem;
-  padding-top: calc(var(--safe-area-top) + 0.08rem);
-  position: sticky;
-  top: 0;
-  z-index: 50;
-}
+/* 分类胶囊横滑 */
+.amz-pills {
+  background: #fff;
+  padding: 0.1rem 0.12rem;
 
-.jd-search-bar {
-  display: flex;
-  align-items: center;
-  gap: 0.1rem;
+  .pills-scroll {
+    display: flex;
+    gap: 0.08rem;
+    overflow-x: auto;
+    scrollbar-width: none;
 
-  .search-input {
-    flex: 1;
-    height: 0.32rem;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .pill {
+    flex-shrink: 0;
+    height: 0.3rem;
+    padding: 0 0.14rem;
+    border-radius: 0.15rem;
+    border: 1px solid #ddd;
     background: #fff;
-    border-radius: 0.16rem;
+    font-size: 0.13rem;
+    color: #0f1111;
     display: flex;
     align-items: center;
-    padding: 0 0.12rem;
-    gap: 0.06rem;
-    color: #999;
-    font-size: 0.13rem;
-  }
+    white-space: nowrap;
+    text-decoration: none;
+    transition: background 0.2s;
 
-  .header-icon {
-    color: #fff;
-    font-size: 0.22rem;
-    flex-shrink: 0;
+    &:active {
+      background: #f0f0f0;
+    }
   }
 }
 
-/* 轮播图 */
-.jd-banner {
+/* Banner 轮播 */
+.amz-banner {
   position: relative;
-  margin: 0.08rem 0.08rem 0;
-  border-radius: 0.1rem;
   overflow: hidden;
   aspect-ratio: 75 / 28;
 
@@ -67,161 +67,56 @@
 
   .banner-dots {
     position: absolute;
-    bottom: 0.06rem;
+    bottom: 0.08rem;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
-    gap: 0.04rem;
+    gap: 0.06rem;
 
     .dot {
       width: 0.06rem;
-      height: 0.03rem;
-      border-radius: 0.02rem;
+      height: 0.06rem;
+      border-radius: 50%;
       background: rgba(255, 255, 255, 0.5);
       transition: all 0.3s;
 
       &.active {
-        width: 0.12rem;
         background: #fff;
+        transform: scale(1.3);
       }
     }
   }
 }
 
-/* 分类宫格 */
-.jd-categories {
+/* Deal of the Day */
+.amz-deals {
   background: #fff;
-  margin: 0 0.08rem;
-  border-radius: 0 0 0.1rem 0.1rem;
-  padding: 0.12rem 0 0.08rem;
-  overflow: hidden;
-
-  .cat-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    row-gap: 0.08rem;
-  }
-
-  .cat-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.04rem;
-    text-decoration: none;
-
-    .cat-icon {
-      width: 0.44rem;
-      height: 0.44rem;
-      border-radius: 50%;
-      overflow: hidden;
-      background: #f9f9f9;
-
-      img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-    }
-
-    .cat-name {
-      font-size: 0.11rem;
-      color: #333;
-      text-align: center;
-      line-height: 1.2;
-    }
-  }
-}
-
-/* 功能入口区域 */
-.jd-features {
-  display: flex;
-  gap: 0.06rem;
-  margin: 0.08rem 0.08rem 0;
-
-  .feature-card {
-    flex: 1;
-    background: #fff;
-    border-radius: 0.1rem;
-    padding: 0.1rem;
-    display: flex;
-    flex-direction: column;
-
-    .feature-title {
-      font-size: 0.14rem;
-      font-weight: 600;
-      color: #333;
-    }
-
-    .feature-desc {
-      font-size: 0.1rem;
-      color: #999;
-      margin-top: 0.02rem;
-    }
-
-    .feature-img {
-      width: 0.5rem;
-      height: 0.5rem;
-      align-self: flex-end;
-      margin-top: 0.04rem;
-    }
-  }
-}
-
-/* 秒杀区域 */
-.jd-flash-sale {
-  background: #fff;
-  margin: 0.08rem 0.08rem 0;
-  border-radius: 0.1rem;
+  margin-top: 0.08rem;
   padding: 0.12rem;
 
-  .flash-header {
+  .deals-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 0.1rem;
 
-    .flash-left {
-      display: flex;
-      align-items: center;
-      gap: 0.08rem;
-    }
-
-    .flash-title {
-      font-size: 0.16rem;
+    .deals-title {
+      font-size: 0.17rem;
       font-weight: 700;
-      color: #e4393c;
+      color: #0f1111;
     }
 
-    .flash-countdown {
-      display: flex;
-      align-items: center;
-      gap: 0.02rem;
-      font-size: 0.1rem;
-      color: #999;
-
-      .cd-block {
-        background: #333;
-        color: #fff;
-        font-size: 0.1rem;
-        padding: 0.01rem 0.03rem;
-        border-radius: 0.02rem;
-        font-weight: 600;
-        min-width: 0.18rem;
-        text-align: center;
-      }
-    }
-
-    .flash-more {
-      font-size: 0.12rem;
-      color: #999;
-      display: flex;
-      align-items: center;
-      gap: 0.02rem;
+    .deals-more {
+      font-size: 0.13rem;
+      color: #007185;
       text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.04rem;
     }
   }
 
-  .flash-list {
+  .deals-scroll {
     display: flex;
     gap: 0.08rem;
     overflow-x: auto;
@@ -232,15 +127,15 @@
     }
   }
 
-  .flash-item {
+  .deal-item {
     flex-shrink: 0;
-    width: 0.9rem;
+    width: 1.2rem;
     text-decoration: none;
 
-    .flash-img {
-      width: 0.9rem;
-      height: 0.9rem;
-      border-radius: 0.06rem;
+    .deal-img {
+      width: 1.2rem;
+      height: 1.2rem;
+      border-radius: 0.08rem;
       overflow: hidden;
       background: #f5f5f5;
 
@@ -251,75 +146,62 @@
       }
     }
 
-    .flash-price {
-      margin-top: 0.04rem;
-      font-size: 0.14rem;
+    .deal-discount {
+      margin-top: 0.06rem;
+      display: inline-block;
+      background: #cc0c39;
+      color: #fff;
+      font-size: 0.11rem;
       font-weight: 700;
-      color: #e4393c;
-
-      .flash-symbol {
-        font-size: 0.1rem;
-      }
+      padding: 0.02rem 0.06rem;
+      border-radius: 0.02rem;
     }
 
-    .flash-origin {
-      font-size: 0.1rem;
-      color: #999;
-      text-decoration: line-through;
-    }
-
-    .flash-progress {
+    .deal-price {
       margin-top: 0.04rem;
-      height: 0.12rem;
-      background: linear-gradient(90deg, #e4393c, #ff8a65);
-      border-radius: 0.06rem;
-      position: relative;
-      overflow: hidden;
+      font-size: 0.15rem;
+      font-weight: 700;
+      color: #b12704;
+    }
 
-      .progress-text {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 0.08rem;
-        color: #fff;
-        white-space: nowrap;
-      }
+    .deal-label {
+      font-size: 0.11rem;
+      color: #565959;
+      margin-top: 0.02rem;
     }
   }
 }
 
 /* 推荐商品标题 */
-.jd-recommend-header {
+.amz-section-header {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.08rem;
-  padding: 0.14rem 0 0.08rem;
+  justify-content: space-between;
+  padding: 0.14rem 0.12rem 0.08rem;
 
-  .rec-line {
-    width: 0.2rem;
-    height: 1px;
-    background: #ccc;
+  .section-title {
+    font-size: 0.17rem;
+    font-weight: 700;
+    color: #0f1111;
   }
 
-  .rec-title {
-    font-size: 0.15rem;
-    font-weight: 700;
-    color: #333;
+  .section-more {
+    font-size: 0.13rem;
+    color: #007185;
+    text-decoration: none;
   }
 }
 
-/* 推荐商品瀑布流 */
-.jd-product-grid {
+/* 商品网格 */
+.amz-product-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 0.06rem;
+  gap: 0.08rem;
   padding: 0 0.08rem;
 
   .product-card {
     background: #fff;
-    border-radius: 0.1rem;
+    border-radius: 0.08rem;
     overflow: hidden;
     text-decoration: none;
     display: block;
@@ -342,7 +224,7 @@
 
     .product-title {
       font-size: 0.13rem;
-      color: #333;
+      color: #0f1111;
       line-height: 1.4;
       display: -webkit-box;
       -webkit-line-clamp: 2;
@@ -350,58 +232,39 @@
       overflow: hidden;
     }
 
-    .product-tags {
-      display: flex;
-      gap: 0.04rem;
-      margin-top: 0.04rem;
-      flex-wrap: wrap;
-
-      .tag {
-        font-size: 0.09rem;
-        color: #e4393c;
-        border: 1px solid #e4393c;
-        border-radius: 0.02rem;
-        padding: 0 0.03rem;
-        line-height: 1.4;
-      }
-    }
-
-    .product-bottom {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      margin-top: 0.06rem;
-    }
-
     .product-price {
+      margin-top: 0.06rem;
       font-size: 0.17rem;
       font-weight: 700;
-      color: #e4393c;
+      color: #b12704;
 
       .price-symbol {
         font-size: 0.11rem;
       }
     }
 
-    .product-sales {
-      font-size: 0.1rem;
-      color: #999;
+    .product-compare {
+      font-size: 0.11rem;
+      color: #565959;
+      text-decoration: line-through;
+      margin-top: 0.02rem;
     }
 
-    .product-comment {
-      font-size: 0.1rem;
-      color: #999;
+    .product-sales {
+      font-size: 0.11rem;
+      color: #565959;
+      margin-top: 0.02rem;
     }
   }
 }
 
 /* 加载更多 */
-.jd-load-more {
+.amz-load-more {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0.16rem 0 0.24rem;
   gap: 0.06rem;
-  color: #999;
+  color: #565959;
   font-size: 0.12rem;
 }
