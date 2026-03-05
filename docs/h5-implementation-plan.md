@@ -502,11 +502,11 @@ Tab 页面（RootLayout 包裹，显示底部导航）:
 - API：`address.list/create/update/delete`
 
 **验收标准：**
-- [ ] 订单确认页正确展示商品和地址
-- [ ] 下单成功跳转支付
+- [x] 订单确认页正确展示商品和地址
+- [x] 下单成功跳转支付
 - [ ] 订单列表按状态筛选
 - [ ] 订单详情信息完整
-- [ ] 地址 CRUD 正常
+- [x] 地址 CRUD 正常
 
 ---
 
@@ -541,11 +541,11 @@ Tab 页面（RootLayout 包裹，显示底部导航）:
 | ProductList `/product` | ✅ 已实现 | Step 5a |
 | ProductDetail `/product/:id` | ✅ 已实现 | Step 5b |
 | Cart `/cart` | ✅ 已实现 | Step 6 |
-| OrderCreate `/order/create` | ❌ 占位 | Step 8a |
+| OrderCreate `/order/create` | ✅ 已实现 | Step 8a |
 | OrderList `/order` | ❌ 占位 | Step 8c |
 | OrderDetail `/order/:id` | ❌ 占位 | Step 8d |
-| Payment `/order/:id/pay` | ❌ 占位 | Step 8b |
-| Address `/me/address` | ❌ 占位 | Step 8e |
+| Payment `/order/:id/pay` | ✅ 已实现 | Step 8b |
+| Address `/me/address` | ✅ 已实现 | Step 8e |
 
 ---
 

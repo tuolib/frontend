@@ -1,0 +1,231 @@
+/**
+ * Payment — 支付页样式
+ */
+
+.amz-payment {
+  min-height: 100vh;
+  background: #eaeded;
+  padding-bottom: 0.70rem;
+}
+
+// ── Amount Section ──
+.pay-amount-section {
+  background: #fff;
+  margin: 0.08rem;
+  border-radius: 0.08rem;
+  padding: 0.24rem 0.12rem;
+  text-align: center;
+
+  .pay-label {
+    font-size: 0.13rem;
+    color: #565959;
+    margin-bottom: 0.08rem;
+  }
+
+  .pay-amount {
+    font-size: 0.32rem;
+    font-weight: 700;
+    color: #b12704;
+
+    .pay-symbol {
+      font-size: 0.18rem;
+      font-weight: 400;
+    }
+  }
+
+  .pay-order-no {
+    font-size: 0.12rem;
+    color: #565959;
+    margin-top: 0.08rem;
+    font-family: monospace;
+  }
+
+  .pay-expire {
+    font-size: 0.12rem;
+    color: #cc0c39;
+    margin-top: 0.06rem;
+  }
+}
+
+// ── Method Section ──
+.pay-method-section {
+  background: #fff;
+  margin: 0.08rem;
+  border-radius: 0.08rem;
+  overflow: hidden;
+
+  .method-title {
+    padding: 0.12rem;
+    font-size: 0.15rem;
+    font-weight: 600;
+    color: #0f1111;
+    border-bottom: 1px solid #eaeded;
+  }
+}
+
+.pay-method-item {
+  display: flex;
+  align-items: center;
+  gap: 0.10rem;
+  padding: 0.14rem 0.12rem;
+  border-bottom: 1px solid #eaeded;
+  cursor: pointer;
+  width: 100%;
+  background: none;
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  text-align: left;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:active {
+    background: #f5f5f5;
+  }
+
+  .method-radio {
+    width: 0.20rem;
+    height: 0.20rem;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.checked {
+      border-color: #007185;
+
+      &::after {
+        content: '';
+        width: 0.10rem;
+        height: 0.10rem;
+        border-radius: 50%;
+        background: #007185;
+      }
+    }
+  }
+
+  .method-icon {
+    font-size: 0.24rem;
+    flex-shrink: 0;
+  }
+
+  .method-info {
+    flex: 1;
+
+    .method-name {
+      font-size: 0.14rem;
+      font-weight: 600;
+      color: #0f1111;
+    }
+
+    .method-desc {
+      font-size: 0.12rem;
+      color: #565959;
+      margin-top: 0.02rem;
+    }
+  }
+}
+
+// ── Bottom Bar ──
+.pay-bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  background: #fff;
+  border-top: 1px solid #ddd;
+  padding: 0.10rem 0.12rem;
+  padding-bottom: calc(0.10rem + var(--safe-area-bottom, 0));
+
+  .pay-submit-btn {
+    width: 100%;
+    height: 0.44rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ff9900;
+    border: none;
+    border-radius: 0.22rem;
+    font-size: 0.16rem;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+
+    &:active {
+      background: #e68a00;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// ── Success Overlay ──
+.pay-success-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.20rem;
+  text-align: center;
+
+  .success-icon {
+    font-size: 0.64rem;
+    color: #067d62;
+    margin-bottom: 0.16rem;
+  }
+
+  .success-title {
+    font-size: 0.20rem;
+    font-weight: 700;
+    color: #0f1111;
+    margin-bottom: 0.08rem;
+  }
+
+  .success-desc {
+    font-size: 0.14rem;
+    color: #565959;
+    margin-bottom: 0.24rem;
+  }
+
+  .success-btn {
+    width: 2.00rem;
+    height: 0.40rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffd814;
+    border: 1px solid #fcd200;
+    border-radius: 0.20rem;
+    font-size: 0.14rem;
+    font-weight: 600;
+    color: #0f1111;
+    cursor: pointer;
+
+    &:active {
+      background: #f7ca00;
+    }
+
+    & + .success-btn {
+      margin-top: 0.10rem;
+      background: #fff;
+      border-color: #ddd;
+      color: #0f1111;
+
+      &:active {
+        background: #f5f5f5;
+      }
+    }
+  }
+}
