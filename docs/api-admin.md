@@ -229,6 +229,82 @@
 
 > 以下接口需要管理员认证。
 
+### POST /api/v1/admin/product/list
+
+管理端商品列表（含 draft/archived，支持筛选排序分页和关键词搜索）。
+
+**Request Body:**
+
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| page | number | 否 | 默认 1 |
+| pageSize | number | 否 | 1-100，默认 20 |
+| sort | string | 否 | `createdAt` \| `price` \| `sales`，默认 `createdAt` |
+| order | string | 否 | `asc` \| `desc`，默认 `desc` |
+| keyword | string | 否 | 按商品标题模糊搜索，最长 200 字符 |
+| filters | object | 否 | 见下 |
+
+`filters` 对象：
+
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| status | string | 否 | `active` \| `draft` \| `archived` |
+| categoryId | string | 否 | 分类 ID（含子分类） |
+| brand | string | 否 | 品牌精确匹配 |
+
+**Response Data:** 分页结构。
+
+```typescript
+{
+  items: Array<{
+    id: string
+    title: string
+    slug: string
+    brand: string | null
+    status: string
+    minPrice: string | null
+    maxPrice: string | null
+    totalSales: number
+    avgRating: string
+    reviewCount: number
+    primaryImage: string | null
+    createdAt: string
+  }>
+  pagination: { page, pageSize, total, totalPages }
+}
+```
+
+---
+
+### POST /api/v1/admin/product/detail
+
+管理端商品详情（含全部 SKU、图片、分类，不走缓存）。
+
+**Request Body:**
+
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| id | string | 是 | 商品 ID |
+
+**Response Data:** 完整商品对象（含 images、skus、categories 数组）。
+
+---
+
+### POST /api/v1/admin/product/toggle-status
+
+上架 / 下架 / 归档。
+
+**Request Body:**
+
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| id | string | 是 | 商品 ID |
+| status | string | 是 | `active` \| `draft` \| `archived` |
+
+**Response Data:** 更新后的商品对象。
+
+---
+
 ### POST /api/v1/admin/product/create
 
 创建商品。
@@ -340,6 +416,73 @@
 
 ---
 
+### POST /api/v1/admin/product/sku/delete
+
+删除 SKU（同时清除 Redis 库存，更新商品价格区间）。
+
+**Request Body:**
+
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| skuId | string | 是 | SKU ID |
+
+**Response Data:** `null`
+
+---
+
+### POST /api/v1/admin/product/image/add
+
+添加商品图片。
+
+**Request Body:**
+
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| productId | string | 是 | 商品 ID |
+| images | Array | 是 | 至少 1 张，见下 |
+
+`images` 数组元素：
+
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| url | string | 是 | 合法 URL |
+| altText | string | 否 | 最长 200 字符 |
+| isPrimary | boolean | 否 | 是否主图 |
+| sortOrder | number | 否 | 排序，不填则自动递增 |
+
+**Response Data:** 更新后的商品对象。
+
+---
+
+### POST /api/v1/admin/product/image/delete
+
+删除商品图片。
+
+**Request Body:**
+
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| imageId | string | 是 | 图片 ID |
+
+**Response Data:** `null`
+
+---
+
+### POST /api/v1/admin/product/image/sort
+
+图片排序（按传入的 imageIds 数组顺序重新排列）。
+
+**Request Body:**
+
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| productId | string | 是 | 商品 ID |
+| imageIds | string[] | 是 | 图片 ID 数组，按期望顺序排列 |
+
+**Response Data:** 更新后的商品对象。
+
+---
+
 ## 4. 分类管理
 
 > 以下接口需要管理员认证。
@@ -379,6 +522,52 @@
 | isActive | boolean | 否 | |
 
 **Response Data:** 更新后的分类对象。
+
+---
+
+### POST /api/v1/admin/category/list
+
+管理端分类列表（含已禁用分类），支持分页和筛选。
+
+**Request Body:**
+
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| page | number | 否 | 默认 1 |
+| pageSize | number | 否 | 1-100，默认 20 |
+| keyword | string | 否 | 按名称模糊搜索 |
+| isActive | boolean | 否 | 筛选启用/禁用状态 |
+| parentId | string \| null | 否 | 按父分类筛选，null 表示顶级分类 |
+
+**Response Data:** 分页结构，包含分类对象数组。
+
+---
+
+### POST /api/v1/admin/category/tree
+
+管理端分类树（含已禁用分类，不走缓存）。
+
+**Request Body:** 无
+
+**Response Data:** 嵌套树形结构，每个节点含 `children` 数组。
+
+---
+
+### POST /api/v1/admin/category/delete
+
+删除分类。当分类下有子分类或关联商品时拒绝删除。
+
+**Request Body:**
+
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| id | string | 是 | 分类 ID |
+
+**Response Data:** `null`
+
+**错误码：**
+- `PRODUCT_2004` — 分类不存在
+- `PRODUCT_2010` — 分类删除被拒绝（有子分类或关联商品）
 
 ---
 
@@ -434,6 +623,114 @@
 | trackingNo | string | 否 | 物流单号，最长 100 字符 |
 
 **Response Data:** `null`
+
+---
+
+### POST /api/v1/admin/order/detail
+
+管理端订单详情（含用户信息、收货地址、商品明细、支付记录）。
+
+**Request Body:**
+
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| orderId | string | 是 | 订单 ID |
+
+**Response Data:**
+
+```typescript
+{
+  orderId: string
+  orderNo: string
+  status: string
+  totalAmount: string
+  discountAmount: string
+  payAmount: string
+  remark: string | null
+  expiresAt: string
+  paidAt: string | null
+  shippedAt: string | null
+  deliveredAt: string | null
+  completedAt: string | null
+  cancelledAt: string | null
+  cancelReason: string | null
+  createdAt: string
+  userId: string
+  user: {                          // 用户基本信息（跨服务获取）
+    id: string
+    email: string
+    nickname: string | null
+    phone: string | null
+    status: string
+  } | null
+  items: Array<{                   // 商品明细（快照）
+    id: string
+    productId: string
+    skuId: string
+    productTitle: string
+    skuAttrs: object
+    imageUrl: string | null
+    unitPrice: string
+    quantity: number
+    subtotal: string
+  }>
+  address: {                       // 收货地址（快照）
+    recipient: string
+    phone: string
+    province: string
+    city: string
+    district: string
+    address: string
+    postalCode: string | null
+  } | null
+  payments: Array<{                // 支付记录
+    id: string
+    method: string
+    amount: string
+    status: string
+    transactionId: string | null
+    createdAt: string
+  }>
+}
+```
+
+---
+
+### POST /api/v1/admin/order/cancel
+
+管理员取消订单（自动释放库存）。仅 `pending` 状态订单可取消。
+
+**Request Body:**
+
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| orderId | string | 是 | 订单 ID |
+| reason | string | 否 | 取消原因，最长 500 字 |
+
+**Response Data:** `null`，message: `"订单已取消"`
+
+**错误码：**
+- `ORDER_4001` — 订单不存在
+- `ORDER_4002` — 订单状态不允许取消
+
+---
+
+### POST /api/v1/admin/order/refund
+
+管理员退款处理。仅 `paid` 状态订单可退款，退款后自动释放库存。
+
+**Request Body:**
+
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| orderId | string | 是 | 订单 ID |
+| reason | string | 否 | 退款原因，最长 500 字 |
+
+**Response Data:** `null`，message: `"退款成功"`
+
+**错误码：**
+- `ORDER_4001` — 订单不存在
+- `ORDER_4002` — 订单状态不允许退款（仅 paid → refunded）
 
 ---
 

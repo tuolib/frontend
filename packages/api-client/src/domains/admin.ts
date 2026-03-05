@@ -5,6 +5,7 @@
 import { post, postPaginated } from '../client';
 import type {
   ProductDetail,
+  ProductListItem,
   SkuDTO,
   CategoryNode,
   OrderListItem,
@@ -12,6 +13,29 @@ import type {
 } from '@fe/shared';
 
 export const adminProduct = {
+  async list(params: {
+    page?: number;
+    pageSize?: number;
+    sort?: 'createdAt' | 'price' | 'sales';
+    order?: 'asc' | 'desc';
+    keyword?: string;
+    filters?: {
+      status?: 'active' | 'draft' | 'archived';
+      categoryId?: string;
+      brand?: string;
+    };
+  }): Promise<{ items: ProductListItem[]; pagination: PaginationMeta }> {
+    return postPaginated<ProductListItem>('/v1/admin/product/list', params);
+  },
+
+  async detail(id: string): Promise<ProductDetail> {
+    return post<ProductDetail>('/v1/admin/product/detail', { id });
+  },
+
+  async toggleStatus(id: string, status: 'active' | 'draft' | 'archived'): Promise<ProductDetail> {
+    return post<ProductDetail>('/v1/admin/product/toggle-status', { id, status });
+  },
+
   async create(input: {
     title: string;
     slug?: string;
@@ -80,6 +104,27 @@ export const adminProduct = {
     status?: 'active' | 'inactive';
   }): Promise<SkuDTO> {
     return post<SkuDTO>('/v1/admin/product/sku/update', input);
+  },
+
+  async deleteSku(skuId: string): Promise<null> {
+    return post<null>('/v1/admin/product/sku/delete', { skuId });
+  },
+
+  async addImages(productId: string, images: Array<{
+    url: string;
+    altText?: string;
+    isPrimary?: boolean;
+    sortOrder?: number;
+  }>): Promise<ProductDetail> {
+    return post<ProductDetail>('/v1/admin/product/image/add', { productId, images });
+  },
+
+  async deleteImage(imageId: string): Promise<null> {
+    return post<null>('/v1/admin/product/image/delete', { imageId });
+  },
+
+  async sortImages(productId: string, imageIds: string[]): Promise<ProductDetail> {
+    return post<ProductDetail>('/v1/admin/product/image/sort', { productId, imageIds });
   },
 };
 
