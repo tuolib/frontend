@@ -55,7 +55,7 @@ export const router = createBrowserRouter([
   {
     children: [
       { path: 'product', element: <RouteErrorBoundary><ProductList /></RouteErrorBoundary> },
-      { path: 'product/:id', element: <RouteErrorBoundary><ProductDetail /></RouteErrorBoundary> },
+      { path: 'dp/:id', element: <RouteErrorBoundary><ProductDetail /></RouteErrorBoundary> },
       { path: 'search', element: <RouteErrorBoundary><Search /></RouteErrorBoundary> },
     ],
   },

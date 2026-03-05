@@ -77,7 +77,7 @@ function PopularProducts({ categoryId }: { categoryId: string }) {
         {items.map((item) => {
           const price = item.minPrice ? Number.parseFloat(item.minPrice) : 0;
           return (
-            <Link key={item.id} to={`/product/${item.id}`} className="popular-item">
+            <Link key={item.id} to={`/dp/${item.id}`} className="popular-item">
               <div className="popular-img">
                 <img
                   src={item.primaryImage || productPlaceholder(item.title)}

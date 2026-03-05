@@ -1,5 +1,5 @@
 /**
- * ProductDetail — 商品详情页 `/product/:id`
+ * ProductDetail — 商品详情页 `/dp/:id`
  * 图片轮播 + 价格 + SKU选择 + 加入购物车
  */
 

@@ -40,7 +40,7 @@ export function ProductCard({ item }: { item: ProductListItem }) {
   const rating = Number.parseFloat(item.avgRating || '0');
 
   return (
-    <Link to={`/product/${item.id}`} className="product-card">
+    <Link to={`/dp/${item.id}`} className="product-card">
       <div className="product-img">
         <img
           src={item.primaryImage || productPlaceholder(item.title)}

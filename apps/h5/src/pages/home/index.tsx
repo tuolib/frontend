@@ -39,7 +39,7 @@ function BannerCarousel({ banners }: { banners: Array<Pick<BannerItem, 'id' | 'i
   const handleClick = (b: Pick<BannerItem, 'linkType' | 'linkValue'>) => {
     if (!b.linkValue) return;
     if (b.linkType === 'product') {
-      navigate(`/product/${b.linkValue}`);
+      navigate(`/dp/${b.linkValue}`);
     } else if (b.linkType === 'category') {
       navigate(`/product?categoryId=${b.linkValue}`);
     }
@@ -115,7 +115,7 @@ function DealSection({ items }: { items: ProductListItem[] }) {
             : 0;
 
           return (
-            <Link key={item.id} to={`/product/${item.id}`} className="deal-item">
+            <Link key={item.id} to={`/dp/${item.id}`} className="deal-item">
               <div className="deal-img">
                 <img
                   src={item.primaryImage || productPlaceholder(item.title)}
