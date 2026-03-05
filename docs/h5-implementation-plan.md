@@ -450,7 +450,7 @@ Tab 页面（RootLayout 包裹，显示底部导航）:
 
 ---
 
-### Step 8 — 订单流程 `[ ]`
+### Step 8 — 订单流程 `[x]`
 
 > 完整的下单→支付→查看链路。
 
@@ -504,8 +504,8 @@ Tab 页面（RootLayout 包裹，显示底部导航）:
 **验收标准：**
 - [x] 订单确认页正确展示商品和地址
 - [x] 下单成功跳转支付
-- [ ] 订单列表按状态筛选
-- [ ] 订单详情信息完整
+- [x] 订单列表按状态筛选
+- [x] 订单详情信息完整
 - [x] 地址 CRUD 正常
 
 ---
@@ -542,8 +542,8 @@ Tab 页面（RootLayout 包裹，显示底部导航）:
 | ProductDetail `/product/:id` | ✅ 已实现 | Step 5b |
 | Cart `/cart` | ✅ 已实现 | Step 6 |
 | OrderCreate `/order/create` | ✅ 已实现 | Step 8a |
-| OrderList `/order` | ❌ 占位 | Step 8c |
-| OrderDetail `/order/:id` | ❌ 占位 | Step 8d |
+| OrderList `/order` | ✅ 已实现 | Step 8c |
+| OrderDetail `/order/:id` | ✅ 已实现 | Step 8d |
 | Payment `/order/:id/pay` | ✅ 已实现 | Step 8b |
 | Address `/me/address` | ✅ 已实现 | Step 8e |
 

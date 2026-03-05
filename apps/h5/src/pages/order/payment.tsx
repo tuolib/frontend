@@ -74,7 +74,19 @@ export default function OrderPayment() {
 
     setSubmitting(true);
     try {
-      await payment.create({ orderId: id, method });
+      const payInfo = await payment.create({ orderId: id, method });
+
+      // For mock payment, simulate callback to complete payment
+      if (method === 'mock') {
+        await payment.notify({
+          orderId: id,
+          transactionId: `tx-mock-${payInfo.paymentId}`,
+          status: 'success',
+          amount: Number.parseFloat(orderDetail!.payAmount),
+          method: 'mock',
+        });
+      }
+
       setPaySuccess(true);
     } catch {
       toast('Payment failed, please try again', 'error');
