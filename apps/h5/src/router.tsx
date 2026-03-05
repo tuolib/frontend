@@ -22,6 +22,7 @@ const Address = lazy(() => import('./pages/user/address'));
 const Login = lazy(() => import('./pages/auth/login'));
 const Register = lazy(() => import('./pages/auth/register'));
 const NotFound = lazy(() => import('./pages/error/not-found'));
+const ScrollToTop = lazy(() => import('./components/scroll-to-top'));
 
 function PageFallback() {
   return (
@@ -42,52 +43,57 @@ function RouteErrorBoundary({ children }: { children: React.ReactNode }) {
 }
 
 export const router = createBrowserRouter([
-  // Tab 页面（RootLayout 包裹，显示底部导航）
   {
-    element: <RootLayout />,
+    element: <ScrollToTop />,
     children: [
-      { index: true, element: <Home /> },
-      { path: 'me', element: <Profile /> },
-      { path: 'menu', element: <Menu /> },
-    ],
-  },
-  // 独立公开页面（无底部导航）
-  {
-    children: [
-      { path: 'product', element: <RouteErrorBoundary><ProductList /></RouteErrorBoundary> },
-      { path: 'dp/:id', element: <RouteErrorBoundary><ProductDetail /></RouteErrorBoundary> },
-      { path: 'search', element: <RouteErrorBoundary><Search /></RouteErrorBoundary> },
-    ],
-  },
-  // 需要登录
-  {
-    element: <RequireAuth />,
-    children: [
+      // Tab 页面（RootLayout 包裹，显示底部导航）
       {
         element: <RootLayout />,
         children: [
-          { path: 'cart', element: <Cart /> },
+          { index: true, element: <Home /> },
+          { path: 'me', element: <Profile /> },
+          { path: 'menu', element: <Menu /> },
         ],
       },
-      { path: 'me/address', element: <RouteErrorBoundary><Address /></RouteErrorBoundary> },
-      { path: 'order/create', element: <RouteErrorBoundary><OrderCreate /></RouteErrorBoundary> },
-      { path: 'order', element: <RouteErrorBoundary><OrderList /></RouteErrorBoundary> },
-      { path: 'order/:id', element: <RouteErrorBoundary><OrderDetail /></RouteErrorBoundary> },
-      { path: 'order/:id/pay', element: <RouteErrorBoundary><OrderPayment /></RouteErrorBoundary> },
-    ],
-  },
-  // 仅游客
-  {
-    element: <GuestOnly />,
-    children: [
+      // 独立公开页面（无底部导航）
       {
-        element: <AuthLayout />,
         children: [
-          { path: 'login', element: <Login /> },
-          { path: 'register', element: <Register /> },
+          { path: 'product', element: <RouteErrorBoundary><ProductList /></RouteErrorBoundary> },
+          { path: 'dp/:id', element: <RouteErrorBoundary><ProductDetail /></RouteErrorBoundary> },
+          { path: 'search', element: <RouteErrorBoundary><Search /></RouteErrorBoundary> },
         ],
       },
+      // 需要登录
+      {
+        element: <RequireAuth />,
+        children: [
+          {
+            element: <RootLayout />,
+            children: [
+              { path: 'cart', element: <Cart /> },
+            ],
+          },
+          { path: 'me/address', element: <RouteErrorBoundary><Address /></RouteErrorBoundary> },
+          { path: 'order/create', element: <RouteErrorBoundary><OrderCreate /></RouteErrorBoundary> },
+          { path: 'order', element: <RouteErrorBoundary><OrderList /></RouteErrorBoundary> },
+          { path: 'order/:id', element: <RouteErrorBoundary><OrderDetail /></RouteErrorBoundary> },
+          { path: 'order/:id/pay', element: <RouteErrorBoundary><OrderPayment /></RouteErrorBoundary> },
+        ],
+      },
+      // 仅游客
+      {
+        element: <GuestOnly />,
+        children: [
+          {
+            element: <AuthLayout />,
+            children: [
+              { path: 'login', element: <Login /> },
+              { path: 'register', element: <Register /> },
+            ],
+          },
+        ],
+      },
+      { path: '*', element: <NotFound /> },
     ],
   },
-  { path: '*', element: <NotFound /> },
 ]);
