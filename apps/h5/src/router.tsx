@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router';
-import { lazy } from 'react';
+import { lazy, Suspense } from 'react';
+import { ErrorBoundary, Spinner } from '@fe/ui';
 import RequireAuth from '@/components/require-auth';
 import GuestOnly from '@/components/guest-only';
 
@@ -21,6 +22,24 @@ const Login = lazy(() => import('./pages/auth/login'));
 const Register = lazy(() => import('./pages/auth/register'));
 const NotFound = lazy(() => import('./pages/error/not-found'));
 
+function PageFallback() {
+  return (
+    <div className="flex-cc min-h-screen">
+      <Spinner size="lg" />
+    </div>
+  );
+}
+
+function RouteErrorBoundary({ children }: { children: React.ReactNode }) {
+  return (
+    <ErrorBoundary>
+      <Suspense fallback={<PageFallback />}>
+        {children}
+      </Suspense>
+    </ErrorBoundary>
+  );
+}
+
 export const router = createBrowserRouter([
   // 公开路由
   {
@@ -33,8 +52,8 @@ export const router = createBrowserRouter([
   },
   {
     children: [
-      { path: 'product/:id', element: <ProductDetail /> },
-      { path: 'search', element: <Search /> },
+      { path: 'product/:id', element: <RouteErrorBoundary><ProductDetail /></RouteErrorBoundary> },
+      { path: 'search', element: <RouteErrorBoundary><Search /></RouteErrorBoundary> },
     ],
   },
   // 需要登录
@@ -47,11 +66,11 @@ export const router = createBrowserRouter([
           { path: 'cart', element: <Cart /> },
         ],
       },
-      { path: 'me/address', element: <Address /> },
-      { path: 'order/create', element: <OrderCreate /> },
-      { path: 'order', element: <OrderList /> },
-      { path: 'order/:id', element: <OrderDetail /> },
-      { path: 'order/:id/pay', element: <OrderPayment /> },
+      { path: 'me/address', element: <RouteErrorBoundary><Address /></RouteErrorBoundary> },
+      { path: 'order/create', element: <RouteErrorBoundary><OrderCreate /></RouteErrorBoundary> },
+      { path: 'order', element: <RouteErrorBoundary><OrderList /></RouteErrorBoundary> },
+      { path: 'order/:id', element: <RouteErrorBoundary><OrderDetail /></RouteErrorBoundary> },
+      { path: 'order/:id/pay', element: <RouteErrorBoundary><OrderPayment /></RouteErrorBoundary> },
     ],
   },
   // 仅游客

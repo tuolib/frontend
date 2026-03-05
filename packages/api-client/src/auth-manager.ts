@@ -2,6 +2,8 @@
  * Token 管理 — 存取 + 刷新去重
  */
 
+import { getStorageItem, setStorageItem, removeStorageItem } from '@fe/shared';
+
 const ACCESS_TOKEN_KEY = 'access_token';
 const REFRESH_TOKEN_KEY = 'refresh_token';
 
@@ -22,21 +24,21 @@ export function setAuthCallbacks(cb: AuthCallbacks): void {
 }
 
 export function getAccessToken(): string | null {
-  return localStorage.getItem(ACCESS_TOKEN_KEY);
+  return getStorageItem<string>(ACCESS_TOKEN_KEY);
 }
 
 export function getRefreshToken(): string | null {
-  return localStorage.getItem(REFRESH_TOKEN_KEY);
+  return getStorageItem<string>(REFRESH_TOKEN_KEY);
 }
 
 export function setTokens(tokens: AuthTokens): void {
-  localStorage.setItem(ACCESS_TOKEN_KEY, tokens.accessToken);
-  localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refreshToken);
+  setStorageItem(ACCESS_TOKEN_KEY, tokens.accessToken);
+  setStorageItem(REFRESH_TOKEN_KEY, tokens.refreshToken);
 }
 
 export function clearTokens(): void {
-  localStorage.removeItem(ACCESS_TOKEN_KEY);
-  localStorage.removeItem(REFRESH_TOKEN_KEY);
+  removeStorageItem(ACCESS_TOKEN_KEY);
+  removeStorageItem(REFRESH_TOKEN_KEY);
 }
 
 /**

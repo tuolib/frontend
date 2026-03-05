@@ -3,7 +3,7 @@
  */
 
 import { post } from '../client';
-import { setTokens, clearTokens, getRefreshToken } from '../auth-manager';
+import { setTokens, getRefreshToken } from '../auth-manager';
 import type { AuthResult, TokenPair } from '@fe/shared';
 
 export const auth = {
@@ -29,7 +29,7 @@ export const auth = {
   async logout(): Promise<void> {
     const refreshToken = getRefreshToken();
     await post<null>('api/v1/auth/logout', { refreshToken });
-    clearTokens();
+    // token 清理由调用方（useAuthStore）统一处理
   },
 
   async refresh(): Promise<TokenPair> {

@@ -1,5 +1,7 @@
 import { createBrowserRouter } from 'react-router';
-import { lazy } from 'react';
+import { lazy, Suspense } from 'react';
+import { Spin } from 'antd';
+import { ErrorBoundary } from '@fe/ui';
 import RequireAuth from '@/components/require-auth';
 import GuestOnly from '@/components/guest-only';
 
@@ -16,6 +18,24 @@ const OrderDetail = lazy(() => import('./pages/order/detail'));
 const StockAdjust = lazy(() => import('./pages/stock/adjust'));
 const Login = lazy(() => import('./pages/auth/login'));
 
+function PageFallback() {
+  return (
+    <div className="flex items-center justify-center min-h-60">
+      <Spin size="large" />
+    </div>
+  );
+}
+
+function RouteErrorBoundary({ children }: { children: React.ReactNode }) {
+  return (
+    <ErrorBoundary>
+      <Suspense fallback={<PageFallback />}>
+        {children}
+      </Suspense>
+    </ErrorBoundary>
+  );
+}
+
 export const router = createBrowserRouter([
   // 需要登录
   {
@@ -24,14 +44,14 @@ export const router = createBrowserRouter([
       {
         element: <AdminLayout />,
         children: [
-          { index: true, element: <Dashboard /> },
-          { path: 'product', element: <ProductList /> },
-          { path: 'product/create', element: <ProductCreate /> },
-          { path: 'product/:id/edit', element: <ProductEdit /> },
-          { path: 'category', element: <CategoryList /> },
-          { path: 'order', element: <OrderList /> },
-          { path: 'order/:id', element: <OrderDetail /> },
-          { path: 'stock', element: <StockAdjust /> },
+          { index: true, element: <RouteErrorBoundary><Dashboard /></RouteErrorBoundary> },
+          { path: 'product', element: <RouteErrorBoundary><ProductList /></RouteErrorBoundary> },
+          { path: 'product/create', element: <RouteErrorBoundary><ProductCreate /></RouteErrorBoundary> },
+          { path: 'product/:id/edit', element: <RouteErrorBoundary><ProductEdit /></RouteErrorBoundary> },
+          { path: 'category', element: <RouteErrorBoundary><CategoryList /></RouteErrorBoundary> },
+          { path: 'order', element: <RouteErrorBoundary><OrderList /></RouteErrorBoundary> },
+          { path: 'order/:id', element: <RouteErrorBoundary><OrderDetail /></RouteErrorBoundary> },
+          { path: 'stock', element: <RouteErrorBoundary><StockAdjust /></RouteErrorBoundary> },
         ],
       },
     ],

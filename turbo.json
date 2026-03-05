@@ -4,7 +4,6 @@
   "globalEnv": ["VITE_API_BASE_URL"],
   "tasks": {
     "dev": {
-      "dependsOn": ["^build"],
       "cache": false,
       "persistent": true
     },

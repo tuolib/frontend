@@ -17,11 +17,5 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src"],
-  "references": [
-    { "path": "../../packages/shared" },
-    { "path": "../../packages/ui" },
-    { "path": "../../packages/api-client" },
-    { "path": "../../packages/hooks" }
-  ]
+  "include": ["src"]
 }

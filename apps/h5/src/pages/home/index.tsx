@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
 import { Link } from 'react-router';
-import { useAuthStore } from '@fe/hooks';
+import { useAuthStore, useRequest, usePaginatedRequest } from '@fe/hooks';
 import { ROUTES } from '@fe/shared';
 import { product, category } from '@fe/api-client';
 import { Image, PriceRange, Skeleton, Spinner, EmptyState } from '@fe/ui';
@@ -59,57 +59,42 @@ function ProductCard({ item }: { item: ProductListItem }) {
 export default function Home() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
-  // ── 分类 ──
-  const [categories, setCategories] = useState<CategoryNode[]>([]);
-  const [catLoading, setCatLoading] = useState(true);
-  const [catError, setCatError] = useState(false);
+  const { data: categories, loading: catLoading, error: catError } = useRequest(
+    (signal) => category.tree({ signal }),
+  );
 
-  // ── 商品 ──
-  const [products, setProducts] = useState<ProductListItem[]>([]);
-  const [prodLoading, setProdLoading] = useState(true);
-  const [prodError, setProdError] = useState(false);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
+  const {
+    items: products,
+    loading: prodLoading,
+    loadingMore,
+    error: prodError,
+    hasMore,
+    loadMore,
+  } = usePaginatedRequest(
+    (page, pageSize, signal) =>
+      product.list({ page, pageSize, sort: 'createdAt', order: 'desc', signal }),
+    { pageSize: PAGE_SIZE },
+  );
+
+  // IntersectionObserver 自动加载更多
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+  const loadMoreFn = useCallback(() => { loadMore(); }, [loadMore]);
 
   useEffect(() => {
-    category
-      .tree()
-      .then((data) => setCategories(data))
-      .catch(() => setCatError(true))
-      .finally(() => setCatLoading(false));
-  }, []);
+    const el = loadMoreRef.current;
+    if (!el) return;
 
-  useEffect(() => {
-    product
-      .list({ page: 1, pageSize: PAGE_SIZE, sort: 'createdAt', order: 'desc' })
-      .then(({ items, pagination }) => {
-        setProducts(items);
-        setHasMore(pagination.page < pagination.totalPages);
-      })
-      .catch(() => setProdError(true))
-      .finally(() => setProdLoading(false));
-  }, []);
-
-  const loadMore = async () => {
-    const nextPage = page + 1;
-    setLoadingMore(true);
-    try {
-      const { items, pagination } = await product.list({
-        page: nextPage,
-        pageSize: PAGE_SIZE,
-        sort: 'createdAt',
-        order: 'desc',
-      });
-      setProducts((prev) => [...prev, ...items]);
-      setPage(nextPage);
-      setHasMore(pagination.page < pagination.totalPages);
-    } catch {
-      // keep current state
-    } finally {
-      setLoadingMore(false);
-    }
-  };
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && hasMore && !loadingMore) {
+          loadMoreFn();
+        }
+      },
+      { rootMargin: '200px' },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [hasMore, loadingMore, loadMoreFn]);
 
   return (
     <div className="min-h-screen bg-gray-50 pb-16">
@@ -136,7 +121,7 @@ export default function Home() {
           </div>
         ) : catError ? (
           <EmptyState title="分类加载失败" description="请稍后再试" />
-        ) : categories.length > 0 ? (
+        ) : categories && categories.length > 0 ? (
           <div className="flex gap-16 overflow-x-auto scrollbar-hide">
             {categories.map((cat) => (
               <CategoryItem key={cat.id} item={cat} />
@@ -173,23 +158,16 @@ export default function Home() {
               ))}
             </div>
 
-            <div className="mt-16 flex justify-center pb-8">
+            <div ref={loadMoreRef} className="mt-16 flex justify-center pb-8">
               {hasMore ? (
-                <button
-                  type="button"
-                  className="flex items-center gap-6 px-24 py-8 text-14 text-gray-500 bg-white rounded-full border border-gray-200 active:bg-gray-50"
-                  onClick={loadMore}
-                  disabled={loadingMore}
-                >
-                  {loadingMore ? (
-                    <>
-                      <Spinner size="sm" className="text-gray-400" />
-                      加载中...
-                    </>
-                  ) : (
-                    '加载更多'
-                  )}
-                </button>
+                loadingMore ? (
+                  <div className="flex items-center gap-6 px-24 py-8 text-14 text-gray-500">
+                    <Spinner size="sm" className="text-gray-400" />
+                    加载中...
+                  </div>
+                ) : (
+                  <span className="text-12 text-gray-400">上滑加载更多</span>
+                )
               ) : (
                 <span className="text-12 text-gray-400">没有更多了</span>
               )}

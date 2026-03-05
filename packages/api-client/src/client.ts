@@ -23,15 +23,16 @@ export function setBaseUrl(url: string): void {
 
 function getBaseUrl(): string {
   if (_baseUrl) return _baseUrl;
-  // Vite 环境下通过 import.meta.env 注入
-  if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_BASE_URL) {
-    return import.meta.env.VITE_API_BASE_URL;
+  // Vite 环境下通过 import.meta.env 注入（类型安全绕过 — api-client 不依赖 vite）
+  // eslint-disable-next-line
+  const env = (import.meta as unknown as { env?: Record<string, string> }).env;
+  if (env?.VITE_API_BASE_URL) {
+    return env.VITE_API_BASE_URL;
   }
   return DEFAULT_BASE_URL;
 }
 
 export const httpClient = ky.create({
-  prefixUrl: getBaseUrl(),
   timeout: 15_000,
   headers: {
     'Content-Type': 'application/json',
@@ -81,6 +82,7 @@ async function doRefreshCall(refreshToken: string): Promise<AuthTokens> {
 
 /**
  * POST helper — 解包响应信封，失败时抛 ApiError
+ * prefixUrl 在每次请求时动态取值，确保 setBaseUrl() 调用后生效
  */
 export async function post<T>(
   path: string,
@@ -89,6 +91,7 @@ export async function post<T>(
 ): Promise<T> {
   const response = await httpClient
     .post(path, {
+      prefixUrl: getBaseUrl(),
       json: body,
       ...options,
     })

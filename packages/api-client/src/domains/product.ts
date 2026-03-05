@@ -11,6 +11,10 @@ import type {
   SortOrder,
 } from '@fe/shared';
 
+interface RequestOptions {
+  signal?: AbortSignal;
+}
+
 export const product = {
   async list(params: {
     page?: number;
@@ -18,16 +22,18 @@ export const product = {
     sort?: string;
     order?: SortOrder;
     filters?: { status?: string; categoryId?: string; brand?: string };
+    signal?: AbortSignal;
   }): Promise<{ items: ProductListItem[]; pagination: PaginationMeta }> {
+    const { signal, ...body } = params;
     return postPaginated<ProductListItem>('api/v1/product/list', {
       sort: 'createdAt',
       order: 'desc',
-      ...params,
-    });
+      ...body,
+    }, signal ? { signal } : undefined);
   },
 
-  async detail(id: string): Promise<ProductDetail> {
-    return post<ProductDetail>('api/v1/product/detail', { id });
+  async detail(id: string, options?: RequestOptions): Promise<ProductDetail> {
+    return post<ProductDetail>('api/v1/product/detail', { id }, options);
   },
 
   async search(params: {
@@ -38,14 +44,16 @@ export const product = {
     sort?: string;
     page?: number;
     pageSize?: number;
+    signal?: AbortSignal;
   }): Promise<{ items: ProductListItem[]; pagination: PaginationMeta }> {
+    const { signal, ...body } = params;
     return postPaginated<ProductListItem>('api/v1/product/search', {
       sort: 'relevance',
-      ...params,
-    });
+      ...body,
+    }, signal ? { signal } : undefined);
   },
 
-  async skuList(productId: string): Promise<SkuDTO[]> {
-    return post<SkuDTO[]>('api/v1/product/sku/list', { productId });
+  async skuList(productId: string, options?: RequestOptions): Promise<SkuDTO[]> {
+    return post<SkuDTO[]>('api/v1/product/sku/list', { productId }, options);
   },
 };
