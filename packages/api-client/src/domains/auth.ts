@@ -12,7 +12,7 @@ export const auth = {
     password: string;
     nickname?: string;
   }): Promise<AuthResult> {
-    const result = await post<AuthResult>('api/v1/auth/register', {
+    const result = await post<AuthResult>('/v1/auth/register', {
       ...input,
       confirmPassword: input.password,
     });
@@ -21,21 +21,21 @@ export const auth = {
   },
 
   async login(input: { email: string; password: string }): Promise<AuthResult> {
-    const result = await post<AuthResult>('api/v1/auth/login', input);
+    const result = await post<AuthResult>('/v1/auth/login', input);
     setTokens(result);
     return result;
   },
 
   async logout(): Promise<void> {
     const refreshToken = getRefreshToken();
-    await post<null>('api/v1/auth/logout', { refreshToken });
+    await post<null>('/v1/auth/logout', { refreshToken });
     // token 清理由调用方（useAuthStore）统一处理
   },
 
   async refresh(): Promise<TokenPair> {
     const refreshToken = getRefreshToken();
     if (!refreshToken) throw new Error('No refresh token');
-    const result = await post<TokenPair>('api/v1/auth/refresh', { refreshToken });
+    const result = await post<TokenPair>('/v1/auth/refresh', { refreshToken });
     setTokens(result);
     return result;
   },

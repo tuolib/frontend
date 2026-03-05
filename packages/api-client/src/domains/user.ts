@@ -7,7 +7,7 @@ import type { UserProfile } from '@fe/shared';
 
 export const user = {
   async profile(): Promise<UserProfile> {
-    return post<UserProfile>('api/v1/user/profile');
+    return post<UserProfile>('/v1/user/profile');
   },
 
   async update(input: {
@@ -15,6 +15,6 @@ export const user = {
     avatarUrl?: string;
     phone?: string;
   }): Promise<UserProfile> {
-    return post<UserProfile>('api/v1/user/update', input);
+    return post<UserProfile>('/v1/user/update', input);
   },
 };

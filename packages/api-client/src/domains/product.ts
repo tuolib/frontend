@@ -25,7 +25,7 @@ export const product = {
     signal?: AbortSignal;
   }): Promise<{ items: ProductListItem[]; pagination: PaginationMeta }> {
     const { signal, ...body } = params;
-    return postPaginated<ProductListItem>('api/v1/product/list', {
+    return postPaginated<ProductListItem>('/v1/product/list', {
       sort: 'createdAt',
       order: 'desc',
       ...body,
@@ -33,7 +33,7 @@ export const product = {
   },
 
   async detail(id: string, options?: RequestOptions): Promise<ProductDetail> {
-    return post<ProductDetail>('api/v1/product/detail', { id }, options);
+    return post<ProductDetail>('/v1/product/detail', { id }, options);
   },
 
   async search(params: {
@@ -47,13 +47,13 @@ export const product = {
     signal?: AbortSignal;
   }): Promise<{ items: ProductListItem[]; pagination: PaginationMeta }> {
     const { signal, ...body } = params;
-    return postPaginated<ProductListItem>('api/v1/product/search', {
+    return postPaginated<ProductListItem>('/v1/product/search', {
       sort: 'relevance',
       ...body,
     }, signal ? { signal } : undefined);
   },
 
   async skuList(productId: string, options?: RequestOptions): Promise<SkuDTO[]> {
-    return post<SkuDTO[]>('api/v1/product/sku/list', { productId }, options);
+    return post<SkuDTO[]>('/v1/product/sku/list', { productId }, options);
   },
 };

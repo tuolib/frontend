@@ -11,14 +11,14 @@ interface RequestOptions {
 
 export const category = {
   async list(options?: RequestOptions): Promise<CategoryNode[]> {
-    return post<CategoryNode[]>('api/v1/category/list', undefined, options);
+    return post<CategoryNode[]>('/v1/category/list', undefined, options);
   },
 
   async tree(options?: RequestOptions): Promise<CategoryNode[]> {
-    return post<CategoryNode[]>('api/v1/category/tree', undefined, options);
+    return post<CategoryNode[]>('/v1/category/tree', undefined, options);
   },
 
   async detail(id: string, options?: RequestOptions): Promise<CategoryNode> {
-    return post<CategoryNode>('api/v1/category/detail', { id }, options);
+    return post<CategoryNode>('/v1/category/detail', { id }, options);
   },
 };

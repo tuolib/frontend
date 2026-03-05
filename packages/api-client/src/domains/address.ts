@@ -7,7 +7,7 @@ import type { UserAddress } from '@fe/shared';
 
 export const address = {
   async list(): Promise<UserAddress[]> {
-    return post<UserAddress[]>('api/v1/user/address/list');
+    return post<UserAddress[]>('/v1/user/address/list');
   },
 
   async create(input: {
@@ -21,7 +21,7 @@ export const address = {
     postalCode?: string;
     isDefault?: boolean;
   }): Promise<UserAddress> {
-    return post<UserAddress>('api/v1/user/address/create', input);
+    return post<UserAddress>('/v1/user/address/create', input);
   },
 
   async update(input: {
@@ -36,10 +36,10 @@ export const address = {
     postalCode?: string;
     isDefault?: boolean;
   }): Promise<UserAddress> {
-    return post<UserAddress>('api/v1/user/address/update', input);
+    return post<UserAddress>('/v1/user/address/update', input);
   },
 
   async remove(id: string): Promise<null> {
-    return post<null>('api/v1/user/address/delete', { id });
+    return post<null>('/v1/user/address/delete', { id });
   },
 };

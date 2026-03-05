@@ -11,6 +11,6 @@ interface RequestOptions {
 
 export const banner = {
   async list(options?: RequestOptions): Promise<BannerItem[]> {
-    return post<BannerItem[]>('api/v1/banner/list', undefined, options);
+    return post<BannerItem[]>('/v1/banner/list', undefined, options);
   },
 };

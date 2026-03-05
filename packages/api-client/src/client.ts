@@ -33,9 +33,13 @@ function getBaseUrl(): string {
   return DEFAULT_BASE_URL;
 }
 
+function toKyPath(path: string): string {
+  return `api${path.startsWith('/') ? path : `/${path}`}`;
+}
+
 async function doRefreshCall(refreshToken: string): Promise<AuthTokens> {
   const resp = await ky
-    .post('api/v1/auth/refresh', {
+    .post(toKyPath('/v1/auth/refresh'), {
       prefixUrl: getBaseUrl(),
       json: { refreshToken },
     })
@@ -93,7 +97,7 @@ export async function post<T>(
   options?: Options,
 ): Promise<T> {
   const response = await httpClient
-    .post(path, {
+    .post(toKyPath(path), {
       prefixUrl: getBaseUrl(),
       json: body,
       ...options,

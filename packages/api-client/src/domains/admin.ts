@@ -27,7 +27,7 @@ export const adminProduct = {
       sortOrder?: number;
     }>;
   }): Promise<ProductDetail> {
-    return post<ProductDetail>('api/v1/admin/product/create', input);
+    return post<ProductDetail>('/v1/admin/product/create', input);
   },
 
   async update(input: {
@@ -46,11 +46,11 @@ export const adminProduct = {
       sortOrder?: number;
     }>;
   }): Promise<ProductDetail> {
-    return post<ProductDetail>('api/v1/admin/product/update', input);
+    return post<ProductDetail>('/v1/admin/product/update', input);
   },
 
   async remove(id: string): Promise<null> {
-    return post<null>('api/v1/admin/product/delete', { id });
+    return post<null>('/v1/admin/product/delete', { id });
   },
 
   async createSku(input: {
@@ -65,7 +65,7 @@ export const adminProduct = {
     attributes: Record<string, string>;
     barcode?: string;
   }): Promise<SkuDTO> {
-    return post<SkuDTO>('api/v1/admin/product/sku/create', input);
+    return post<SkuDTO>('/v1/admin/product/sku/create', input);
   },
 
   async updateSku(input: {
@@ -79,7 +79,7 @@ export const adminProduct = {
     barcode?: string | null;
     status?: 'active' | 'inactive';
   }): Promise<SkuDTO> {
-    return post<SkuDTO>('api/v1/admin/product/sku/update', input);
+    return post<SkuDTO>('/v1/admin/product/sku/update', input);
   },
 };
 
@@ -91,7 +91,7 @@ export const adminCategory = {
     iconUrl?: string;
     sortOrder?: number;
   }): Promise<CategoryNode> {
-    return post<CategoryNode>('api/v1/admin/category/create', input);
+    return post<CategoryNode>('/v1/admin/category/create', input);
   },
 
   async update(input: {
@@ -103,7 +103,7 @@ export const adminCategory = {
     sortOrder?: number;
     isActive?: boolean;
   }): Promise<CategoryNode> {
-    return post<CategoryNode>('api/v1/admin/category/update', input);
+    return post<CategoryNode>('/v1/admin/category/update', input);
   },
 };
 
@@ -113,11 +113,11 @@ export const adminOrder = {
     pageSize?: number;
     status?: string;
   }): Promise<{ items: OrderListItem[]; pagination: PaginationMeta }> {
-    return postPaginated<OrderListItem>('api/v1/admin/order/list', params);
+    return postPaginated<OrderListItem>('/v1/admin/order/list', params);
   },
 
   async ship(orderId: string, trackingNo?: string): Promise<null> {
-    return post<null>('api/v1/admin/order/ship', { orderId, trackingNo });
+    return post<null>('/v1/admin/order/ship', { orderId, trackingNo });
   },
 };
 
@@ -127,6 +127,6 @@ export const adminStock = {
     quantity: number;
     reason?: string;
   }): Promise<null> {
-    return post<null>('api/v1/admin/stock/adjust', input);
+    return post<null>('/v1/admin/stock/adjust', input);
   },
 };
