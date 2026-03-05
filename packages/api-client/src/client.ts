@@ -14,7 +14,7 @@ import {
   type AuthTokens,
 } from './auth-manager';
 
-const DEFAULT_BASE_URL = '';
+const DEFAULT_BASE_URL = '/';
 
 let _baseUrl: string | undefined;
 
