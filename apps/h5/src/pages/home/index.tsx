@@ -1,10 +1,15 @@
 import { useRef, useEffect, useCallback, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { useAuthStore, useRequest, usePaginatedRequest } from '@fe/hooks';
-import { ROUTES, formatPrice } from '@fe/shared';
+import { useRequest, usePaginatedRequest } from '@fe/hooks';
 import { product, category } from '@fe/api-client';
-import { Image, Skeleton, Spinner } from '@fe/ui';
+import { Skeleton, Spinner } from '@fe/ui';
 import type { ProductListItem, CategoryNode } from '@fe/shared';
+import {
+  bannerPlaceholder,
+  categoryPlaceholder,
+  productPlaceholder,
+  flashPlaceholder,
+} from './placeholder';
 import './home.scss';
 
 const PAGE_SIZE = 10;
@@ -12,17 +17,17 @@ const PAGE_SIZE = 10;
 // ── Mock 数据（无后端 banner/秒杀接口，用占位数据） ──
 
 const BANNERS = [
-  { id: '1', color: '#e4393c', title: '新品首发', subtitle: '爆款直降300元' },
-  { id: '2', color: '#7b68ee', title: '超级品牌日', subtitle: '大牌5折起' },
-  { id: '3', color: '#ff8c00', title: '限时秒杀', subtitle: '全场低至1折' },
+  { id: '1', title: '新品首发', subtitle: '爆款直降300元', img: bannerPlaceholder('新品首发', '爆款直降300元', '#e4393c', '#c0392b') },
+  { id: '2', title: '超级品牌日', subtitle: '大牌5折起', img: bannerPlaceholder('超级品牌日', '大牌5折起', '#7b68ee', '#5b4bc7') },
+  { id: '3', title: '限时秒杀', subtitle: '全场低至1折', img: bannerPlaceholder('限时秒杀', '全场低至1折', '#ff8c00', '#e67e22') },
 ];
 
 const FLASH_ITEMS = [
-  { id: 'f1', title: '无线蓝牙耳机', price: '59.9', originPrice: '199', progress: 78 },
-  { id: 'f2', title: '纯棉短袖T恤', price: '29.9', originPrice: '89', progress: 65 },
-  { id: 'f3', title: '304不锈钢保温杯', price: '39.9', originPrice: '129', progress: 82 },
-  { id: 'f4', title: '手机充电线', price: '9.9', originPrice: '39', progress: 91 },
-  { id: 'f5', title: '运动双肩包', price: '49.9', originPrice: '159', progress: 55 },
+  { id: 'f1', title: '无线蓝牙耳机', price: '59.9', originPrice: '199', progress: 78, img: flashPlaceholder('无线蓝牙耳机') },
+  { id: 'f2', title: '纯棉短袖T恤', price: '29.9', originPrice: '89', progress: 65, img: flashPlaceholder('纯棉短袖T恤') },
+  { id: 'f3', title: '不锈钢保温杯', price: '39.9', originPrice: '129', progress: 82, img: flashPlaceholder('不锈钢保温杯') },
+  { id: 'f4', title: '手机充电线', price: '9.9', originPrice: '39', progress: 91, img: flashPlaceholder('手机充电线') },
+  { id: 'f5', title: '运动双肩包', price: '49.9', originPrice: '159', progress: 55, img: flashPlaceholder('运动双肩包') },
 ];
 
 // ── Banner 轮播 ──
@@ -43,13 +48,7 @@ function BannerCarousel() {
       <div className="banner-track" style={{ transform: `translateX(-${current * 100}%)` }}>
         {BANNERS.map((b) => (
           <div key={b.id} className="banner-slide">
-            <div
-              className="w-full h-full flex flex-col items-center justify-center"
-              style={{ background: `linear-gradient(135deg, ${b.color}, ${b.color}dd)` }}
-            >
-              <span className="text-20 font-bold text-white">{b.title}</span>
-              <span className="text-12 text-white/80 mt-4">{b.subtitle}</span>
-            </div>
+            <img src={b.img} alt={b.title} className="w-full h-full object-cover" />
           </div>
         ))}
       </div>
@@ -74,7 +73,11 @@ function CategoryGrid({ categories }: { categories: CategoryNode[] }) {
         {items.map((cat) => (
           <Link key={cat.id} to={`/product?categoryId=${cat.id}`} className="cat-item">
             <div className="cat-icon">
-              <Image src={cat.iconUrl ?? undefined} alt={cat.name} />
+              <img
+                src={cat.iconUrl || categoryPlaceholder(cat.name)}
+                alt={cat.name}
+                className="w-full h-full object-cover"
+              />
             </div>
             <span className="cat-name">{cat.name}</span>
           </Link>
@@ -141,9 +144,7 @@ function FlashSale() {
         {FLASH_ITEMS.map((item) => (
           <Link key={item.id} to="/product" className="flash-item">
             <div className="flash-img">
-              <div className="w-full h-full flex-cc bg-gradient-to-br from-gray-100 to-gray-200">
-                <span className="text-10 text-gray-400">{item.title}</span>
-              </div>
+              <img src={item.img} alt={item.title} className="w-full h-full object-cover" />
             </div>
             <div className="flash-price">
               <span className="flash-symbol">¥</span>{item.price}
@@ -203,7 +204,12 @@ function ProductCard({ item }: { item: ProductListItem }) {
   return (
     <Link to={`/product/${item.id}`} className="product-card">
       <div className="product-img">
-        <Image src={item.primaryImage ?? undefined} alt={item.title} className="w-full h-full" />
+        <img
+          src={item.primaryImage || productPlaceholder(item.title)}
+          alt={item.title}
+          className="w-full h-full object-cover"
+          loading="lazy"
+        />
       </div>
       <div className="product-info">
         <div className="product-title">{item.title}</div>
