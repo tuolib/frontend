@@ -1,0 +1,154 @@
+/* 搜索页样式 */
+
+.amz-search {
+  background: #eaeded;
+  min-height: 100vh;
+}
+
+/* 顶部搜索栏 */
+.search-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: linear-gradient(180deg, #131921 0%, #232f3e 100%);
+  padding: 0.08rem 0.12rem;
+  padding-top: calc(var(--safe-area-top) + 0.08rem);
+  display: flex;
+  align-items: center;
+  gap: 0.08rem;
+
+  .back-btn {
+    color: #fff;
+    font-size: 0.2rem;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  .search-input {
+    flex: 1;
+    height: 0.36rem;
+    border-radius: 0.08rem;
+    border: none;
+    padding: 0 0.12rem;
+    font-size: 0.14rem;
+    background: #fff;
+    outline: none;
+    color: #0f1111;
+
+    &::placeholder {
+      color: #999;
+    }
+  }
+
+  .cancel-btn {
+    color: #fff;
+    font-size: 0.14rem;
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+}
+
+/* 搜索历史 / 热门搜索区块 */
+.search-section {
+  background: #fff;
+  padding: 0.14rem 0.12rem;
+  margin-bottom: 0.08rem;
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.12rem;
+
+    .section-title {
+      font-size: 0.15rem;
+      font-weight: 700;
+      color: #0f1111;
+    }
+
+    .section-clear {
+      font-size: 0.12rem;
+      color: #007185;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+  }
+
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.08rem;
+
+    .tag {
+      height: 0.3rem;
+      padding: 0 0.14rem;
+      border-radius: 0.15rem;
+      background: #f0f0f0;
+      font-size: 0.13rem;
+      color: #0f1111;
+      display: flex;
+      align-items: center;
+      border: none;
+      white-space: nowrap;
+
+      &:active {
+        background: #e0e0e0;
+      }
+    }
+  }
+}
+
+/* 排序栏 */
+.amz-sort-bar {
+  display: flex;
+  background: #fff;
+  padding: 0 0.12rem;
+  border-bottom: 1px solid #eaeded;
+
+  .sort-item {
+    flex: 1;
+    height: 0.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.13rem;
+    color: #565959;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 0;
+    transition: all 0.2s;
+
+    &.active {
+      color: #007185;
+      border-bottom-color: #007185;
+      font-weight: 600;
+    }
+  }
+}
+
+/* 空搜索结果 */
+.search-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.6rem 0.2rem;
+  color: #565959;
+
+  .empty-icon {
+    font-size: 0.48rem;
+    color: #ddd;
+    margin-bottom: 0.16rem;
+  }
+
+  .empty-text {
+    font-size: 0.14rem;
+  }
+}

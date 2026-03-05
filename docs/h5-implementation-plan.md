@@ -182,7 +182,7 @@ Tab 页面（RootLayout 包裹，显示底部导航）:
 
 ---
 
-### Step 3 — 搜索页 Search `[ ]`
+### Step 3 — 搜索页 Search `[x]`
 
 > Amazon 的核心体验，独立全屏页面。
 
@@ -226,10 +226,10 @@ Tab 页面（RootLayout 包裹，显示底部导航）:
 - 搜索历史最多保存 10 条，新的在前
 
 **验收标准：**
-- [ ] 输入框自动聚焦
-- [ ] 搜索历史持久化（localStorage）
-- [ ] 搜索结果支持排序切换
-- [ ] 无限滚动分页
+- [x] 输入框自动聚焦
+- [x] 搜索历史持久化（localStorage）
+- [x] 搜索结果支持排序切换
+- [x] 无限滚动分页
 
 ---
 
@@ -536,7 +536,7 @@ Tab 页面（RootLayout 包裹，显示底部导航）:
 | Profile `/me` | ✅ 已实现 | 需重写为 Amazon 风格 (Step 7) |
 | Home `/` | ✅ 已实现 | Amazon 风格 (Step 2) |
 | RootLayout | ✅ 已实现 | Amazon 风格 4-Tab (Step 1) |
-| Search `/search` | ❌ 占位 | Step 3 |
+| Search `/search` | ✅ 已实现 | Step 3 |
 | Menu `/menu` | ⚠️ 占位 | Step 1 创建占位, Step 4 实现 |
 | ProductList `/product` | ❌ 占位 | Step 5a |
 | ProductDetail `/product/:id` | ❌ 占位 | Step 5b |

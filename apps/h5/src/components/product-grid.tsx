@@ -6,6 +6,7 @@ import { useRef, useEffect, useCallback } from 'react';
 import { Spinner } from '@fe/ui';
 import type { ProductListItem } from '@fe/shared';
 import { ProductCard, ProductCardSkeleton } from './product-card';
+import '@/styles/product.scss';
 
 interface ProductGridProps {
   items: ProductListItem[];
