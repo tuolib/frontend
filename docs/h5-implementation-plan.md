@@ -233,7 +233,7 @@ Tab 页面（RootLayout 包裹，显示底部导航）:
 
 ---
 
-### Step 4 — 分类页 Menu `[ ]`
+### Step 4 — 分类页 Menu `[x]`
 
 > Amazon 的 ≡ 菜单，左右分栏浏览分类。
 
@@ -270,14 +270,14 @@ Tab 页面（RootLayout 包裹，显示底部导航）:
 **数据：** `category.tree` → 一次请求，前端拆分
 
 **验收标准：**
-- [ ] 左侧一级分类可切换
-- [ ] 右侧显示对应二级分类
-- [ ] 点击二级分类跳转商品列表
-- [ ] 无图标时用 `categoryPlaceholder` 占位
+- [x] 左侧一级分类可切换
+- [x] 右侧显示对应二级分类
+- [x] 点击二级分类跳转商品列表
+- [x] 无图标时用 `categoryPlaceholder` 占位
 
 ---
 
-### Step 5 — 商品列表 & 详情 `[ ]`
+### Step 5 — 商品列表 & 详情 `[x]`
 
 > 浏览 → 决策的关键链路，两个页面一起做。
 
@@ -342,16 +342,16 @@ Tab 页面（RootLayout 包裹，显示底部导航）:
 - 库存为 0 时禁用该选项
 
 **验收标准：**
-- [ ] 列表页排序切换正常
-- [ ] 列表页无限滚动分页
-- [ ] 详情页图片可轮播
-- [ ] SKU 选择器联动价格
-- [ ] 加入购物车调用 API 并 toast 提示
-- [ ] 底部操作栏固定不随页面滚动
+- [x] 列表页排序切换正常
+- [x] 列表页无限滚动分页
+- [x] 详情页图片可轮播
+- [x] SKU 选择器联动价格
+- [x] 加入购物车调用 API 并 toast 提示
+- [x] 底部操作栏固定不随页面滚动
 
 ---
 
-### Step 6 — 购物车 Cart `[ ]`
+### Step 6 — 购物车 Cart `[x]`
 
 > Tab 页面，登录后显示购物车内容。
 
@@ -400,11 +400,11 @@ Tab 页面（RootLayout 包裹，显示底部导航）:
 - 底部结算栏固定，显示选中商品小计
 
 **验收标准：**
-- [ ] 购物车列表正确渲染
-- [ ] 数量增减实时更新
-- [ ] 勾选/取消勾选联动小计
-- [ ] 空购物车展示引导
-- [ ] 点击结算跳转订单确认页
+- [x] 购物车列表正确渲染
+- [x] 数量增减实时更新
+- [x] 勾选/取消勾选联动小计
+- [x] 空购物车展示引导
+- [x] 点击结算跳转订单确认页
 
 ---
 
@@ -537,10 +537,10 @@ Tab 页面（RootLayout 包裹，显示底部导航）:
 | Home `/` | ✅ 已实现 | Amazon 风格 (Step 2) |
 | RootLayout | ✅ 已实现 | Amazon 风格 4-Tab (Step 1) |
 | Search `/search` | ✅ 已实现 | Step 3 |
-| Menu `/menu` | ⚠️ 占位 | Step 1 创建占位, Step 4 实现 |
-| ProductList `/product` | ❌ 占位 | Step 5a |
-| ProductDetail `/product/:id` | ❌ 占位 | Step 5b |
-| Cart `/cart` | ❌ 占位 | Step 6 |
+| Menu `/menu` | ✅ 已实现 | Step 4 |
+| ProductList `/product` | ✅ 已实现 | Step 5a |
+| ProductDetail `/product/:id` | ✅ 已实现 | Step 5b |
+| Cart `/cart` | ✅ 已实现 | Step 6 |
 | OrderCreate `/order/create` | ❌ 占位 | Step 8a |
 | OrderList `/order` | ❌ 占位 | Step 8c |
 | OrderDetail `/order/:id` | ❌ 占位 | Step 8d |

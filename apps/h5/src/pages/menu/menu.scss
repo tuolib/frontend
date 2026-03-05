@@ -1,0 +1,226 @@
+/* Menu 分类浏览页 — Amazon 风格左右分栏 */
+
+.amz-menu {
+  min-height: 100vh;
+  background: #eaeded;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-header {
+  padding: 0.14rem 0.16rem;
+  font-size: 0.18rem;
+  font-weight: 700;
+  color: #0f1111;
+  background: #fff;
+  border-bottom: 1px solid #ddd;
+}
+
+.menu-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* 左栏 — 一级分类 */
+.menu-left {
+  width: 0.88rem;
+  flex-shrink: 0;
+  background: #f0f0f0;
+  overflow-y: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.menu-left-item {
+  width: 100%;
+  padding: 0.14rem 0.1rem;
+  font-size: 0.13rem;
+  color: #0f1111;
+  text-align: center;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  word-break: break-all;
+  line-height: 1.3;
+  transition: background 0.15s;
+
+  &.active {
+    background: #fff;
+    font-weight: 600;
+    color: #007185;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.08rem;
+      bottom: 0.08rem;
+      width: 0.03rem;
+      background: #007185;
+      border-radius: 0 0.02rem 0.02rem 0;
+    }
+  }
+
+  &:active:not(.active) {
+    background: #e8e8e8;
+  }
+}
+
+/* 右栏 — 二级分类 */
+.menu-right {
+  flex: 1;
+  background: #fff;
+  overflow-y: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.subcategory-content {
+  padding: 0.16rem;
+}
+
+.subcategory-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.2rem 0.12rem;
+}
+
+.subcategory-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  transition: opacity 0.15s;
+
+  &:active {
+    opacity: 0.7;
+  }
+}
+
+.subcategory-icon {
+  width: 0.56rem;
+  height: 0.56rem;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #f5f5f5;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.subcategory-name {
+  margin-top: 0.08rem;
+  font-size: 0.12rem;
+  color: #0f1111;
+  text-align: center;
+  line-height: 1.3;
+  word-break: break-all;
+}
+
+/* Popular in 分类 — 横滑商品 */
+.popular-section {
+  margin-top: 0.2rem;
+  padding-top: 0.16rem;
+  border-top: 1px solid #eaeded;
+}
+
+.popular-header {
+  font-size: 0.15rem;
+  font-weight: 700;
+  color: #0f1111;
+  margin-bottom: 0.1rem;
+}
+
+.popular-scroll {
+  display: flex;
+  gap: 0.08rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 0.04rem;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.popular-item {
+  flex-shrink: 0;
+  width: 1rem;
+  text-decoration: none;
+  transition: opacity 0.15s;
+
+  &:active {
+    opacity: 0.7;
+  }
+}
+
+.popular-img {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 0.06rem;
+  overflow: hidden;
+  background: #f5f5f5;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.popular-info {
+  margin-top: 0.06rem;
+}
+
+.popular-title {
+  font-size: 0.11rem;
+  color: #0f1111;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.popular-price {
+  margin-top: 0.02rem;
+  font-size: 0.14rem;
+  font-weight: 700;
+  color: #b12704;
+}
+
+.popular-item-skeleton {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1.3rem;
+  border-radius: 0.06rem;
+}
+
+.see-all-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.2rem;
+  padding: 0.1rem 0;
+  font-size: 0.14rem;
+  color: #007185;
+  text-decoration: none;
+  border-top: 1px solid #eaeded;
+  font-weight: 500;
+
+  &:active {
+    color: #c45500;
+  }
+}
+
