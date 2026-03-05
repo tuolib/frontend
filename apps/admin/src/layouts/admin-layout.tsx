@@ -11,6 +11,7 @@ import {
   AppstoreOutlined,
   OrderedListOutlined,
   DatabaseOutlined,
+  TeamOutlined,
   LogoutOutlined,
   UserOutlined,
 } from '@ant-design/icons';
@@ -24,6 +25,7 @@ const menuItems = [
   { key: '/category', icon: <AppstoreOutlined />, label: '分类管理' },
   { key: '/order', icon: <OrderedListOutlined />, label: '订单管理' },
   { key: '/stock', icon: <DatabaseOutlined />, label: '库存管理' },
+  { key: '/user', icon: <TeamOutlined />, label: '用户管理' },
 ];
 
 const BREADCRUMB_MAP: Record<string, string> = {
@@ -33,6 +35,7 @@ const BREADCRUMB_MAP: Record<string, string> = {
   '/category': '分类管理',
   '/order': '订单管理',
   '/stock': '库存管理',
+  '/user': '用户管理',
 };
 
 function getSelectedKey(pathname: string): string {
@@ -40,6 +43,7 @@ function getSelectedKey(pathname: string): string {
   if (pathname.startsWith('/category')) return '/category';
   if (pathname.startsWith('/order')) return '/order';
   if (pathname.startsWith('/stock')) return '/stock';
+  if (pathname.startsWith('/user')) return '/user';
   return '/';
 }
 
@@ -75,6 +79,10 @@ export default function AdminLayout() {
     if (location.pathname.match(/\/order\/[^/]+$/) && !location.pathname.endsWith('/order')) {
       if (!items.some((i) => i.title === '订单管理')) items.push({ title: '订单管理' });
       items.push({ title: '订单详情' });
+    }
+    if (location.pathname.match(/\/user\/[^/]+$/) && !location.pathname.endsWith('/user')) {
+      if (!items.some((i) => i.title === '用户管理')) items.push({ title: '用户管理' });
+      items.push({ title: '用户详情' });
     }
     return items;
   }, [location.pathname, selectedKey]);

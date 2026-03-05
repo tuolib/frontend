@@ -38,4 +38,5 @@ export {
   adminCategory,
   adminOrder,
   adminStock,
+  adminUser,
 } from './domains/admin';

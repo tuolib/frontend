@@ -6,7 +6,7 @@ import {
 } from 'antd';
 import {
   ArrowLeftOutlined, PlusOutlined, DeleteOutlined,
-  ArrowUpOutlined, ArrowDownOutlined, PictureOutlined,
+  ArrowUpOutlined, ArrowDownOutlined,
 } from '@ant-design/icons';
 import { adminProduct, category as categoryApi, ApiError } from '@fe/api-client';
 import type { ProductDetail, CategoryNode, SkuDTO, ProductImage } from '@fe/shared';
@@ -160,31 +160,66 @@ function SkuModal({
   );
 }
 
-// ── Image Management ──
-function ImageAddModal({
+// ── Image Modal（新增 + 编辑）──
+function ImageModal({
   open,
+  image,
   productId,
+  allImages,
   onClose,
   onSuccess,
 }: {
   open: boolean;
+  image: ProductImage | null;
   productId: string;
+  allImages: ProductImage[];
   onClose: () => void;
   onSuccess: () => void;
 }) {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const isEdit = !!image;
+
+  useEffect(() => {
+    if (open) {
+      if (image) {
+        form.setFieldsValue({
+          url: image.url,
+          altText: image.altText || '',
+          isPrimary: image.isPrimary,
+        });
+      } else {
+        form.resetFields();
+      }
+    }
+  }, [open, image, form]);
 
   const onFinish = async (values: { url: string; altText?: string; isPrimary?: boolean }) => {
     setLoading(true);
     try {
-      await adminProduct.addImages(productId, [values]);
-      message.success('图片已添加');
+      if (isEdit) {
+        await adminProduct.update({
+          id: productId,
+          images: allImages.map((img) => ({
+            url: img.id === image.id ? values.url : img.url,
+            altText: img.id === image.id ? (values.altText || undefined) : (img.altText || undefined),
+            isPrimary: img.id === image.id ? !!values.isPrimary : (values.isPrimary ? false : img.isPrimary),
+            sortOrder: img.sortOrder,
+          })),
+        });
+        message.success('图片已更新');
+      } else {
+        await adminProduct.addImages(productId, [{
+          url: values.url,
+          altText: values.altText || undefined,
+          isPrimary: values.isPrimary,
+        }]);
+        message.success('图片已添加');
+      }
       onSuccess();
       onClose();
-      form.resetFields();
     } catch (err) {
-      const msg = err instanceof ApiError ? err.message : '添加失败';
+      const msg = err instanceof ApiError ? err.message : '操作失败';
       message.error(msg);
     } finally {
       setLoading(false);
@@ -192,15 +227,28 @@ function ImageAddModal({
   };
 
   return (
-    <Modal title="添加图片" open={open} onCancel={onClose} footer={null} destroyOnClose>
-      <Form form={form} layout="vertical" onFinish={onFinish}>
-        <Form.Item name="url" label="图片 URL" rules={[{ required: true, message: '请输入图片 URL' }]}>
+    <Modal
+      title={isEdit ? '编辑图片' : '添加图片'}
+      open={open}
+      onCancel={onClose}
+      footer={null}
+      destroyOnClose
+    >
+      <Form form={form} layout="vertical" onFinish={onFinish} initialValues={{ isPrimary: false }}>
+        <Form.Item
+          name="url"
+          label="图片地址"
+          rules={[
+            { required: true, message: '请输入图片地址' },
+            { type: 'url', message: '请输入合法的 URL' },
+          ]}
+        >
           <Input placeholder="https://..." />
         </Form.Item>
         <Form.Item name="altText" label="替代文本">
           <Input placeholder="图片描述（可选）" />
         </Form.Item>
-        <Form.Item name="isPrimary" label="设为主图" valuePropName="checked" initialValue={false}>
+        <Form.Item name="isPrimary" label="设为主图">
           <Select
             options={[
               { label: '否', value: false },
@@ -210,7 +258,9 @@ function ImageAddModal({
         </Form.Item>
         <div className="flex justify-end gap-8">
           <Button onClick={onClose}>取消</Button>
-          <Button type="primary" htmlType="submit" loading={loading}>添加</Button>
+          <Button type="primary" htmlType="submit" loading={loading}>
+            {isEdit ? '保存' : '添加'}
+          </Button>
         </div>
       </Form>
     </Modal>
@@ -229,6 +279,7 @@ export default function ProductEdit() {
   const [skuModalOpen, setSkuModalOpen] = useState(false);
   const [editingSku, setEditingSku] = useState<SkuDTO | null>(null);
   const [imageModalOpen, setImageModalOpen] = useState(false);
+  const [editingImage, setEditingImage] = useState<ProductImage | null>(null);
 
   const fetchProduct = useCallback(async () => {
     if (!id) return;
@@ -313,27 +364,6 @@ export default function ProductEdit() {
     }
   };
 
-  const handleSetPrimary = async (imageId: string) => {
-    if (!product) return;
-    try {
-      // 通过 update 接口重置所有图片的 isPrimary
-      await adminProduct.update({
-        id: product.id,
-        images: product.images.map((img) => ({
-          url: img.url,
-          altText: img.altText || undefined,
-          isPrimary: img.id === imageId,
-          sortOrder: img.sortOrder,
-        })),
-      });
-      message.success('已设为主图');
-      fetchProduct();
-    } catch (err) {
-      const msg = err instanceof ApiError ? err.message : '设置失败';
-      message.error(msg);
-    }
-  };
-
   const handleSortImages = async (imageId: string, direction: 'up' | 'down') => {
     if (!product) return;
     const sorted = [...product.images].sort((a, b) => a.sortOrder - b.sortOrder);
@@ -349,30 +379,6 @@ export default function ProductEdit() {
       fetchProduct();
     } catch (err) {
       const msg = err instanceof ApiError ? err.message : '排序失败';
-      message.error(msg);
-    }
-  };
-
-  const handleUpdateImage = async (imageId: string, field: 'url' | 'altText', value: string) => {
-    if (!product) return;
-    if (field === 'url' && !value.trim()) {
-      message.error('图片地址不能为空');
-      return;
-    }
-    try {
-      await adminProduct.update({
-        id: product.id,
-        images: product.images.map((img) => ({
-          url: field === 'url' && img.id === imageId ? value.trim() : img.url,
-          altText: field === 'altText' && img.id === imageId ? value.trim() : (img.altText || undefined),
-          isPrimary: img.isPrimary,
-          sortOrder: img.sortOrder,
-        })),
-      });
-      message.success('已更新');
-      fetchProduct();
-    } catch (err) {
-      const msg = err instanceof ApiError ? err.message : '更新失败';
       message.error(msg);
     }
   };
@@ -460,49 +466,23 @@ export default function ProductEdit() {
     {
       title: '图片地址',
       dataIndex: 'url',
-      key: 'urlEdit',
+      key: 'urlText',
       ellipsis: true,
-      render: (v: string, record: ProductImage) => (
-        <Input
-          size="small"
-          defaultValue={v}
-          key={v}
-          placeholder="图片 URL"
-          variant="borderless"
-          onBlur={(e) => {
-            const newVal = e.target.value.trim();
-            if (newVal && newVal !== v) handleUpdateImage(record.id, 'url', newVal);
-          }}
-          onPressEnter={(e) => (e.target as HTMLInputElement).blur()}
-        />
-      ),
+      render: (v: string) => <span style={{ color: 'rgba(0,0,0,0.45)', fontSize: 12 }}>{v}</span>,
     },
     {
       title: '替代文本',
       dataIndex: 'altText',
       key: 'altText',
-      width: 160,
+      width: 150,
       ellipsis: true,
-      render: (v: string | null, record: ProductImage) => (
-        <Input
-          size="small"
-          defaultValue={v || ''}
-          key={`alt-${record.id}-${v}`}
-          placeholder="替代文本"
-          variant="borderless"
-          onBlur={(e) => {
-            const newVal = e.target.value.trim();
-            if (newVal !== (v || '')) handleUpdateImage(record.id, 'altText', newVal);
-          }}
-          onPressEnter={(e) => (e.target as HTMLInputElement).blur()}
-        />
-      ),
+      render: (v: string | null) => v || <span style={{ color: 'rgba(0,0,0,0.25)' }}>-</span>,
     },
     {
       title: '主图',
       dataIndex: 'isPrimary',
       key: 'isPrimary',
-      width: 80,
+      width: 70,
       render: (v: boolean) => v ? <Tag color="blue">主图</Tag> : <span style={{ color: 'rgba(0,0,0,0.25)' }}>-</span>,
     },
     {
@@ -534,22 +514,19 @@ export default function ProductEdit() {
     {
       title: '操作',
       key: 'actions',
-      width: 120,
+      width: 140,
       fixed: 'right' as const,
       render: (_: unknown, record: ProductImage) => (
         <Space>
-          {!record.isPrimary && (
-            <Button
-              type="link"
-              size="small"
-              icon={<PictureOutlined />}
-              onClick={() => handleSetPrimary(record.id)}
-            >
-              主图
-            </Button>
-          )}
+          <Button
+            type="link"
+            size="small"
+            onClick={() => { setEditingImage(record); setImageModalOpen(true); }}
+          >
+            编辑
+          </Button>
           <Popconfirm title="确定删除此图片？" onConfirm={() => handleDeleteImage(record.id)}>
-            <Button type="link" size="small" danger icon={<DeleteOutlined />} />
+            <Button type="link" size="small" danger>删除</Button>
           </Popconfirm>
         </Space>
       ),
@@ -672,7 +649,7 @@ export default function ProductEdit() {
                   <Button
                     type="primary"
                     icon={<PlusOutlined />}
-                    onClick={() => setImageModalOpen(true)}
+                    onClick={() => { setEditingImage(null); setImageModalOpen(true); }}
                   >
                     添加图片
                   </Button>
@@ -685,9 +662,11 @@ export default function ProductEdit() {
                   scroll={{ x: 700 }}
                   sticky={{ offsetHeader: 56 }}
                 />
-                <ImageAddModal
+                <ImageModal
                   open={imageModalOpen}
+                  image={editingImage}
                   productId={id!}
+                  allImages={product.images}
                   onClose={() => setImageModalOpen(false)}
                   onSuccess={fetchProduct}
                 />

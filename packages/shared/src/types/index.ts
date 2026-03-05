@@ -42,4 +42,11 @@ export type { PaymentInfo, PaymentRecord, PaymentStatusResult } from './payment'
 
 export type { BannerItem } from './banner';
 
-export type { AdminProfile, AdminLoginResult } from './admin';
+export type {
+  AdminProfile,
+  AdminLoginResult,
+  AdminUserListItem,
+  AdminUserAddress,
+  AdminUserOrderStats,
+  AdminUserDetail,
+} from './admin';

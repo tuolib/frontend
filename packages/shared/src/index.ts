@@ -33,6 +33,10 @@ export type {
   BannerItem,
   AdminProfile,
   AdminLoginResult,
+  AdminUserListItem,
+  AdminUserAddress,
+  AdminUserOrderStats,
+  AdminUserDetail,
 } from './types';
 
 // ── constants ──

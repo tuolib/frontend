@@ -16,6 +16,8 @@ const CategoryList = lazy(() => import('./pages/category/list'));
 const OrderList = lazy(() => import('./pages/order/list'));
 const OrderDetail = lazy(() => import('./pages/order/detail'));
 const StockAdjust = lazy(() => import('./pages/stock/adjust'));
+const UserList = lazy(() => import('./pages/user/list'));
+const UserDetail = lazy(() => import('./pages/user/detail'));
 const Login = lazy(() => import('./pages/auth/login'));
 
 function PageFallback() {
@@ -52,6 +54,8 @@ export const router = createBrowserRouter([
           { path: 'order', element: <RouteErrorBoundary><OrderList /></RouteErrorBoundary> },
           { path: 'order/:id', element: <RouteErrorBoundary><OrderDetail /></RouteErrorBoundary> },
           { path: 'stock', element: <RouteErrorBoundary><StockAdjust /></RouteErrorBoundary> },
+          { path: 'user', element: <RouteErrorBoundary><UserList /></RouteErrorBoundary> },
+          { path: 'user/:id', element: <RouteErrorBoundary><UserDetail /></RouteErrorBoundary> },
         ],
       },
     ],

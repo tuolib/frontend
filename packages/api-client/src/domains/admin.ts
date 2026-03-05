@@ -10,6 +10,8 @@ import type {
   CategoryNode,
   OrderListItem,
   PaginationMeta,
+  AdminUserListItem,
+  AdminUserDetail,
 } from '@fe/shared';
 
 export const adminProduct = {
@@ -173,5 +175,24 @@ export const adminStock = {
     reason?: string;
   }): Promise<null> {
     return post<null>('/v1/admin/stock/adjust', input);
+  },
+};
+
+export const adminUser = {
+  async list(params: {
+    page?: number;
+    pageSize?: number;
+    keyword?: string;
+    status?: 'active' | 'banned';
+  }): Promise<{ items: AdminUserListItem[]; pagination: PaginationMeta }> {
+    return postPaginated<AdminUserListItem>('/v1/admin/user/list', params);
+  },
+
+  async detail(id: string): Promise<AdminUserDetail> {
+    return post<AdminUserDetail>('/v1/admin/user/detail', { id });
+  },
+
+  async toggleStatus(id: string, status: 'active' | 'banned'): Promise<null> {
+    return post<null>('/v1/admin/user/toggle-status', { id, status });
   },
 };

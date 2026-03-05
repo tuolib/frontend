@@ -18,3 +18,40 @@ export interface AdminLoginResult {
   accessToken: string;
   mustChangePassword: boolean;
 }
+
+export interface AdminUserListItem {
+  id: string;
+  email: string;
+  nickname: string | null;
+  avatarUrl: string | null;
+  phone: string | null;
+  status: string;
+  lastLogin: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AdminUserAddress {
+  id: string;
+  label: string | null;
+  recipient: string;
+  phone: string;
+  province: string;
+  city: string;
+  district: string;
+  address: string;
+  postalCode: string | null;
+  isDefault: boolean;
+}
+
+export interface AdminUserOrderStats {
+  totalOrders: number;
+  totalPaid: number;
+  totalAmount: string;
+}
+
+export interface AdminUserDetail {
+  user: AdminUserListItem;
+  addresses: AdminUserAddress[];
+  orderStats: AdminUserOrderStats;
+}
