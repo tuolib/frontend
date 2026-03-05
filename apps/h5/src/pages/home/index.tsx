@@ -1,12 +1,12 @@
-import { useRef, useEffect, useCallback, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useRequest, usePaginatedRequest } from '@fe/hooks';
 import { product, category, banner as bannerApi } from '@fe/api-client';
-import { Skeleton, Spinner } from '@fe/ui';
-import type { ProductListItem, CategoryNode, BannerItem } from '@fe/shared';
+import { Skeleton } from '@fe/ui';
+import type { ProductListItem, BannerItem } from '@fe/shared';
+import { ProductGrid } from '@/components/product-grid';
 import {
   bannerPlaceholder,
-  categoryPlaceholder,
   productPlaceholder,
 } from './placeholder';
 import './home.scss';
@@ -67,7 +67,7 @@ function BannerCarousel({ banners }: { banners: Array<Pick<BannerItem, 'id' | 'i
 
 // ── 分类胶囊横滑 ──
 
-function CategoryPills({ categories }: { categories: CategoryNode[] }) {
+function CategoryPills({ categories }: { categories: { id: string; name: string }[] }) {
   return (
     <div className="amz-pills">
       <div className="pills-scroll">
@@ -141,49 +141,6 @@ function DealSection({ items }: { items: ProductListItem[] }) {
   );
 }
 
-// ── 商品卡片 ──
-
-function ProductCard({ item }: { item: ProductListItem }) {
-  const price = item.minPrice ? Number.parseFloat(item.minPrice).toFixed(1) : '0';
-  const [integer, decimal] = price.split('.');
-
-  return (
-    <Link to={`/product/${item.id}`} className="product-card">
-      <div className="product-img">
-        <img
-          src={item.primaryImage || productPlaceholder(item.title)}
-          alt={item.title}
-          loading="lazy"
-        />
-      </div>
-      <div className="product-info">
-        <div className="product-title">{item.title}</div>
-        <div className="product-price">
-          <span className="price-symbol">¥</span>
-          {integer}
-          <span className="text-12">.{decimal}</span>
-        </div>
-        <div className="product-sales">
-          {item.totalSales > 0 ? `${item.totalSales}+ bought` : 'New'}
-        </div>
-      </div>
-    </Link>
-  );
-}
-
-function ProductSkeleton() {
-  return (
-    <div className="product-card">
-      <Skeleton className="w-full aspect-square" />
-      <div className="product-info">
-        <Skeleton className="w-full h-14 rounded-4" />
-        <Skeleton className="w-3/5 h-14 mt-6 rounded-4" />
-        <Skeleton className="w-2/5 h-16 mt-8 rounded-4" />
-      </div>
-    </div>
-  );
-}
-
 // ── 首页主体 ──
 
 export default function Home() {
@@ -192,7 +149,7 @@ export default function Home() {
     (signal) => category.tree({ signal }),
   );
 
-  // Banner 数据（从 API 获取）
+  // Banner 数据
   const { data: bannerData, loading: bannerLoading } = useRequest(
     (signal) => bannerApi.list({ signal }),
   );
@@ -216,27 +173,7 @@ export default function Home() {
     { pageSize: PAGE_SIZE },
   );
 
-  // IntersectionObserver 自动加载更多
-  const loadMoreRef = useRef<HTMLDivElement>(null);
-  const loadMoreFn = useCallback(() => { loadMore(); }, [loadMore]);
-
-  useEffect(() => {
-    const el = loadMoreRef.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && hasMore && !loadingMore) {
-          loadMoreFn();
-        }
-      },
-      { rootMargin: '200px' },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [hasMore, loadingMore, loadMoreFn]);
-
-  // Banner 展示：API 数据优先，无数据用 fallback
+  // Banner: API 优先，无数据用 fallback
   const banners = bannerData && bannerData.length > 0
     ? bannerData.map((b) => ({ id: b.id, title: b.title, imageUrl: b.imageUrl, linkType: b.linkType, linkValue: b.linkValue }))
     : FALLBACK_BANNERS;
@@ -265,36 +202,13 @@ export default function Home() {
         <span className="section-title">Recommended for you</span>
       </div>
 
-      {prodLoading ? (
-        <div className="amz-product-grid">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <ProductSkeleton key={i} />
-          ))}
-        </div>
-      ) : products.length > 0 ? (
-        <>
-          <div className="amz-product-grid">
-            {products.map((item) => (
-              <ProductCard key={item.id} item={item} />
-            ))}
-          </div>
-
-          <div ref={loadMoreRef} className="amz-load-more">
-            {hasMore ? (
-              loadingMore ? (
-                <>
-                  <Spinner size="sm" className="text-[#565959]" />
-                  Loading...
-                </>
-              ) : (
-                <span>Scroll for more</span>
-              )
-            ) : (
-              <span>— You've seen it all —</span>
-            )}
-          </div>
-        </>
-      ) : null}
+      <ProductGrid
+        items={products}
+        loading={prodLoading}
+        loadingMore={loadingMore}
+        hasMore={hasMore}
+        loadMore={loadMore}
+      />
 
       {/* 底部安全距离 */}
       <div className="h-60" />

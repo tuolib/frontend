@@ -11,6 +11,8 @@ export interface ProductListItem {
   minPrice: string | null;
   maxPrice: string | null;
   totalSales: number;
+  avgRating: string;
+  reviewCount: number;
   primaryImage: string | null;
   createdAt: string;
 }

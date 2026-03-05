@@ -112,7 +112,7 @@ Tab 页面（RootLayout 包裹，显示底部导航）:
 
 ---
 
-### Step 2 — 首页 Home `[ ]`
+### Step 2 — 首页 Home `[x]`
 
 > 用户打开 App 看到的第一个页面。
 
@@ -174,11 +174,11 @@ Tab 页面（RootLayout 包裹，显示底部导航）:
 - 销量/评论数：灰色小字
 
 **验收标准：**
-- [ ] 分类胶囊可横滑，点击跳转 `/product?categoryId=xxx`
-- [ ] Banner 自动轮播，3秒切换
-- [ ] Deal 横滑区展示销量 Top 商品
-- [ ] 推荐商品 2 列网格无限滚动
-- [ ] 无真实图片时显示占位图
+- [x] 分类胶囊可横滑，点击跳转 `/product?categoryId=xxx`
+- [x] Banner 自动轮播，3秒切换
+- [x] Deal 横滑区展示销量 Top 商品
+- [x] 推荐商品 2 列网格无限滚动
+- [x] 无真实图片时显示占位图
 
 ---
 
@@ -534,7 +534,7 @@ Tab 页面（RootLayout 包裹，显示底部导航）:
 | Login `/login` | ✅ 已实现 | 完整的表单验证 + API |
 | Register `/register` | ✅ 已实现 | 完整的表单验证 + API |
 | Profile `/me` | ✅ 已实现 | 需重写为 Amazon 风格 (Step 7) |
-| Home `/` | ⚠️ 京东风格 | 需重写为 Amazon 风格 (Step 2) |
+| Home `/` | ✅ 已实现 | Amazon 风格 (Step 2) |
 | RootLayout | ✅ 已实现 | Amazon 风格 4-Tab (Step 1) |
 | Search `/search` | ❌ 占位 | Step 3 |
 | Menu `/menu` | ⚠️ 占位 | Step 1 创建占位, Step 4 实现 |

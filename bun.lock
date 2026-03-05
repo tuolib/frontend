@@ -8,6 +8,7 @@
         "@vitejs/plugin-react": "^5.1.4",
       },
       "devDependencies": {
+        "@iconify-json/carbon": "^1.2.19",
         "oxfmt": "^0.1.0",
         "oxlint": "^1.0.0",
         "sass-embedded": "^1.97.3",
@@ -81,7 +82,6 @@
       "dependencies": {
         "@fe/api-client": "workspace:*",
         "@fe/shared": "workspace:*",
-        "@fe/ui": "workspace:*",
         "zustand": "^5.0.0",
       },
       "devDependencies": {
@@ -196,6 +196,8 @@
     "@fe/shared": ["@fe/shared@workspace:packages/shared"],
 
     "@fe/ui": ["@fe/ui@workspace:packages/ui"],
+
+    "@iconify-json/carbon": ["@iconify-json/carbon@1.2.19", "", { "dependencies": { "@iconify/types": "*" } }, "sha512-l89XjtEeSA5fxlxPTNSU9AA+rxaz/Dn0X/ux0/3awR+tAayY8iJqWQu3AKxhchfx3LB/fX1Nv3ZppZzrBAt7aA=="],
 
     "@iconify/types": ["@iconify/types@2.0.0", "", {}, "sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg=="],
 
