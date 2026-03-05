@@ -408,7 +408,7 @@ Tab 页面（RootLayout 包裹，显示底部导航）:
 
 ---
 
-### Step 7 — 我的 You `[ ]`
+### Step 7 — 我的 You `[x]`
 
 > Amazon "Your Account" 风格的个人中心。
 
@@ -443,10 +443,10 @@ Tab 页面（RootLayout 包裹，显示底部导航）:
 **API：** `user.profile`, `order.list({ page: 1, pageSize: 3 })`
 
 **验收标准：**
-- [ ] 未登录 → 显示 "Sign in" 引导
-- [ ] 已登录 → 显示用户名 + 功能入口
-- [ ] 最近订单预览（最多3条）
-- [ ] 登出功能正常
+- [x] 未登录 → 显示 "Sign in" 引导
+- [x] 已登录 → 显示用户名 + 功能入口
+- [x] 最近订单预览（最多3条）
+- [x] 登出功能正常
 
 ---
 
@@ -533,7 +533,7 @@ Tab 页面（RootLayout 包裹，显示底部导航）:
 |------|------|------|
 | Login `/login` | ✅ 已实现 | 完整的表单验证 + API |
 | Register `/register` | ✅ 已实现 | 完整的表单验证 + API |
-| Profile `/me` | ✅ 已实现 | 需重写为 Amazon 风格 (Step 7) |
+| Profile `/me` | ✅ 已实现 | Amazon 风格 (Step 7) |
 | Home `/` | ✅ 已实现 | Amazon 风格 (Step 2) |
 | RootLayout | ✅ 已实现 | Amazon 风格 4-Tab (Step 1) |
 | Search `/search` | ✅ 已实现 | Step 3 |
