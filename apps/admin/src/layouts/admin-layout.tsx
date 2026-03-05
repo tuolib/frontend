@@ -4,14 +4,17 @@
 
 import { useState } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router';
-import { Layout, Menu } from 'antd';
+import { Layout, Menu, Button, Dropdown } from 'antd';
 import {
   DashboardOutlined,
   ShoppingOutlined,
   AppstoreOutlined,
   OrderedListOutlined,
   DatabaseOutlined,
+  LogoutOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
+import { useAdminAuthStore } from '@/stores/admin-auth';
 
 const { Sider, Header, Content } = Layout;
 
@@ -27,6 +30,13 @@ export default function AdminLayout() {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const admin = useAdminAuthStore((s) => s.admin);
+  const logout = useAdminAuthStore((s) => s.logout);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login', { replace: true });
+  };
 
   return (
     <Layout className="min-h-screen">
@@ -52,6 +62,22 @@ export default function AdminLayout() {
       <Layout>
         <Header className="bg-white border-b border-gray-200 px-6 flex items-center justify-between h-16">
           <span className="text-gray-600">后台管理系统</span>
+          <Dropdown
+            menu={{
+              items: [
+                {
+                  key: 'logout',
+                  icon: <LogoutOutlined />,
+                  label: '退出登录',
+                  onClick: handleLogout,
+                },
+              ],
+            }}
+          >
+            <Button type="text" icon={<UserOutlined />}>
+              {admin?.realName || admin?.username || '管理员'}
+            </Button>
+          </Dropdown>
         </Header>
         <Content className="p-6 bg-gray-50">
           <Outlet />

@@ -32,6 +32,7 @@ export { payment } from './domains/payment';
 export { banner } from './domains/banner';
 
 // ── admin APIs ──
+export { adminAuth } from './domains/admin-auth';
 export {
   adminProduct,
   adminCategory,

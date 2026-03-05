@@ -1,10 +1,10 @@
 import { Navigate, Outlet, useLocation } from 'react-router';
-import { useAuthStore } from '@fe/hooks';
 import { Spin } from 'antd';
+import { useAdminAuthStore } from '@/stores/admin-auth';
 
 export default function RequireAuth() {
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const isLoading = useAuthStore((s) => s.isLoading);
+  const isAuthenticated = useAdminAuthStore((s) => s.isAuthenticated);
+  const isLoading = useAdminAuthStore((s) => s.isLoading);
   const location = useLocation();
 
   if (isLoading) {

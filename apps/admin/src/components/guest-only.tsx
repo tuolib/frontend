@@ -1,8 +1,8 @@
 import { Navigate, Outlet, useLocation } from 'react-router';
-import { useAuthStore } from '@fe/hooks';
+import { useAdminAuthStore } from '@/stores/admin-auth';
 
 export default function GuestOnly() {
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const isAuthenticated = useAdminAuthStore((s) => s.isAuthenticated);
   const location = useLocation();
   const from = (location.state as { from?: Location })?.from?.pathname ?? '/';
 

@@ -41,10 +41,18 @@ docs/                       # 架构文档 + API 参考
 **重要：** H5 Amazon 风格的分步实现计划在 `docs/h5-implementation-plan.md`。
 当用户说"开始 Step N"时，必须先读取该文件，了解对应 Step 的完整规格和当前进度。
 
+## Admin 实现计划
+
+**重要：** Admin 后台管理系统的分步实现计划在 `docs/admin-implementation-plan.md`。
+当用户说"开始 Step N"且上下文为 Admin 时，必须先读取该文件。
+
 ## 后端 API 参考
 
-**重要：** 后端 API 详细文档在 `docs/api-reference.md`。
-编写 API 调用代码时必须参考此文件，确保请求/响应类型与后端一致。
+**重要：**
+- H5 C 端 API 文档：`docs/api-reference.md`
+- Admin 后台 API 文档：`docs/api-admin.md`（独立认证体系，username 登录，无 refresh token）
+
+编写 API 调用代码时必须参考对应文件，确保请求/响应类型与后端一致。
 
 后端项目位于 `~/my-backend`，如需查看实现细节可读取该目录下的代码。
 

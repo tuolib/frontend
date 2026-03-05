@@ -3,8 +3,8 @@ import { RouterProvider } from 'react-router';
 import { ConfigProvider, App as AntdApp, Spin } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 import { ToastProvider, ErrorBoundary } from '@fe/ui';
-import { useAuthStore } from '@fe/hooks';
 import { router } from './router';
+import { useAdminAuthStore } from './stores/admin-auth';
 
 const theme = {
   token: {
@@ -22,7 +22,7 @@ function LoadingFallback() {
 }
 
 export function App() {
-  const initialize = useAuthStore((s) => s.initialize);
+  const initialize = useAdminAuthStore((s) => s.initialize);
 
   useEffect(() => {
     initialize();

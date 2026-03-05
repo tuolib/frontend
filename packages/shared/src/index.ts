@@ -31,6 +31,8 @@ export type {
   PaymentRecord,
   PaymentStatusResult,
   BannerItem,
+  AdminProfile,
+  AdminLoginResult,
 } from './types';
 
 // ── constants ──
