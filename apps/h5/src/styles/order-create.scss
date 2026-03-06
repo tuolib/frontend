@@ -100,6 +100,16 @@
   &:last-child {
     border-bottom: none;
   }
+
+  &.unavailable {
+    opacity: 0.45;
+  }
+}
+
+.item-unavailable {
+  font-size: 0.12rem;
+  color: #cc0c39;
+  margin-top: auto;
 }
 
 .oc-item-img {

@@ -3,13 +3,13 @@
  * 从购物车结算进入，确认地址/商品/金额后下单
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { useRequest } from '@fe/hooks';
 import { cart, address, order } from '@fe/api-client';
 import { useToast, Skeleton } from '@fe/ui';
 import { formatPrice } from '@fe/shared';
-import type { UserAddress, CheckoutPreview } from '@fe/shared';
+import type { UserAddress } from '@fe/shared';
 import { productPlaceholder } from '@/pages/home/placeholder';
 import { PageHeader } from '@/components/page-header';
 import '@/styles/order-create.scss';
@@ -31,20 +31,22 @@ export default function OrderCreate() {
   const [remark, setRemark] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
+  // Filter out unavailable items
+  const availableItems = useMemo(() => {
+    if (!preview) return [];
+    const unavailableSkus = new Set(preview.warnings.unavailableItems.map((w) => w.skuId));
+    return preview.items.filter((i) => !unavailableSkus.has(i.skuId));
+  }, [preview]);
+
   // Resolve selected address: user-selected, or default, or first
   const selectedAddress = resolveAddress(addresses, selectedAddressId);
 
   const handlePlaceOrder = useCallback(async () => {
-    if (!preview || !selectedAddress || submitting) return;
-
-    if (!preview.canCheckout) {
-      toast('Please resolve warnings before placing order', 'error');
-      return;
-    }
+    if (availableItems.length === 0 || !selectedAddress || submitting) return;
 
     setSubmitting(true);
     try {
-      const items = preview.items.map((i) => ({
+      const items = availableItems.map((i) => ({
         skuId: i.skuId,
         quantity: i.quantity,
       }));
@@ -60,7 +62,7 @@ export default function OrderCreate() {
     } finally {
       setSubmitting(false);
     }
-  }, [preview, selectedAddress, submitting, remark, navigate, toast]);
+  }, [availableItems, selectedAddress, submitting, remark, navigate, toast]);
 
   const loading = previewLoading || addressLoading;
 
@@ -73,7 +75,7 @@ export default function OrderCreate() {
     );
   }
 
-  if (!preview || preview.items.length === 0) {
+  if (!preview || availableItems.length === 0) {
     return (
       <>
         <PageHeader title="Confirm Order" />
@@ -120,15 +122,9 @@ export default function OrderCreate() {
           )}
         </div>
 
-        {/* Warnings */}
-        {preview.warnings && hasWarnings(preview.warnings) && (
+        {/* Warnings (price changed / insufficient only) */}
+        {preview.warnings && (preview.warnings.priceChangedItems.length > 0 || preview.warnings.insufficientItems.length > 0) && (
           <div className="oc-warnings">
-            {preview.warnings.unavailableItems.map((w) => (
-              <div key={w.skuId} className="warning-item">
-                <span className="warning-icon i-carbon-warning-alt" />
-                <span>{w.productTitle} is unavailable</span>
-              </div>
-            ))}
             {preview.warnings.priceChangedItems.map((w) => (
               <div key={w.skuId} className="warning-item">
                 <span className="warning-icon i-carbon-warning-alt" />
@@ -144,10 +140,10 @@ export default function OrderCreate() {
           </div>
         )}
 
-        {/* Items */}
+        {/* Items (available only) */}
         <div className="oc-items-section">
-          <div className="oc-items-title">Items ({preview.items.length})</div>
-          {preview.items.map((item) => (
+          <div className="oc-items-title">Items ({availableItems.length})</div>
+          {availableItems.map((item) => (
             <div key={item.skuId} className="oc-item">
               <div className="oc-item-img">
                 <img
@@ -217,7 +213,7 @@ export default function OrderCreate() {
         </div>
         <button
           className="oc-submit-btn"
-          disabled={!selectedAddress || !preview.canCheckout || submitting}
+          disabled={!selectedAddress || availableItems.length === 0 || submitting}
           onClick={handlePlaceOrder}
         >
           {submitting ? 'Placing...' : 'Place Order'}
@@ -256,14 +252,6 @@ function resolveAddress(
     if (found) return found;
   }
   return addresses.find((a) => a.isDefault) || addresses[0];
-}
-
-function hasWarnings(w: CheckoutPreview['warnings']): boolean {
-  return (
-    w.unavailableItems.length > 0 ||
-    w.priceChangedItems.length > 0 ||
-    w.insufficientItems.length > 0
-  );
 }
 
 // ── Address Picker ──
