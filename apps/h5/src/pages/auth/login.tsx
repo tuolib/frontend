@@ -66,7 +66,7 @@ export default function Login() {
         <Input
           label="邮箱"
           type="email"
-          placeholder="请输入邮箱地址"
+          placeholder="请输入假的邮箱（如 test@example.com）"
           value={email}
           onChange={(e) => {
             setEmail(e.target.value);
