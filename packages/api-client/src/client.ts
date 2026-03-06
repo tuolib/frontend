@@ -14,6 +14,13 @@ import {
   type AuthTokens,
 } from './auth-manager';
 
+// ── 全局错误提示回调 ──
+let _onError: ((message: string) => void) | null = null;
+
+export function setApiErrorNotifier(notifier: (message: string) => void): void {
+  _onError = notifier;
+}
+
 const DEFAULT_BASE_URL = '/';
 
 let _baseUrl: string | undefined;
@@ -96,16 +103,25 @@ export async function post<T>(
   body?: Record<string, unknown>,
   options?: Options,
 ): Promise<T> {
-  const response = await httpClient
-    .post(toKyPath(path), {
-      prefixUrl: getBaseUrl(),
-      json: body,
-      ...options,
-    })
-    .json<ApiResponse<T>>();
+  let response: ApiResponse<T>;
+
+  try {
+    response = await httpClient
+      .post(toKyPath(path), {
+        prefixUrl: getBaseUrl(),
+        json: body,
+        ...options,
+      })
+      .json<ApiResponse<T>>();
+  } catch {
+    _onError?.('网络异常，请检查网络连接');
+    throw new Error('Network error');
+  }
 
   if (!response.success) {
-    throw new ApiError(response);
+    const err = new ApiError(response);
+    _onError?.(err.message);
+    throw err;
   }
 
   return response.data;

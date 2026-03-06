@@ -8,5 +8,5 @@ export { Price, PriceRange, type PriceProps, type PriceRangeProps } from './pric
 export { Badge, type BadgeProps } from './badge';
 export { Image, type ImageProps } from './image';
 export { Pagination, type PaginationProps } from './pagination';
-export { ToastProvider, useToast } from './toast';
+export { ToastProvider, useToast, showToast } from './toast';
 export { ErrorBoundary, type ErrorBoundaryProps } from './error-boundary';

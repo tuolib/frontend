@@ -1,5 +1,5 @@
 // ── client ──
-export { httpClient, post, postPaginated, setBaseUrl } from './client';
+export { httpClient, post, postPaginated, setBaseUrl, setApiErrorNotifier } from './client';
 
 // ── errors ──
 export { ApiError } from './errors';

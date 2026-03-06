@@ -2,7 +2,7 @@
  * Toast 组件 — 轻量提示
  */
 
-import { createContext, useCallback, useContext, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 
 interface ToastItem {
   id: number;
@@ -16,6 +16,13 @@ interface ToastContextValue {
 
 const ToastContext = createContext<ToastContextValue | null>(null);
 
+// ── 命令式 API（供 React 外部调用）──
+let _imperativeToast: ((message: string, type?: ToastItem['type']) => void) | null = null;
+
+export function showToast(message: string, type: ToastItem['type'] = 'error') {
+  _imperativeToast?.(message, type);
+}
+
 let nextId = 0;
 
 export function ToastProvider({ children }: { children: ReactNode }) {
@@ -28,6 +35,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       setToasts((prev) => prev.filter((t) => t.id !== id));
     }, 3000);
   }, []);
+
+  useEffect(() => {
+    _imperativeToast = toast;
+    return () => { _imperativeToast = null; };
+  }, [toast]);
 
   return (
     <ToastContext.Provider value={{ toast }}>

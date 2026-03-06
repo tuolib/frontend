@@ -1,10 +1,13 @@
 import { useEffect, Suspense } from 'react';
 import { RouterProvider } from 'react-router';
-import { ConfigProvider, App as AntdApp, Spin } from 'antd';
+import { ConfigProvider, App as AntdApp, Spin, message } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 import { ToastProvider, ErrorBoundary } from '@fe/ui';
 import { useVersionCheck } from '@fe/hooks';
+import { setApiErrorNotifier } from '@fe/api-client';
 import { router } from './router';
+
+setApiErrorNotifier((msg) => message.error(msg));
 import { useAdminAuthStore } from './stores/admin-auth';
 
 const theme = {
