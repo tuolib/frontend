@@ -3,7 +3,7 @@
  * Amazon 风格：顶部返回+分类名称+搜索，排序栏，2列无限滚动
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router';
 import { usePaginatedRequest, useRequest } from '@fe/hooks';
 import { product, category } from '@fe/api-client';
@@ -66,6 +66,10 @@ export default function ProductList() {
   );
 
   const headerTitle = categoryData?.name || 'Products';
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [categoryId, sort]);
 
   return (
     <div className="min-h-screen bg-[#eaeded]">
