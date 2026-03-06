@@ -30,7 +30,11 @@ export interface SkuDTO {
   skuCode: string;
   price: string;
   comparePrice: string | null;
+  costPrice: string | null;
   stock: number;
+  lowStock: number;
+  weight: string | null;
+  barcode: string | null;
   attributes: Record<string, string> | null;
   status: string;
 }

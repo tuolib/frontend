@@ -11,6 +11,7 @@ import type {
   OrderListItem,
   PaginationMeta,
   StaffListItem,
+  AdminOrderDetail,
   AdminUserListItem,
   AdminUserDetail,
 } from '@fe/shared';
@@ -182,8 +183,20 @@ export const adminOrder = {
     return postPaginated<OrderListItem>('/v1/admin/order/list', params);
   },
 
+  async detail(orderId: string): Promise<AdminOrderDetail> {
+    return post<AdminOrderDetail>('/v1/admin/order/detail', { orderId });
+  },
+
   async ship(orderId: string, trackingNo?: string): Promise<null> {
     return post<null>('/v1/admin/order/ship', { orderId, trackingNo });
+  },
+
+  async cancel(orderId: string, reason?: string): Promise<null> {
+    return post<null>('/v1/admin/order/cancel', { orderId, reason });
+  },
+
+  async refund(orderId: string, reason?: string): Promise<null> {
+    return post<null>('/v1/admin/order/refund', { orderId, reason });
   },
 };
 

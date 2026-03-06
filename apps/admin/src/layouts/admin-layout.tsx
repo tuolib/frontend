@@ -22,9 +22,9 @@ const { Sider, Header, Content } = Layout;
 
 const BASE_MENU_ITEMS = [
   { key: '/', icon: <DashboardOutlined />, label: '数据概览' },
+  { key: '/order', icon: <OrderedListOutlined />, label: '订单管理' },
   { key: '/product', icon: <ShoppingOutlined />, label: '商品管理' },
   { key: '/category', icon: <AppstoreOutlined />, label: '分类管理' },
-  { key: '/order', icon: <OrderedListOutlined />, label: '订单管理' },
   { key: '/stock', icon: <DatabaseOutlined />, label: '库存管理' },
   { key: '/user', icon: <TeamOutlined />, label: '用户管理' },
 ];
