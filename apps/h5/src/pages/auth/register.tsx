@@ -76,60 +76,69 @@ export default function Register() {
   }
 
   return (
-    <div>
-      <h1 className="text-28 font-bold text-center mb-8">注册</h1>
+    <>
+      <div className="auth-card">
+        <h1 className="text-22 font-600 text-[#0f1111] mb-20">创建账号</h1>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
-        <Input
-          label="邮箱"
-          type="email"
-          placeholder="请输入假的邮箱（如 test@example.com）"
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-            clearError('email');
-          }}
-          error={errors.email}
-          autoComplete="email"
-        />
+        <form onSubmit={handleSubmit} className="flex flex-col gap-20" noValidate>
+          <Input
+            label="邮箱"
+            type="email"
+            placeholder="请输入邮箱"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              clearError('email');
+            }}
+            error={errors.email}
+            autoComplete="email"
+          />
 
-        <Input
-          label="昵称（选填）"
-          type="text"
-          placeholder="请输入昵称"
-          value={nickname}
-          onChange={(e) => {
-            setNickname(e.target.value);
-            clearError('nickname');
-          }}
-          error={errors.nickname}
-          autoComplete="nickname"
-        />
+          <Input
+            label="昵称（选填）"
+            type="text"
+            placeholder="请输入昵称"
+            value={nickname}
+            onChange={(e) => {
+              setNickname(e.target.value);
+              clearError('nickname');
+            }}
+            error={errors.nickname}
+            autoComplete="nickname"
+          />
 
-        <Input
-          label="密码"
-          type="password"
-          placeholder="至少 8 个字符"
-          value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-            clearError('password');
-          }}
-          error={errors.password}
-          autoComplete="new-password"
-        />
+          <Input
+            label="密码"
+            type="password"
+            placeholder="至少 8 个字符"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              clearError('password');
+            }}
+            error={errors.password}
+            autoComplete="new-password"
+          />
 
-        <Button type="submit" loading={loading} className="w-full mt-4">
-          注册
-        </Button>
-      </form>
+          <Button type="submit" loading={loading} className="amz-btn-gold w-full">
+            创建账号
+          </Button>
+        </form>
 
-      <p className="text-14 text-gray-500 text-center mt-6">
-        已有账号？
-        <Link to={ROUTES.LOGIN} className="text-blue-600 ml-1">
-          立即登录
-        </Link>
-      </p>
-    </div>
+        <p className="text-11 text-[#555] mt-16 leading-[1.6]">
+          创建账号即表示您同意 ShopMall 的
+          <span className="text-[#007185]">使用条款</span>和
+          <span className="text-[#007185]">隐私声明</span>。
+        </p>
+      </div>
+
+      <div className="auth-divider">
+        <span>已有账号？</span>
+      </div>
+
+      <Link to={ROUTES.LOGIN} className="amz-btn-light">
+        登录
+      </Link>
+    </>
   );
 }

@@ -59,47 +59,56 @@ export default function Login() {
   }
 
   return (
-    <div>
-      <h1 className="text-28 font-bold text-center mb-8">登录</h1>
+    <>
+      <div className="auth-card">
+        <h1 className="text-22 font-600 text-[#0f1111] mb-20">登录</h1>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
-        <Input
-          label="邮箱"
-          type="email"
-          placeholder="请输入假的邮箱（如 test@example.com）"
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-            if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
-          }}
-          error={errors.email}
-          autoComplete="email"
-        />
+        <form onSubmit={handleSubmit} className="flex flex-col gap-20" noValidate>
+          <Input
+            label="邮箱"
+            type="email"
+            placeholder="请输入邮箱"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
+            }}
+            error={errors.email}
+            autoComplete="email"
+          />
 
-        <Input
-          label="密码"
-          type="password"
-          placeholder="请输入密码"
-          value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-            if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
-          }}
-          error={errors.password}
-          autoComplete="current-password"
-        />
+          <Input
+            label="密码"
+            type="password"
+            placeholder="请输入密码"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
+            }}
+            error={errors.password}
+            autoComplete="current-password"
+          />
 
-        <Button type="submit" loading={loading} className="w-full mt-4">
-          登录
-        </Button>
-      </form>
+          <Button type="submit" loading={loading} className="amz-btn-gold w-full">
+            登录
+          </Button>
+        </form>
 
-      <p className="text-14 text-gray-500 text-center mt-6">
-        还没有账号？
-        <Link to={ROUTES.REGISTER} className="text-blue-600 ml-1">
-          立即注册
-        </Link>
-      </p>
-    </div>
+        <p className="text-11 text-[#555] mt-16 leading-[1.6]">
+          继续即表示您同意 ShopMall 的
+          <span className="text-[#007185]">使用条款</span>和
+          <span className="text-[#007185]">隐私声明</span>。
+        </p>
+      </div>
+
+      <div className="auth-divider">
+        <span>没有账号？</span>
+      </div>
+
+      <Link to={ROUTES.REGISTER} className="amz-btn-light">
+        创建 ShopMall 账号
+      </Link>
+    </>
   );
 }

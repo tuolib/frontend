@@ -1,15 +1,23 @@
 /**
- * AuthLayout — 登录/注册页面布局
+ * AuthLayout — Amazon 风格登录/注册页面布局
  */
 
 import { Outlet } from 'react-router';
+import '@/styles/auth.scss';
 
 export default function AuthLayout() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-white">
-      <div className="w-full max-w-384px">
-        <Outlet />
+    <div className="auth-page">
+      <div className="auth-logo">
+        <span className="i-carbon-shopping-bag w-40 h-40 text-[#ff9900]" />
+        <span className="text-26 font-700 text-white tracking-[0.04em]">
+          Shop<span className="text-[#ff9900]">Mall</span>
+        </span>
       </div>
+
+      <Outlet />
+
+      <div className="auth-footer">© 2026 ShopMall</div>
     </div>
   );
 }

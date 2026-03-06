@@ -1,0 +1,158 @@
+// Amazon-style auth pages
+
+.auth-page {
+  min-height: 100dvh;
+  background: #eaeded;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2.4rem;
+    background: linear-gradient(180deg, #131921 0%, #232f3e 100%);
+  }
+}
+
+.auth-logo {
+  position: relative;
+  z-index: 1;
+  padding-top: calc(var(--safe-area-top) + 0.40rem);
+  padding-bottom: 0.28rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.08rem;
+}
+
+.auth-card {
+  position: relative;
+  z-index: 1;
+  width: calc(100% - 0.40rem);
+  max-width: 3.35rem;
+  background: #fff;
+  border-radius: 0.12rem;
+  padding: 0.24rem 0.20rem;
+  box-shadow:
+    0 0.02rem 0.08rem rgba(0, 0, 0, 0.08),
+    0 0.04rem 0.20rem rgba(0, 0, 0, 0.06);
+  animation: auth-card-in 0.35s ease-out;
+
+  // Fix Input component sizing for H5 rem postprocess
+  input {
+    padding: 0.10rem 0.12rem;
+    font-size: 0.14rem;
+  }
+
+  // Fix gap between label and input (gap-1 → 1px after postprocess)
+  > form > div {
+    gap: 0.06rem !important;
+  }
+}
+
+@keyframes auth-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.12rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Amazon-style gold CTA button
+button.amz-btn-gold {
+  height: 0.44rem;
+  border-radius: 0.08rem;
+  border: 1px solid #c89411;
+  font-size: 0.16rem;
+  font-weight: 600;
+  padding: 0;
+
+  &,
+  &:hover,
+  &:focus {
+    background: linear-gradient(to bottom, #FFD814, #ff9900);
+    color: #0f1111;
+  }
+
+  &:active {
+    background: linear-gradient(to bottom, #f0c14b, #dfa000);
+    color: #0f1111;
+  }
+
+  &:disabled,
+  &:disabled:hover {
+    opacity: 0.65;
+    background: linear-gradient(to bottom, #f7e6a0, #f0cc62);
+    color: #0f1111;
+  }
+}
+
+// Horizontal divider with centered text
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.12rem;
+  margin: 0.20rem 0;
+  position: relative;
+  z-index: 1;
+  width: calc(100% - 0.40rem);
+  max-width: 3.35rem;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #bbb;
+  }
+
+  span {
+    font-size: 0.12rem;
+    color: #767676;
+    white-space: nowrap;
+  }
+}
+
+// Light secondary action button (Link styled as button)
+.amz-btn-light {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(100% - 0.40rem);
+  max-width: 3.35rem;
+  height: 0.40rem;
+  border-radius: 0.08rem;
+  background: linear-gradient(to bottom, #fff, #f0f0f0);
+  border: 1px solid #d5d9d9;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  color: #0f1111;
+  font-size: 0.14rem;
+  cursor: pointer;
+  text-decoration: none;
+  position: relative;
+  z-index: 1;
+
+  &:active {
+    background: linear-gradient(to bottom, #ededed, #e2e2e2);
+    border-color: #ccc;
+  }
+}
+
+// Footer
+.auth-footer {
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+  padding: 0.24rem 0 calc(var(--safe-area-bottom) + 0.16rem);
+  text-align: center;
+  font-size: 0.11rem;
+  color: #999;
+}
