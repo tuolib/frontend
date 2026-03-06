@@ -5,24 +5,23 @@
   "type": "module",
   "workspaces": ["apps/*", "packages/*"],
   "scripts": {
-    "dev": "turbo dev",
-    "dev:h5": "turbo dev --filter=@app/h5",
-    "dev:admin": "turbo dev --filter=@app/admin",
-    "build": "turbo build",
-    "build:h5": "turbo build --filter=@app/h5",
-    "build:admin": "turbo build --filter=@app/admin",
-    "type-check": "turbo type-check",
+    "dev": "bun run --filter='./apps/*' dev",
+    "dev:h5": "bun run --cwd apps/h5 dev",
+    "dev:admin": "bun run --cwd apps/admin dev",
+    "build": "bun run --cwd apps/h5 build && bun run --cwd apps/admin build",
+    "build:h5": "bun run --cwd apps/h5 build",
+    "build:admin": "bun run --cwd apps/admin build",
+    "type-check": "bun run --cwd apps/h5 type-check && bun run --cwd apps/admin type-check",
     "lint": "oxlint .",
     "format": "oxfmt .",
     "format:check": "oxfmt --check .",
-    "clean": "turbo clean"
+    "clean": "rm -rf apps/h5/dist apps/admin/dist"
   },
   "devDependencies": {
     "@iconify-json/carbon": "^1.2.19",
     "oxfmt": "^0.1.0",
     "oxlint": "^1.0.0",
     "sass-embedded": "^1.97.3",
-    "turbo": "^2.4.0",
     "typescript": "^5.7.0",
     "unocss": "^66.0.0"
   },
