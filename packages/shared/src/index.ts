@@ -33,6 +33,7 @@ export type {
   BannerItem,
   AdminProfile,
   AdminLoginResult,
+  StaffListItem,
   AdminUserListItem,
   AdminUserAddress,
   AdminUserOrderStats,

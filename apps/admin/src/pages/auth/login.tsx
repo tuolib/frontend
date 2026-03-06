@@ -24,7 +24,7 @@ export default function Login() {
   const mustChangePassword = useAdminAuthStore((s) => s.mustChangePassword);
   const [loading, setLoading] = useState(false);
 
-  const from = (location.state as { from?: string })?.from || '/';
+  const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/';
 
   const onLogin = async (values: LoginForm) => {
     setLoading(true);

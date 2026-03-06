@@ -10,6 +10,7 @@ import type {
   CategoryNode,
   OrderListItem,
   PaginationMeta,
+  StaffListItem,
   AdminUserListItem,
   AdminUserDetail,
 } from '@fe/shared';
@@ -131,6 +132,20 @@ export const adminProduct = {
 };
 
 export const adminCategory = {
+  async tree(): Promise<CategoryNode[]> {
+    return post<CategoryNode[]>('/v1/admin/category/tree', {});
+  },
+
+  async list(params: {
+    page?: number;
+    pageSize?: number;
+    keyword?: string;
+    isActive?: boolean;
+    parentId?: string | null;
+  }): Promise<{ items: CategoryNode[]; pagination: PaginationMeta }> {
+    return postPaginated<CategoryNode>('/v1/admin/category/list', params);
+  },
+
   async create(input: {
     name: string;
     slug?: string;
@@ -151,6 +166,10 @@ export const adminCategory = {
     isActive?: boolean;
   }): Promise<CategoryNode> {
     return post<CategoryNode>('/v1/admin/category/update', input);
+  },
+
+  async remove(id: string): Promise<null> {
+    return post<null>('/v1/admin/category/delete', { id });
   },
 };
 
@@ -175,6 +194,45 @@ export const adminStock = {
     reason?: string;
   }): Promise<null> {
     return post<null>('/v1/admin/stock/adjust', input);
+  },
+};
+
+export const adminManage = {
+  async list(params: {
+    page?: number;
+    pageSize?: number;
+    keyword?: string;
+  }): Promise<{ items: StaffListItem[]; pagination: PaginationMeta }> {
+    return postPaginated<StaffListItem>('/v1/admin/manage/list', params);
+  },
+
+  async create(input: {
+    username: string;
+    password: string;
+    realName?: string;
+    phone?: string;
+    email?: string;
+    role?: 'admin' | 'operator' | 'viewer';
+  }): Promise<StaffListItem> {
+    return post<StaffListItem>('/v1/admin/manage/create', input);
+  },
+
+  async update(input: {
+    id: string;
+    realName?: string;
+    phone?: string;
+    email?: string;
+    role?: 'admin' | 'operator' | 'viewer';
+  }): Promise<StaffListItem> {
+    return post<StaffListItem>('/v1/admin/manage/update', input);
+  },
+
+  async toggleStatus(id: string, status: 'active' | 'disabled'): Promise<null> {
+    return post<null>('/v1/admin/manage/toggle-status', { id, status });
+  },
+
+  async resetPassword(id: string, newPassword: string): Promise<null> {
+    return post<null>('/v1/admin/manage/reset-password', { id, newPassword });
   },
 };
 

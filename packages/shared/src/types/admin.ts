@@ -19,6 +19,19 @@ export interface AdminLoginResult {
   mustChangePassword: boolean;
 }
 
+export interface StaffListItem {
+  id: string;
+  username: string;
+  realName: string | null;
+  role: 'admin' | 'operator' | 'viewer';
+  isSuper: boolean;
+  status: 'active' | 'disabled';
+  phone: string | null;
+  email: string | null;
+  lastLoginAt: string | null;
+  createdAt: string;
+}
+
 export interface AdminUserListItem {
   id: string;
   email: string;

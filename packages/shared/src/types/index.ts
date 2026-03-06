@@ -45,6 +45,7 @@ export type { BannerItem } from './banner';
 export type {
   AdminProfile,
   AdminLoginResult,
+  StaffListItem,
   AdminUserListItem,
   AdminUserAddress,
   AdminUserOrderStats,

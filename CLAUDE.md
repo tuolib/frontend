@@ -198,3 +198,8 @@ bun run format:check  # oxfmt 格式检查
 - 不要直接操作 `localStorage`（使用 `@fe/shared` 的 storage 工具）
 - 不要在组件中直接调用 `ky`（使用 `@fe/api-client` 的 domain modules）
 - 不要信任 URL 参数作为金额或数量（服务端会重新校验，但前端也要做基本校验）
+
+## Admin 开发注意事项
+
+- Admin 后台 API 以 `docs/api-admin.md` 为准（独立认证体系，username 登录，无 refresh token）
+- Admin 登录页密码字段**不做位数限制**，仅做非空校验（后端处理验证）

@@ -18,6 +18,7 @@ const OrderDetail = lazy(() => import('./pages/order/detail'));
 const StockAdjust = lazy(() => import('./pages/stock/adjust'));
 const UserList = lazy(() => import('./pages/user/list'));
 const UserDetail = lazy(() => import('./pages/user/detail'));
+const StaffList = lazy(() => import('./pages/staff/list'));
 const Login = lazy(() => import('./pages/auth/login'));
 
 function PageFallback() {
@@ -56,6 +57,7 @@ export const router = createBrowserRouter([
           { path: 'stock', element: <RouteErrorBoundary><StockAdjust /></RouteErrorBoundary> },
           { path: 'user', element: <RouteErrorBoundary><UserList /></RouteErrorBoundary> },
           { path: 'user/:id', element: <RouteErrorBoundary><UserDetail /></RouteErrorBoundary> },
+          { path: 'staff', element: <RouteErrorBoundary><StaffList /></RouteErrorBoundary> },
         ],
       },
     ],

@@ -12,6 +12,7 @@ import {
   OrderedListOutlined,
   DatabaseOutlined,
   TeamOutlined,
+  CrownOutlined,
   LogoutOutlined,
   UserOutlined,
 } from '@ant-design/icons';
@@ -19,7 +20,7 @@ import { useAdminAuthStore } from '@/stores/admin-auth';
 
 const { Sider, Header, Content } = Layout;
 
-const menuItems = [
+const BASE_MENU_ITEMS = [
   { key: '/', icon: <DashboardOutlined />, label: '数据概览' },
   { key: '/product', icon: <ShoppingOutlined />, label: '商品管理' },
   { key: '/category', icon: <AppstoreOutlined />, label: '分类管理' },
@@ -27,6 +28,8 @@ const menuItems = [
   { key: '/stock', icon: <DatabaseOutlined />, label: '库存管理' },
   { key: '/user', icon: <TeamOutlined />, label: '用户管理' },
 ];
+
+const STAFF_MENU_ITEM = { key: '/staff', icon: <CrownOutlined />, label: '管理员管理' };
 
 const BREADCRUMB_MAP: Record<string, string> = {
   '/': '数据概览',
@@ -36,6 +39,7 @@ const BREADCRUMB_MAP: Record<string, string> = {
   '/order': '订单管理',
   '/stock': '库存管理',
   '/user': '用户管理',
+  '/staff': '管理员管理',
 };
 
 function getSelectedKey(pathname: string): string {
@@ -44,6 +48,7 @@ function getSelectedKey(pathname: string): string {
   if (pathname.startsWith('/order')) return '/order';
   if (pathname.startsWith('/stock')) return '/stock';
   if (pathname.startsWith('/user')) return '/user';
+  if (pathname.startsWith('/staff')) return '/staff';
   return '/';
 }
 
@@ -60,6 +65,9 @@ export default function AdminLayout() {
   };
 
   const selectedKey = getSelectedKey(location.pathname);
+  const menuItems = useMemo(() => {
+    return admin?.isSuper ? [...BASE_MENU_ITEMS, STAFF_MENU_ITEM] : BASE_MENU_ITEMS;
+  }, [admin?.isSuper]);
 
   const breadcrumbItems = useMemo(() => {
     const items: { title: string }[] = [{ title: '首页' }];

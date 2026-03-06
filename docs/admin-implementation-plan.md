@@ -11,12 +11,19 @@
 - 路由配置（React Router v7，懒加载 + 路由守卫）
 - 布局组件（Sider 侧边栏 + Header 顶部导航）
 - 认证守卫（RequireAuth / GuestOnly）
-- API Client（`@fe/api-client` 的 admin domain 已有 10 个接口）
+- API Client（`@fe/api-client` 的 admin domain）
 - 共享类型、hooks、UI 组件
+
+### 已完成（业务页面）
+
+- Step 1：登录页（含首次改密流程）
+- Step 2：管理员管理（后台人员 CRUD，超管专属）— 待实施
+- Step 3：用户管理（C 端客户列表 + 详情 + 封禁/解封）
+- Step 4：分类管理（树形表格、CRUD Modal、启用/禁用/删除）
 
 ### 未完成
 
-所有 8 个页面均为占位符，零业务逻辑。
+Step 2、Step 5-11 待实施。
 
 ### 可用 Admin API 接口
 
@@ -40,57 +47,157 @@
 ## 实施顺序
 
 ```
-Step 1 (Login) -> Step 2 (Category) -> Step 3 (Product List) -> Step 4 (Product Create)
--> Step 5 (Product Edit) -> Step 6 (Order List) -> Step 7 (Order Detail)
--> Step 8 (Dashboard) -> Step 9 (Stock Adjust)
+系统管理    Step 1 (Login) -> Step 2 (Staff Mgmt) -> Step 3 (User Mgmt)
+基础数据    Step 4 (Category)
+商品管理    Step 5 (Product List) -> Step 6 (Product Create) -> Step 7 (Product Edit)
+订单管理    Step 8 (Order List) -> Step 9 (Order Detail)
+运营总览    Step 10 (Dashboard) -> Step 11 (Stock Adjust)
 ```
+
+> Step 1 / 3 / 4 已完成。Step 2 (管理员管理) 仅超级管理员可访问。
 
 ---
 
 ## Step 1: 登录页
 
 **文件：** `pages/auth/login.tsx`
-**状态：** [ ] 未开始
+**状态：** [x] 已完成
 
 ### 功能清单
 
-- [ ] Ant Design Form 登录表单（email + password）
-- [ ] 表单校验：邮箱格式、密码非空（8-100 字符）
-- [ ] 调用 `auth.login()` 接口
-- [ ] 登录成功后存储 token（通过 useAuthStore）
-- [ ] 登录后重定向至之前页面或 Dashboard
-- [ ] 错误提示：message.error 显示后端错误信息
-- [ ] Loading 状态防止重复提交
+- [x] Ant Design Form 登录表单（username + password）
+- [x] 表单校验：用户名非空、密码非空
+- [x] 调用 admin auth login 接口
+- [x] 登录成功后存储 token（通过 useAuthStore）
+- [x] 首次登录强制改密流程（mustChangePassword）
+- [x] 登录后重定向至之前页面或 Dashboard
+- [x] 错误提示：message.error 显示后端错误信息
+- [x] Loading 状态防止重复提交
 
 ### UI 设计
 
 - 居中卡片布局（AuthLayout 已提供）
 - 标题："后台管理系统"
-- 输入框带前缀图标（邮箱、锁）
+- 输入框带前缀图标（用户、锁）
 - "登录" 按钮全宽
 
 ### API
 
-- `POST /api/v1/auth/login` — { email, password } -> { user, accessToken, refreshToken }
+- `POST /api/v1/admin/auth/login` — { username, password } -> { admin, accessToken, mustChangePassword }
+- `POST /api/v1/admin/auth/change-password` — { oldPassword, newPassword }
 
 ---
 
-## Step 2: 分类管理
+## Step 2: 管理员管理（后台人员）
+
+**文件：** `pages/staff/list.tsx`
+**状态：** [ ] 未开始
+**前置依赖：** Step 1
+**权限要求：** 超级管理员（`isSuper: true`）
+
+> **设计说明：** 后台管理员与 C 端用户是完全独立的两套体系——不同数据表（`admins` vs `users`）、不同认证方式（username vs email）、不同 API 前缀（`/admin/manage/*` vs `/admin/user/*`）、不同权限要求（仅超管 vs 所有管理员）。管理员有角色体系（admin/operator/viewer），由超级管理员统一管理。非超级管理员不应看到此菜单。
+
+### 功能清单
+
+- [ ] 管理员列表：`adminManage.list()` 分页展示
+  - 列：用户名、姓名、角色、状态、手机号、邮箱、最后登录、创建时间、操作
+  - 搜索：按用户名关键词
+  - 角色标签颜色：admin=blue、operator=green、viewer=default
+  - 状态标签：active=green "正常"、disabled=red "已禁用"
+  - 超级管理员行特殊标识（如 crown 图标或"超管"标签）
+- [ ] 创建管理员：Modal 弹窗表单
+  - 用户名（必填，2-50 字符，字母/数字/下划线/短横线）
+  - 初始密码（必填，8-100 字符）
+  - 姓名（选填）、手机号（选填）、邮箱（选填）
+  - 角色（Select：admin / operator / viewer，默认 operator）
+  - 提示：新管理员首次登录需修改密码
+- [ ] 编辑管理员：Modal 弹窗表单，预填数据
+  - 可修改：姓名、手机号、邮箱、角色
+  - 不可修改：用户名（展示但禁用）
+  - 超级管理员不可编辑
+- [ ] 启用/禁用管理员：`adminManage.toggleStatus(id, status)`
+  - 超级管理员不可禁用
+  - Popconfirm 确认
+- [ ] 重置密码：`adminManage.resetPassword(id, newPassword)`
+  - Modal 输入新密码（8-100 字符）
+  - 超级管理员不可重置
+  - 成功提示：该管理员下次登录需修改密码
+- [ ] 菜单可见性：侧边栏"管理员管理"菜单项仅超级管理员可见
+
+### UI 设计
+
+- 页面顶部："管理员管理" 标题 + "新建管理员" 按钮
+- 数据表格 + 粘性底部分页器（与用户管理风格一致）
+- Modal 表单宽度 520px
+- 操作列：编辑、启用/禁用、重置密码（超级管理员行隐藏操作按钮）
+
+### API
+
+- `POST /api/v1/admin/manage/list` — 管理员列表
+- `POST /api/v1/admin/manage/create` — 创建管理员
+- `POST /api/v1/admin/manage/update` — 更新管理员
+- `POST /api/v1/admin/manage/toggle-status` — 启用/禁用
+- `POST /api/v1/admin/manage/reset-password` — 重置密码
+
+### 实现注意事项
+
+1. **API Client 新增：** `@fe/api-client` 中添加 `adminManage` domain
+2. **类型新增：** `@fe/shared` 中添加 `StaffListItem` 类型
+3. **路由新增：** `/staff` 路径，懒加载 `pages/staff/list`
+4. **侧边栏条件渲染：** 读取 `useAuthStore` 中的 `admin.isSuper`，仅超管显示菜单
+5. **前端路由守卫（可选）：** 非超管直接访问 `/staff` 时重定向到首页
+
+---
+
+## Step 3: 用户管理（C 端客户）
+
+**文件：** `pages/user/list.tsx`、`pages/user/detail.tsx`
+**状态：** [x] 已完成
+**前置依赖：** Step 1
+
+> **设计说明：** C 端用户（消费者）与后台管理员完全隔离。所有管理员均可查看和管理 C 端用户。
+
+### 功能清单
+
+- [x] 用户列表：`adminUser.list()` 分页展示
+  - 列：头像+昵称/邮箱、手机号、状态、最后登录、注册时间、操作
+  - 搜索：按邮箱/昵称关键词
+  - 筛选：状态（正常/已封禁）
+- [x] 用户详情页：`adminUser.detail(id)` 展示完整信息
+  - 基本信息：头像、昵称、邮箱、手机号、状态、注册时间、最后登录
+  - 订单统计：总订单数、已付款订单数、消费总额
+  - 收货地址列表
+- [x] 封禁/解封：`adminUser.toggleStatus(id, status)`
+
+### UI 设计
+
+- 列表页：搜索框 + 状态筛选 + 数据表格 + 粘性底部分页器
+- 详情页：返回按钮 + 用户信息卡片 + 订单统计卡片 + 收货地址表格
+
+### API
+
+- `POST /api/v1/admin/user/list` — 用户列表
+- `POST /api/v1/admin/user/detail` — 用户详情
+- `POST /api/v1/admin/user/toggle-status` — 封禁/解封
+
+---
+
+## Step 4: 分类管理
 
 **文件：** `pages/category/list.tsx`
-**状态：** [ ] 未开始
+**状态：** [x] 已完成
 **前置依赖：** Step 1
 
 ### 功能清单
 
-- [ ] 分类树展示（Ant Design Table + expandable rows 或 Tree 组件）
-- [ ] 加载数据：`category.tree()` 获取层级结构
-- [ ] 创建分类：Modal 弹窗表单
+- [x] 分类树展示（Ant Design Table + expandable rows）
+- [x] 加载数据：`adminCategory.tree()` 获取层级结构
+- [x] 创建分类：Modal 弹窗表单
   - 名称（必填）、slug（可选）、父分类（TreeSelect）、图标 URL、排序
-- [ ] 编辑分类：Modal 弹窗表单，预填数据
-- [ ] 启用/禁用切换：`adminCategory.update({ id, isActive })`
-- [ ] 排序调整：sortOrder 数值输入
-- [ ] 操作列：编辑、启用/禁用
+- [x] 编辑分类：Modal 弹窗表单，预填数据
+- [x] 启用/禁用切换：`adminCategory.update({ id, isActive })`
+- [x] 删除分类：`adminCategory.remove(id)`
+- [x] 操作列：编辑、启用/禁用、删除
 
 ### UI 设计
 
@@ -100,13 +207,14 @@ Step 1 (Login) -> Step 2 (Category) -> Step 3 (Product List) -> Step 4 (Product 
 
 ### API
 
-- `POST /api/v1/category/tree` — 获取分类树
+- `POST /api/v1/admin/category/tree` — 获取分类树
 - `POST /api/v1/admin/category/create` — 创建分类
 - `POST /api/v1/admin/category/update` — 更新分类
+- `POST /api/v1/admin/category/delete` — 删除分类
 
 ---
 
-## Step 3: 商品列表
+## Step 5: 商品列表
 
 **文件：** `pages/product/list.tsx`
 **状态：** [ ] 未开始
@@ -116,10 +224,10 @@ Step 1 (Login) -> Step 2 (Category) -> Step 3 (Product List) -> Step 4 (Product 
 
 - [ ] Ant Design Table 数据表格
   - 列：主图缩略图、标题、品牌、状态、价格区间、销量、创建时间、操作
-- [ ] 分页：`product.list()` with page/pageSize
+- [ ] 分页：`adminProduct.list()` with page/pageSize
 - [ ] 筛选：状态（draft/active/archived）、分类（TreeSelect）、品牌（输入）
 - [ ] 排序：创建时间、价格、销量
-- [ ] 搜索：关键词输入框，使用 `product.search()`
+- [ ] 搜索：关键词输入框
 - [ ] 操作列：编辑（跳转）、上架/下架（状态切换）、删除（Popconfirm）
 - [ ] "新建商品" 按钮跳转 `/product/create`
 - [ ] 状态标签：draft=灰色、active=绿色、archived=红色
@@ -132,18 +240,17 @@ Step 1 (Login) -> Step 2 (Category) -> Step 3 (Product List) -> Step 4 (Product 
 
 ### API
 
-- `POST /api/v1/product/list` — 分页列表
-- `POST /api/v1/product/search` — 关键词搜索
-- `POST /api/v1/admin/product/update` — 状态切换
+- `POST /api/v1/admin/product/list` — 分页列表（含筛选排序搜索）
+- `POST /api/v1/admin/product/toggle-status` — 状态切换
 - `POST /api/v1/admin/product/delete` — 删除商品
 
 ---
 
-## Step 4: 商品创建
+## Step 6: 商品创建
 
 **文件：** `pages/product/create.tsx`
 **状态：** [ ] 未开始
-**前置依赖：** Step 2（需要分类数据）
+**前置依赖：** Step 4（需要分类数据）
 
 ### 功能清单
 
@@ -171,21 +278,21 @@ Step 1 (Login) -> Step 2 (Category) -> Step 3 (Product List) -> Step 4 (Product 
 ### API
 
 - `POST /api/v1/admin/product/create`
-- `POST /api/v1/category/tree` — 获取分类供选择
+- `POST /api/v1/admin/category/tree` — 获取分类供选择
 
 ---
 
-## Step 5: 商品编辑
+## Step 7: 商品编辑
 
 **文件：** `pages/product/edit.tsx`
 **状态：** [ ] 未开始
-**前置依赖：** Step 4
+**前置依赖：** Step 6
 
 ### 功能清单
 
 - [ ] 路由参数获取商品 ID
-- [ ] 加载商品详情：`product.detail(id)` 填充表单
-- [ ] 商品信息编辑表单（复用 Step 4 的表单结构，可抽取公共组件）
+- [ ] 加载商品详情：`adminProduct.detail(id)` 填充表单
+- [ ] 商品信息编辑表单（复用 Step 6 的表单结构，可抽取公共组件）
 - [ ] SKU 管理区
   - [ ] 展示已有 SKU 列表（Table）
   - [ ] 创建 SKU：Modal 表单 — skuCode、price、comparePrice、costPrice、stock、lowStock、weight、attributes（key-value）、barcode
@@ -202,7 +309,7 @@ Step 1 (Login) -> Step 2 (Category) -> Step 3 (Product List) -> Step 4 (Product 
 
 ### API
 
-- `POST /api/v1/product/detail` — 加载商品（含 images、skus、categories）
+- `POST /api/v1/admin/product/detail` — 加载商品（含 images、skus、categories）
 - `POST /api/v1/admin/product/update` — 更新商品
 - `POST /api/v1/admin/product/sku/create` — 创建 SKU
 - `POST /api/v1/admin/product/sku/update` — 更新 SKU
@@ -210,7 +317,7 @@ Step 1 (Login) -> Step 2 (Category) -> Step 3 (Product List) -> Step 4 (Product 
 
 ---
 
-## Step 6: 订单列表
+## Step 8: 订单列表
 
 **文件：** `pages/order/list.tsx`
 **状态：** [ ] 未开始
@@ -241,16 +348,16 @@ Step 1 (Login) -> Step 2 (Category) -> Step 3 (Product List) -> Step 4 (Product 
 
 ---
 
-## Step 7: 订单详情
+## Step 9: 订单详情
 
 **文件：** `pages/order/detail.tsx`
 **状态：** [ ] 未开始
-**前置依赖：** Step 6
+**前置依赖：** Step 8
 
 ### 功能清单
 
 - [ ] 路由参数获取订单 ID
-- [ ] 加载订单详情：`order.detail(orderId)`
+- [ ] 加载订单详情：`adminOrder.detail(orderId)`
 - [ ] 订单状态流程：Ant Design Steps 组件
   - 创建 -> 已支付 -> 已发货 -> 已送达 -> 已完成
 - [ ] 订单信息卡片：订单号、状态、金额、备注、创建时间、过期时间
@@ -269,21 +376,23 @@ Step 1 (Login) -> Step 2 (Category) -> Step 3 (Product List) -> Step 4 (Product 
 
 ### API
 
-- `POST /api/v1/order/detail` — 订单详情（公共接口，管理员也可用）
+- `POST /api/v1/admin/order/detail` — 订单详情
 - `POST /api/v1/admin/order/ship` — 发货
+- `POST /api/v1/admin/order/cancel` — 取消订单
+- `POST /api/v1/admin/order/refund` — 退款
 
 ---
 
-## Step 8: Dashboard 仪表盘
+## Step 10: Dashboard 仪表盘
 
 **文件：** `pages/dashboard/index.tsx`
 **状态：** [ ] 未开始
-**前置依赖：** Step 3, Step 6（需要商品和订单数据）
+**前置依赖：** Step 5, Step 8（需要商品和订单数据）
 
 ### 功能清单
 
 - [ ] 统计卡片（Ant Design Statistic + Card）
-  - 商品总数（`product.list({ pageSize: 1 })` 取 pagination.total）
+  - 商品总数（`adminProduct.list({ pageSize: 1 })` 取 pagination.total）
   - 订单总数（`adminOrder.list({ pageSize: 1 })` 取 pagination.total）
   - 待处理订单数（status=pending）
   - 待发货订单数（status=paid）
@@ -299,16 +408,16 @@ Step 1 (Login) -> Step 2 (Category) -> Step 3 (Product List) -> Step 4 (Product 
 
 ### API
 
-- `POST /api/v1/product/list` — { pageSize: 1 } 取商品总数
+- `POST /api/v1/admin/product/list` — { pageSize: 1 } 取商品总数
 - `POST /api/v1/admin/order/list` — 取订单统计 + 近期订单
 
 ---
 
-## Step 9: 库存调整
+## Step 11: 库存调整
 
 **文件：** `pages/stock/adjust.tsx`
 **状态：** [ ] 未开始
-**前置依赖：** Step 5（需要 SKU 数据）
+**前置依赖：** Step 7（需要 SKU 数据）
 
 ### 功能清单
 
@@ -342,10 +451,10 @@ Step 1 (Login) -> Step 2 (Category) -> Step 3 (Product List) -> Step 4 (Product 
 
 | 组件 | 说明 | 时机 |
 |------|------|------|
-| ProductForm | 商品表单（Create/Edit 复用） | Step 5 实施时抽取 |
-| OrderStatusTag | 订单状态彩色标签 | Step 6 实施时创建 |
-| SkuFormModal | SKU 创建/编辑弹窗 | Step 5 实施时创建 |
-| CategoryTreeSelect | 分类树选择器 | Step 4 实施时创建（如 Step 2 和 Step 4 都需要） |
+| ProductForm | 商品表单（Create/Edit 复用） | Step 7 实施时抽取 |
+| OrderStatusTag | 订单状态彩色标签 | Step 8 实施时创建 |
+| SkuFormModal | SKU 创建/编辑弹窗 | Step 7 实施时创建 |
+| CategoryTreeSelect | 分类树选择器 | Step 6 实施时创建（如 Step 4 和 Step 6 都需要） |
 
 ---
 
