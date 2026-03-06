@@ -6,7 +6,7 @@
 import { useState, useRef, useMemo, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { useRequest, useAuthStore } from '@fe/hooks';
-import { product, cart } from '@fe/api-client';
+import { product, cart, ApiError } from '@fe/api-client';
 import { useToast, Skeleton } from '@fe/ui';
 import type { SkuDTO } from '@fe/shared';
 import { PageHeader } from '@/components/page-header';
@@ -277,8 +277,8 @@ function BottomSection({
     try {
       await cart.add(matchedSku.id, 1);
       toast('Added to cart', 'success');
-    } catch {
-      toast('Failed to add to cart', 'error');
+    } catch (err) {
+      toast(err instanceof ApiError ? err.message : 'Failed to add to cart', 'error');
     } finally {
       setAdding(false);
     }
@@ -295,8 +295,8 @@ function BottomSection({
     try {
       await cart.add(matchedSku.id, 1);
       navigate('/cart');
-    } catch {
-      toast('Failed to add to cart', 'error');
+    } catch (err) {
+      toast(err instanceof ApiError ? err.message : 'Failed to add to cart', 'error');
     } finally {
       setAdding(false);
     }

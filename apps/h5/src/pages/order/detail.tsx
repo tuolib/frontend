@@ -6,7 +6,7 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { useRequest } from '@fe/hooks';
-import { order } from '@fe/api-client';
+import { order, ApiError } from '@fe/api-client';
 import { useToast, Skeleton } from '@fe/ui';
 import {
   ORDER_STATUS,
@@ -55,8 +55,8 @@ export default function OrderDetail() {
       await order.cancel(id);
       toast('Order cancelled', 'success');
       reload();
-    } catch {
-      toast('Failed to cancel order', 'error');
+    } catch (err) {
+      toast(err instanceof ApiError ? err.message : 'Failed to cancel order', 'error');
     } finally {
       setCancelling(false);
     }

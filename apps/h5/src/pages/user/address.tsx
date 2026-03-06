@@ -5,7 +5,7 @@
 
 import { useState, type FormEvent } from 'react';
 import { useRequest } from '@fe/hooks';
-import { address } from '@fe/api-client';
+import { address, ApiError } from '@fe/api-client';
 import { useToast, Skeleton } from '@fe/ui';
 import type { UserAddress } from '@fe/shared';
 import { PageHeader } from '@/components/page-header';
@@ -102,8 +102,8 @@ export default function Address() {
       }
       setFormOpen(false);
       reload();
-    } catch {
-      toast('Failed to save address', 'error');
+    } catch (err) {
+      toast(err instanceof ApiError ? err.message : 'Failed to save address', 'error');
     } finally {
       setSubmitting(false);
     }
@@ -114,8 +114,8 @@ export default function Address() {
       await address.remove(id);
       toast('Address deleted', 'success');
       reload();
-    } catch {
-      toast('Failed to delete address', 'error');
+    } catch (err) {
+      toast(err instanceof ApiError ? err.message : 'Failed to delete address', 'error');
     }
   }
 
@@ -124,8 +124,8 @@ export default function Address() {
       await address.update({ id, isDefault: true });
       toast('Default address updated', 'success');
       reload();
-    } catch {
-      toast('Failed to update', 'error');
+    } catch (err) {
+      toast(err instanceof ApiError ? err.message : 'Failed to update', 'error');
     }
   }
 

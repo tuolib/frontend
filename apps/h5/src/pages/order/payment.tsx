@@ -6,7 +6,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { useRequest } from '@fe/hooks';
-import { order, payment } from '@fe/api-client';
+import { order, payment, ApiError } from '@fe/api-client';
 import { useToast, Skeleton } from '@fe/ui';
 import { formatPrice } from '@fe/shared';
 import { PageHeader } from '@/components/page-header';
@@ -88,8 +88,8 @@ export default function OrderPayment() {
       }
 
       setPaySuccess(true);
-    } catch {
-      toast('Payment failed, please try again', 'error');
+    } catch (err) {
+      toast(err instanceof ApiError ? err.message : 'Payment failed, please try again', 'error');
     } finally {
       setSubmitting(false);
     }

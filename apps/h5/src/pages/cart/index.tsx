@@ -6,7 +6,7 @@
 import { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import { useRequest } from '@fe/hooks';
-import { cart } from '@fe/api-client';
+import { cart, ApiError } from '@fe/api-client';
 import { useToast, Skeleton } from '@fe/ui';
 import type { CartListItem } from '@fe/shared';
 import { productPlaceholder } from '@/pages/home/placeholder';
@@ -68,8 +68,8 @@ function CartContent({
     mutate((prev) => prev?.map((i) => (i.skuId === skuId ? { ...i, selected } : i)));
     try {
       await cart.select([skuId], selected);
-    } catch {
-      toast('Failed to update selection', 'error');
+    } catch (err) {
+      toast(err instanceof ApiError ? err.message : 'Failed to update selection', 'error');
       reload();
     }
   };
@@ -80,8 +80,8 @@ function CartContent({
     mutate((prev) => prev?.map((i) => (i.unavailable ? i : { ...i, selected })));
     try {
       await cart.select(availableIds, selected);
-    } catch {
-      toast('Failed to update selection', 'error');
+    } catch (err) {
+      toast(err instanceof ApiError ? err.message : 'Failed to update selection', 'error');
       reload();
     }
   };
@@ -107,8 +107,8 @@ function CartContent({
         debounceTimers.current.delete(skuId);
         try {
           await cart.update(skuId, newQty);
-        } catch {
-          toast('Failed to update quantity', 'error');
+        } catch (err) {
+          toast(err instanceof ApiError ? err.message : 'Failed to update quantity', 'error');
           reload();
         }
       }, 300),
@@ -120,8 +120,8 @@ function CartContent({
     mutate((prev) => prev?.filter((i) => i.skuId !== skuId));
     try {
       await cart.remove([skuId]);
-    } catch {
-      toast('Failed to remove item', 'error');
+    } catch (err) {
+      toast(err instanceof ApiError ? err.message : 'Failed to remove item', 'error');
       reload();
     }
   };

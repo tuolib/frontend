@@ -6,7 +6,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { useRequest } from '@fe/hooks';
-import { cart, address, order } from '@fe/api-client';
+import { cart, address, order, ApiError } from '@fe/api-client';
 import { useToast, Skeleton } from '@fe/ui';
 import { formatPrice } from '@fe/shared';
 import type { UserAddress } from '@fe/shared';
@@ -57,8 +57,8 @@ export default function OrderCreate() {
       });
       toast('Order placed successfully', 'success');
       navigate(`/order/${result.orderId}/pay`, { replace: true });
-    } catch {
-      toast('Failed to place order', 'error');
+    } catch (err) {
+      toast(err instanceof ApiError ? err.message : 'Failed to place order', 'error');
     } finally {
       setSubmitting(false);
     }

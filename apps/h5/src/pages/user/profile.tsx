@@ -6,7 +6,7 @@
 import { Link, useNavigate } from 'react-router';
 import { useToast, Skeleton } from '@fe/ui';
 import { useAuthStore, useRequest } from '@fe/hooks';
-import { order } from '@fe/api-client';
+import { order, ApiError } from '@fe/api-client';
 import {
   ROUTES,
   ORDER_STATUS_LABEL,
@@ -41,8 +41,8 @@ export default function Profile() {
       await logout();
       toast('Signed out successfully', 'success');
       navigate(ROUTES.HOME, { replace: true });
-    } catch {
-      toast('Sign out failed, please try again', 'error');
+    } catch (err) {
+      toast(err instanceof ApiError ? err.message : 'Sign out failed, please try again', 'error');
     }
   }
 
