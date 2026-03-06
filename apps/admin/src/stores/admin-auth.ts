@@ -51,6 +51,14 @@ export const useAdminAuthStore = create<AdminAuthState>((set) => ({
     const token = getStorageItem<string>(ACCESS_TOKEN_KEY);
     if (token) {
       set({ isAuthenticated: true, isLoading: false });
+      // Fetch admin profile to restore admin info (role, isSuper, etc.)
+      adminAuth.profile().then((admin) => {
+        set({ admin });
+      }).catch(() => {
+        // Token expired or invalid
+        removeStorageItem(ACCESS_TOKEN_KEY);
+        set({ admin: null, isAuthenticated: false });
+      });
     } else {
       set({ isAuthenticated: false, isLoading: false });
     }
