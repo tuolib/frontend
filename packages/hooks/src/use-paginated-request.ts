@@ -46,10 +46,6 @@ export function usePaginatedRequest<T>(
 
   const fetchPage = useCallback(
     async (page: number, append: boolean) => {
-      abortRef.current?.abort();
-      const controller = new AbortController();
-      abortRef.current = controller;
-
       if (append) {
         setLoadingMore(true);
       } else {
@@ -58,8 +54,7 @@ export function usePaginatedRequest<T>(
       setError(null);
 
       try {
-        const result = await fetcher(page, pageSize, controller.signal);
-        if (controller.signal.aborted) return;
+        const result = await fetcher(page, pageSize, undefined as unknown as AbortSignal);
 
         if (append) {
           setItems((prev) => [...prev, ...result.items]);
@@ -69,14 +64,10 @@ export function usePaginatedRequest<T>(
         setPagination(result.pagination);
         pageRef.current = page;
       } catch (err) {
-        if (!controller.signal.aborted) {
-          setError(err instanceof Error ? err : new Error(String(err)));
-        }
+        setError(err instanceof Error ? err : new Error(String(err)));
       } finally {
-        if (!controller.signal.aborted) {
-          setLoading(false);
-          setLoadingMore(false);
-        }
+        setLoading(false);
+        setLoadingMore(false);
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -88,9 +79,6 @@ export function usePaginatedRequest<T>(
       pageRef.current = 1;
       fetchPage(1, false);
     }
-    return () => {
-      abortRef.current?.abort();
-    };
   }, [fetchPage, immediate]);
 
   const loadMore = useCallback(async () => {

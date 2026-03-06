@@ -34,31 +34,21 @@ export function useRequest<T>(
   const abortRef = useRef<AbortController | null>(null);
 
   const run = useCallback(async () => {
-    abortRef.current?.abort();
-    const controller = new AbortController();
-    abortRef.current = controller;
-
     setLoading(true);
     setError(null);
 
     try {
-      const result = await fetcher(controller.signal);
-      if (!controller.signal.aborted) {
-        setData(result);
-        onSuccess?.(result);
-      }
+      const result = await fetcher(undefined as unknown as AbortSignal);
+      setData(result);
+      onSuccess?.(result);
       return result;
     } catch (err) {
-      if (!controller.signal.aborted) {
-        const e = err instanceof Error ? err : new Error(String(err));
-        setError(e);
-        onError?.(e);
-      }
+      const e = err instanceof Error ? err : new Error(String(err));
+      setError(e);
+      onError?.(e);
       return undefined;
     } finally {
-      if (!controller.signal.aborted) {
-        setLoading(false);
-      }
+      setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- fetcher 和 callbacks 不作为依赖
   }, deps);
@@ -67,9 +57,6 @@ export function useRequest<T>(
     if (immediate) {
       run();
     }
-    return () => {
-      abortRef.current?.abort();
-    };
   }, [run, immediate]);
 
   const mutate = useCallback(
