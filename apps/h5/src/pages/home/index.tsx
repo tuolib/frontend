@@ -4,6 +4,7 @@ import { useRequest, usePaginatedRequest } from '@fe/hooks';
 import { product, category, banner as bannerApi } from '@fe/api-client';
 import { Skeleton } from '@fe/ui';
 import type { ProductListItem, BannerItem, CategoryNode } from '@fe/shared';
+import { getCategoryEmoji } from '@/constants/category-emoji';
 import { ProductGrid } from '@/components/product-grid';
 import {
   bannerPlaceholder,
@@ -71,14 +72,15 @@ function CategoryPills({ categories }: { categories: CategoryNode[] }) {
   return (
     <div className="amz-pills">
       <div className="pills-scroll">
-        {categories.map((cat) => (
-          <Link key={cat.id} to={`/product?categoryId=${cat.id}`} className="pill">
-            {cat.iconUrl && (
-              <span className={`i-lucide-${cat.iconUrl} pill-icon`} />
-            )}
-            <span>{cat.name}</span>
-          </Link>
-        ))}
+        {categories.map((cat) => {
+          const emoji = getCategoryEmoji(cat.slug, cat.iconUrl);
+          return (
+            <Link key={cat.id} to={`/product?categoryId=${cat.id}`} className="pill">
+              {emoji && <span className="pill-emoji">{emoji}</span>}
+              <span>{cat.name}</span>
+            </Link>
+          );
+        })}
       </div>
     </div>
   );

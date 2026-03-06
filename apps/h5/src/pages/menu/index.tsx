@@ -8,6 +8,7 @@ import { useRequest } from '@fe/hooks';
 import { category, product } from '@fe/api-client';
 import { Skeleton } from '@fe/ui';
 import type { CategoryNode, ProductListItem } from '@fe/shared';
+import { getCategoryEmoji } from '@/constants/category-emoji';
 import { productPlaceholder } from '@/pages/home/placeholder';
 import './menu.scss';
 
@@ -108,11 +109,12 @@ function SubcategoryGrid({ items, parentId }: { items: CategoryNode[]; parentId:
             className="subcategory-item"
           >
             <div className="subcategory-icon">
-              {sub.iconUrl ? (
-                <span className={`i-lucide-${sub.iconUrl} subcategory-lucide`} />
-              ) : (
-                <span className="subcategory-fallback">{sub.name.charAt(0)}</span>
-              )}
+              {(() => {
+                const emoji = getCategoryEmoji(sub.slug, sub.iconUrl);
+                return emoji
+                  ? <span className="subcategory-emoji">{emoji}</span>
+                  : <span className="subcategory-fallback">{sub.name.charAt(0)}</span>;
+              })()}
             </div>
             <span className="subcategory-name">{sub.name}</span>
           </Link>
@@ -172,9 +174,10 @@ export default function Menu() {
               className={`menu-left-item ${index === activeIndex ? 'active' : ''}`}
               onClick={() => setActiveIndex(index)}
             >
-              {cat.iconUrl && (
-                <span className={`i-lucide-${cat.iconUrl} menu-left-icon`} />
-              )}
+              {(() => {
+                const emoji = getCategoryEmoji(cat.slug, cat.iconUrl);
+                return emoji && <span className="menu-left-emoji">{emoji}</span>;
+              })()}
               <span>{cat.name}</span>
             </button>
           ))}

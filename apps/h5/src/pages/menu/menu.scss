@@ -109,6 +109,11 @@
   }
 }
 
+.menu-left-emoji {
+  font-size: 0.22rem;
+  line-height: 1;
+}
+
 .menu-left-icon {
   width: 0.22rem;
   height: 0.22rem;
@@ -128,6 +133,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.subcategory-emoji {
+  font-size: 0.28rem;
+  line-height: 1;
 }
 
 .subcategory-lucide {
