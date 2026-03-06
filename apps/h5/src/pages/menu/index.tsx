@@ -8,7 +8,7 @@ import { useRequest } from '@fe/hooks';
 import { category, product } from '@fe/api-client';
 import { Skeleton } from '@fe/ui';
 import type { CategoryNode, ProductListItem } from '@fe/shared';
-import { categoryPlaceholder, productPlaceholder } from '@/pages/home/placeholder';
+import { productPlaceholder } from '@/pages/home/placeholder';
 import './menu.scss';
 
 function MenuSkeleton() {
@@ -108,10 +108,11 @@ function SubcategoryGrid({ items, parentId }: { items: CategoryNode[]; parentId:
             className="subcategory-item"
           >
             <div className="subcategory-icon">
-              <img
-                src={sub.iconUrl || categoryPlaceholder(sub.name)}
-                alt={sub.name}
-              />
+              {sub.iconUrl ? (
+                <span className={`i-lucide-${sub.iconUrl} subcategory-lucide`} />
+              ) : (
+                <span className="subcategory-fallback">{sub.name.charAt(0)}</span>
+              )}
             </div>
             <span className="subcategory-name">{sub.name}</span>
           </Link>

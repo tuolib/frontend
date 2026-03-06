@@ -110,13 +110,22 @@
   height: 0.56rem;
   border-radius: 50%;
   overflow: hidden;
-  background: #f5f5f5;
+  background: #f0f6f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
+.subcategory-lucide {
+  width: 0.28rem;
+  height: 0.28rem;
+  color: #007185;
+}
+
+.subcategory-fallback {
+  font-size: 0.22rem;
+  font-weight: 600;
+  color: #007185;
 }
 
 .subcategory-name {

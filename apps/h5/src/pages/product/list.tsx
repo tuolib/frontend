@@ -88,6 +88,7 @@ export default function ProductList() {
       <SortBar options={SORT_OPTIONS} value={sort} onChange={setSort} />
 
       <ProductGrid
+        key={`${categoryId}-${sort}`}
         items={items}
         loading={loading}
         loadingMore={loadingMore}

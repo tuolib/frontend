@@ -39,7 +39,16 @@ export default defineConfig({
       },
     },
   },
-  safelist: [],
+  safelist: [
+    // 分类图标 — iconUrl 存的是 Lucide 图标名，动态渲染需加入 safelist
+    ...[
+      'smartphone', 'laptop', 'refrigerator', 'shirt', 'apple', 'sparkles',
+      'book-open', 'dumbbell', 'sofa', 'baby', 'headphones', 'watch',
+      'tablet', 'keyboard', 'fan', 'cooking-pot', 'footprints', 'candy',
+      'cup-soda', 'salad', 'droplets', 'palette', 'bath', 'graduation-cap',
+      'image', 'tent', 'bed', 'archive', 'milk', 'blocks',
+    ].map(name => `i-lucide-${name}`),
+  ],
   postprocess: [
     util => {
       // UnoCSS 默认 1rem = 0.25rem * n（preset-wind），但 H5 设计稿约定
