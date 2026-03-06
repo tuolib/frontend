@@ -1,7 +1,7 @@
 import { useEffect, Suspense } from 'react';
 import { RouterProvider } from 'react-router';
 import { ToastProvider, ErrorBoundary, Spinner } from '@fe/ui';
-import { useAuthStore } from '@fe/hooks';
+import { useAuthStore, useVersionCheck } from '@fe/hooks';
 import { router } from './router';
 
 function LoadingFallback() {
@@ -14,6 +14,8 @@ function LoadingFallback() {
 
 export function App() {
   const initialize = useAuthStore((s) => s.initialize);
+
+  useVersionCheck();
 
   useEffect(() => {
     initialize();

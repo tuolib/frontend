@@ -10,6 +10,8 @@ interface State {
   error: Error | null;
 }
 
+const CHUNK_RELOAD_KEY = '__chunk_reload__';
+
 function isChunkLoadError(error: Error): boolean {
   const msg = error.message;
   return (
@@ -29,6 +31,12 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     this.props.onError?.(error, errorInfo);
+
+    // Chunk 加载失败时自动刷新一次，防止无限循环
+    if (isChunkLoadError(error) && !sessionStorage.getItem(CHUNK_RELOAD_KEY)) {
+      sessionStorage.setItem(CHUNK_RELOAD_KEY, '1');
+      window.location.reload();
+    }
   }
 
   reset = () => {

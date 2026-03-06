@@ -3,6 +3,7 @@ import { RouterProvider } from 'react-router';
 import { ConfigProvider, App as AntdApp, Spin } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 import { ToastProvider, ErrorBoundary } from '@fe/ui';
+import { useVersionCheck } from '@fe/hooks';
 import { router } from './router';
 import { useAdminAuthStore } from './stores/admin-auth';
 
@@ -23,6 +24,8 @@ function LoadingFallback() {
 
 export function App() {
   const initialize = useAdminAuthStore((s) => s.initialize);
+
+  useVersionCheck();
 
   useEffect(() => {
     initialize();

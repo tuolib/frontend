@@ -1,4 +1,5 @@
 import path from 'node:path';
+import crypto from 'node:crypto';
 import { loadEnv } from 'vite';
 import type { Plugin, PluginOption, UserConfig } from 'vite';
 
@@ -31,12 +32,33 @@ function buildTimePlugin(): Plugin {
   };
 }
 
+function versionPlugin(): Plugin {
+  const version = crypto.randomUUID();
+  return {
+    name: 'app-version',
+    config() {
+      return {
+        define: {
+          __APP_VERSION__: JSON.stringify(version),
+        },
+      };
+    },
+    generateBundle() {
+      this.emitFile({
+        type: 'asset',
+        fileName: 'version.json',
+        source: JSON.stringify({ version }),
+      });
+    },
+  };
+}
+
 export function createAppConfig({ port, root, plugins, manualChunks }: AppConfigOptions): UserConfig {
   const env = loadEnv('development', path.resolve(root, '../..'), 'VITE_');
   const apiTarget = env.VITE_API_PROXY_TARGET || 'http://localhost:3000';
 
   return {
-    plugins: [...plugins, buildTimePlugin()],
+    plugins: [...plugins, buildTimePlugin(), versionPlugin()],
     envDir: path.resolve(root, '../..'),
     server: {
       port,
