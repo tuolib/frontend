@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router';
 import { useRequest, usePaginatedRequest } from '@fe/hooks';
 import { product, category, banner as bannerApi } from '@fe/api-client';
 import { Skeleton } from '@fe/ui';
-import type { ProductListItem, BannerItem } from '@fe/shared';
+import type { ProductListItem, BannerItem, CategoryNode } from '@fe/shared';
 import { ProductGrid } from '@/components/product-grid';
 import {
   bannerPlaceholder,
@@ -67,13 +67,16 @@ function BannerCarousel({ banners }: { banners: Array<Pick<BannerItem, 'id' | 'i
 
 // ── 分类胶囊横滑 ──
 
-function CategoryPills({ categories }: { categories: { id: string; name: string }[] }) {
+function CategoryPills({ categories }: { categories: CategoryNode[] }) {
   return (
     <div className="amz-pills">
       <div className="pills-scroll">
         {categories.map((cat) => (
           <Link key={cat.id} to={`/product?categoryId=${cat.id}`} className="pill">
-            {cat.name}
+            {cat.iconUrl && (
+              <span className={`i-lucide-${cat.iconUrl} pill-icon`} />
+            )}
+            <span>{cat.name}</span>
           </Link>
         ))}
       </div>

@@ -172,7 +172,10 @@ export default function Menu() {
               className={`menu-left-item ${index === activeIndex ? 'active' : ''}`}
               onClick={() => setActiveIndex(index)}
             >
-              {cat.name}
+              {cat.iconUrl && (
+                <span className={`i-lucide-${cat.iconUrl} menu-left-icon`} />
+              )}
+              <span>{cat.name}</span>
             </button>
           ))}
         </div>

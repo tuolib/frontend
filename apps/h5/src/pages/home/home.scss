@@ -32,6 +32,7 @@
     color: #0f1111;
     display: flex;
     align-items: center;
+    gap: 0.04rem;
     white-space: nowrap;
     text-decoration: none;
     transition: background 0.2s;
@@ -39,6 +40,12 @@
     &:active {
       background: #f0f0f0;
     }
+  }
+
+  .pill-icon {
+    width: 0.16rem;
+    height: 0.16rem;
+    color: #007185;
   }
 }
 
