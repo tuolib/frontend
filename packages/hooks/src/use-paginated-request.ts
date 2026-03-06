@@ -42,10 +42,13 @@ export function usePaginatedRequest<T>(
   const [error, setError] = useState<Error | null>(null);
   const [pagination, setPagination] = useState<PaginationMeta | null>(null);
   const pageRef = useRef(1);
-  const abortRef = useRef<AbortController | null>(null);
+  const fetchingRef = useRef(false);
 
   const fetchPage = useCallback(
     async (page: number, append: boolean) => {
+      if (fetchingRef.current) return;
+      fetchingRef.current = true;
+
       if (append) {
         setLoadingMore(true);
       } else {
@@ -66,6 +69,7 @@ export function usePaginatedRequest<T>(
       } catch (err) {
         setError(err instanceof Error ? err : new Error(String(err)));
       } finally {
+        fetchingRef.current = false;
         setLoading(false);
         setLoadingMore(false);
       }
@@ -77,6 +81,7 @@ export function usePaginatedRequest<T>(
   useEffect(() => {
     if (immediate) {
       pageRef.current = 1;
+      fetchingRef.current = false;
       fetchPage(1, false);
     }
   }, [fetchPage, immediate]);
