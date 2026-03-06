@@ -1,6 +1,7 @@
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { loadEnv } from 'vite';
+import legacy from '@vitejs/plugin-legacy';
 import type { Plugin, PluginOption, UserConfig } from 'vite';
 
 interface AppConfigOptions {
@@ -8,6 +9,8 @@ interface AppConfigOptions {
   root: string;
   plugins: PluginOption[];
   manualChunks?: (id: string) => string | undefined;
+  /** 传入 browserslist targets 启用 legacy 插件，false 则禁用 */
+  legacyTargets?: string[] | false;
 }
 
 function defaultManualChunks(id: string): string | undefined {
@@ -53,12 +56,25 @@ function versionPlugin(): Plugin {
   };
 }
 
-export function createAppConfig({ port, root, plugins, manualChunks }: AppConfigOptions): UserConfig {
+export function createAppConfig({ port, root, plugins, manualChunks, legacyTargets }: AppConfigOptions): UserConfig {
   const env = loadEnv('development', path.resolve(root, '../..'), 'VITE_');
   const apiTarget = env.VITE_API_PROXY_TARGET || 'http://localhost:3000';
 
+  const defaultTargets = ['chrome >= 63', 'safari >= 11', 'firefox >= 67', 'edge >= 79', 'ios >= 11'];
+  const targets = legacyTargets === false ? undefined : (legacyTargets ?? defaultTargets);
+
+  const allPlugins: PluginOption[] = [
+    ...plugins,
+    buildTimePlugin(),
+    versionPlugin(),
+  ];
+
+  if (targets) {
+    allPlugins.push(legacy({ targets }));
+  }
+
   return {
-    plugins: [...plugins, buildTimePlugin(), versionPlugin()],
+    plugins: allPlugins,
     envDir: path.resolve(root, '../..'),
     server: {
       port,
@@ -70,6 +86,7 @@ export function createAppConfig({ port, root, plugins, manualChunks }: AppConfig
       },
     },
     build: {
+      target: targets ? ['es2015', ...targets] : undefined,
       outDir: 'dist',
       sourcemap: true,
       rollupOptions: {
