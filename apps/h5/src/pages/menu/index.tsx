@@ -9,7 +9,7 @@ import { Skeleton } from '@fe/ui';
 import type { CategoryNode, ProductListItem } from '@fe/shared';
 import { getCategoryEmoji } from '@/constants/category-emoji';
 import { productPlaceholder } from '@/pages/home/placeholder';
-import { useHomeStore } from '@/stores/home';
+import { useCategoryStore } from '@/stores/category';
 import './menu.scss';
 
 function MenuSkeleton() {
@@ -138,13 +138,13 @@ function SubcategoryGrid({ items, parentId }: { items: CategoryNode[]; parentId:
 }
 
 export default function Menu() {
-  const { categories, loading: homeLoading, loaded, fetch: fetchHome } = useHomeStore();
+  const { categories, loading: catLoading, loaded: catLoaded, fetch: fetchCategories } = useCategoryStore();
 
   useEffect(() => {
-    fetchHome();
-  }, [fetchHome]);
+    fetchCategories();
+  }, [fetchCategories]);
 
-  const loading = homeLoading && !loaded;
+  const loading = catLoading && !catLoaded;
 
   const [activeIndex, setActiveIndex] = useState(0);
 

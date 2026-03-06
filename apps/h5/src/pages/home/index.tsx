@@ -7,6 +7,7 @@ import type { ProductListItem, BannerItem, CategoryNode } from '@fe/shared';
 import { getCategoryEmoji } from '@/constants/category-emoji';
 import { ProductGrid } from '@/components/product-grid';
 import { useHomeStore } from '@/stores/home';
+import { useCategoryStore } from '@/stores/category';
 import {
   bannerPlaceholder,
   productPlaceholder,
@@ -394,14 +395,16 @@ function TopRated({ items }: { items: ProductListItem[] }) {
 // ── 首页主体 ──
 
 export default function Home() {
-  const { categories, banners: bannerData, dealItems, newArrivalItems, loading: homeLoading, loaded, fetch: fetchHome } = useHomeStore();
+  const { categories, loading: catStoreLoading, loaded: catLoaded, fetch: fetchCategories } = useCategoryStore();
+  const { banners: bannerData, dealItems, newArrivalItems, loading: homeLoading, loaded: homeLoaded, fetch: fetchHome } = useHomeStore();
 
   useEffect(() => {
+    fetchCategories();
     fetchHome();
-  }, [fetchHome]);
+  }, [fetchCategories, fetchHome]);
 
-  const catLoading = homeLoading && !loaded;
-  const bannerLoading = homeLoading && !loaded;
+  const catLoading = catStoreLoading && !catLoaded;
+  const bannerLoading = homeLoading && !homeLoaded;
 
   const {
     items: products,

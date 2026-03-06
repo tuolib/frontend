@@ -1,9 +1,8 @@
 import { create } from 'zustand';
-import { product, category, banner as bannerApi } from '@fe/api-client';
-import type { ProductListItem, BannerItem, CategoryNode } from '@fe/shared';
+import { product, banner as bannerApi } from '@fe/api-client';
+import type { ProductListItem, BannerItem } from '@fe/shared';
 
 interface HomeState {
-  categories: CategoryNode[];
   banners: BannerItem[];
   dealItems: ProductListItem[];
   newArrivalItems: ProductListItem[];
@@ -13,7 +12,6 @@ interface HomeState {
 }
 
 export const useHomeStore = create<HomeState>((set, get) => ({
-  categories: [],
   banners: [],
   dealItems: [],
   newArrivalItems: [],
@@ -25,15 +23,13 @@ export const useHomeStore = create<HomeState>((set, get) => ({
     set({ loading: true });
 
     try {
-      const [cats, bannerList, deals, newArrivals] = await Promise.all([
-        category.tree(),
+      const [bannerList, deals, newArrivals] = await Promise.all([
         bannerApi.list(),
         product.list({ page: 1, pageSize: 10, sort: 'sales', order: 'desc' }),
         product.list({ page: 1, pageSize: 8, sort: 'createdAt', order: 'desc' }),
       ]);
 
       set({
-        categories: cats,
         banners: bannerList,
         dealItems: deals.items,
         newArrivalItems: newArrivals.items,
