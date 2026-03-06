@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useRequest, usePaginatedRequest } from '@fe/hooks';
 import { product, category, banner as bannerApi } from '@fe/api-client';
@@ -22,20 +22,56 @@ const FALLBACK_BANNERS = [
   { id: 'fb3', title: 'Top Sellers', subtitle: 'Most popular items', imageUrl: bannerPlaceholder('Top Sellers', 'Most popular items', '#131921', '#232f3e'), linkType: 'category', linkValue: null },
 ];
 
-// ── Banner 轮播 ──
+// ── Banner 轮播（支持手势滑动） ──
 
 function BannerCarousel({ banners }: { banners: Array<Pick<BannerItem, 'id' | 'imageUrl' | 'title' | 'linkType' | 'linkValue'>> }) {
   const [current, setCurrent] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval>>(null);
+  const touchRef = useRef({ startX: 0, startY: 0, moving: false });
+  const trackRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
+  const startAutoPlay = useCallback(() => {
     if (banners.length <= 1) return;
     timerRef.current = setInterval(() => {
       setCurrent((c) => (c + 1) % banners.length);
     }, 3000);
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
   }, [banners.length]);
+
+  const stopAutoPlay = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => {
+    startAutoPlay();
+    return stopAutoPlay;
+  }, [startAutoPlay, stopAutoPlay]);
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    stopAutoPlay();
+    const touch = e.touches[0];
+    touchRef.current = { startX: touch.clientX, startY: touch.clientY, moving: true };
+  };
+
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (!touchRef.current.moving) return;
+    const dx = e.changedTouches[0].clientX - touchRef.current.startX;
+    const dy = e.changedTouches[0].clientY - touchRef.current.startY;
+    touchRef.current.moving = false;
+
+    // 水平滑动幅度大于垂直才切换
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+      if (dx < 0) {
+        setCurrent((c) => Math.min(c + 1, banners.length - 1));
+      } else {
+        setCurrent((c) => Math.max(c - 1, 0));
+      }
+    }
+    startAutoPlay();
+  };
 
   const handleClick = (b: Pick<BannerItem, 'linkType' | 'linkValue'>) => {
     if (!b.linkValue) return;
@@ -47,8 +83,16 @@ function BannerCarousel({ banners }: { banners: Array<Pick<BannerItem, 'id' | 'i
   };
 
   return (
-    <div className="amz-banner">
-      <div className="banner-track" style={{ transform: `translateX(-${current * 100}%)` }}>
+    <div
+      className="amz-banner"
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
+    >
+      <div
+        ref={trackRef}
+        className="banner-track"
+        style={{ transform: `translateX(-${current * 100}%)` }}
+      >
         {banners.map((b) => (
           <div key={b.id} className="banner-slide" onClick={() => handleClick(b)}>
             <img src={b.imageUrl} alt={b.title} className="w-full h-full object-cover" />
@@ -66,18 +110,20 @@ function BannerCarousel({ banners }: { banners: Array<Pick<BannerItem, 'id' | 'i
   );
 }
 
-// ── 分类胶囊横滑 ──
+// ── 分类金刚区（2行5列圆形图标网格） ──
 
-function CategoryPills({ categories }: { categories: CategoryNode[] }) {
+function CategoryGrid({ categories }: { categories: CategoryNode[] }) {
   return (
-    <div className="amz-pills">
-      <div className="pills-scroll">
+    <div className="amz-category-grid">
+      <div className="category-grid-scroll">
         {categories.map((cat) => {
           const emoji = getCategoryEmoji(cat.slug, cat.iconUrl);
           return (
-            <Link key={cat.id} to={`/product?categoryId=${cat.id}`} className="pill">
-              {emoji && <span className="pill-emoji">{emoji}</span>}
-              <span>{cat.name}</span>
+            <Link key={cat.id} to={`/product?categoryId=${cat.id}`} className="category-grid-item">
+              <div className="category-grid-icon">
+                {emoji || cat.name.charAt(0)}
+              </div>
+              <span className="category-grid-name">{cat.name}</span>
             </Link>
           );
         })}
@@ -86,27 +132,63 @@ function CategoryPills({ categories }: { categories: CategoryNode[] }) {
   );
 }
 
-function PillsSkeleton() {
+function CategoryGridSkeleton() {
   return (
-    <div className="amz-pills">
-      <div className="pills-scroll">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <Skeleton key={i} className="w-60 h-30 rounded-15 flex-shrink-0" />
+    <div className="amz-category-grid">
+      <div className="category-grid-scroll">
+        {Array.from({ length: 10 }).map((_, i) => (
+          <div key={i} className="category-grid-item">
+            <Skeleton className="category-grid-icon-skeleton" />
+            <Skeleton className="w-40 h-12 mt-6 rounded-4" />
+          </div>
         ))}
       </div>
     </div>
   );
 }
 
-// ── Deal of the Day（销量 Top） ──
+// ── 倒计时 Hook ──
+
+function useCountdown() {
+  const [timeLeft, setTimeLeft] = useState('');
+
+  useEffect(() => {
+    const calc = () => {
+      const now = new Date();
+      const end = new Date(now);
+      end.setHours(23, 59, 59, 999);
+      const diff = end.getTime() - now.getTime();
+      if (diff <= 0) return '00:00:00';
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    };
+    setTimeLeft(calc());
+    const timer = setInterval(() => setTimeLeft(calc()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return timeLeft;
+}
+
+// ── Deal of the Day（销量 Top + 倒计时） ──
 
 function DealSection({ items }: { items: ProductListItem[] }) {
+  const countdown = useCountdown();
+
   if (items.length === 0) return null;
 
   return (
     <div className="amz-deals">
       <div className="deals-header">
-        <span className="deals-title">Deal of the Day</span>
+        <div className="deals-header-left">
+          <span className="deals-title">Deal of the Day</span>
+          <div className="deals-countdown">
+            <span className="i-carbon-time text-12" />
+            <span>{countdown}</span>
+          </div>
+        </div>
         <Link to="/product" className="deals-more">
           See all deals <span className="i-carbon-chevron-right text-12" />
         </Link>
@@ -185,11 +267,11 @@ export default function Home() {
 
   return (
     <div className="amz-home">
-      {/* 分类胶囊横滑 */}
+      {/* 分类金刚区 */}
       {catLoading ? (
-        <PillsSkeleton />
+        <CategoryGridSkeleton />
       ) : categories && categories.length > 0 ? (
-        <CategoryPills categories={categories} />
+        <CategoryGrid categories={categories} />
       ) : null}
 
       {/* Banner 轮播 */}
@@ -203,8 +285,11 @@ export default function Home() {
       <DealSection items={dealItems} />
 
       {/* Recommended for you */}
-      <div className="amz-section-header">
-        <span className="section-title">Recommended for you</span>
+      <div className="amz-recommend-header">
+        <span className="recommend-title">Recommended for you</span>
+        <Link to="/product" className="recommend-more">
+          See more <span className="i-carbon-chevron-right text-12" />
+        </Link>
       </div>
 
       <ProductGrid

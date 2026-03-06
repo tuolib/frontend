@@ -5,56 +5,71 @@
   min-height: 100vh;
 }
 
-/* 分类胶囊横滑 */
-.amz-pills {
+/* ── 分类金刚区（2行5列） ── */
+.amz-category-grid {
   background: #fff;
-  padding: 0.1rem 0.12rem;
+  padding: 0.12rem 0;
 
-  .pills-scroll {
-    display: flex;
-    gap: 0.08rem;
+  .category-grid-scroll {
+    display: grid;
+    grid-template-rows: repeat(2, auto);
+    grid-auto-flow: column;
+    grid-auto-columns: calc(100% / 5);
+    gap: 0.12rem 0;
     overflow-x: auto;
     scrollbar-width: none;
+    padding: 0 0.04rem;
 
     &::-webkit-scrollbar {
       display: none;
     }
   }
 
-  .pill {
-    flex-shrink: 0;
-    height: 0.3rem;
-    padding: 0 0.14rem;
-    border-radius: 0.15rem;
-    border: 1px solid #ddd;
-    background: #fff;
-    font-size: 0.13rem;
-    color: #0f1111;
+  .category-grid-item {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 0.04rem;
-    white-space: nowrap;
     text-decoration: none;
-    transition: background 0.2s;
+    transition: transform 0.15s;
 
     &:active {
-      background: #f0f0f0;
+      transform: scale(0.95);
     }
   }
 
-  .pill-emoji {
-    font-size: 0.16rem;
+  .category-grid-icon {
+    width: 0.48rem;
+    height: 0.48rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f0f6f6, #e3eeee);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.24rem;
     line-height: 1;
+    box-shadow: 0 0.02rem 0.06rem rgba(0, 0, 0, 0.06);
   }
 
-  .pill-icon {
-    width: 0.16rem;
-    height: 0.16rem;
-    color: #007185;
+  .category-grid-icon-skeleton {
+    width: 0.48rem;
+    height: 0.48rem;
+    border-radius: 50%;
+  }
+
+  .category-grid-name {
+    margin-top: 0.06rem;
+    font-size: 0.11rem;
+    color: #0f1111;
+    text-align: center;
+    line-height: 1.2;
+    max-width: 0.6rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 
-/* Banner 轮播 */
+/* ── Banner 轮播 ── */
 .amz-banner {
   position: relative;
   overflow: hidden;
@@ -94,13 +109,14 @@
 
       &.active {
         background: #fff;
-        transform: scale(1.3);
+        width: 0.16rem;
+        border-radius: 0.03rem;
       }
     }
   }
 }
 
-/* Deal of the Day */
+/* ── Deal of the Day ── */
 .amz-deals {
   background: #fff;
   margin-top: 0.08rem;
@@ -112,10 +128,29 @@
     justify-content: space-between;
     margin-bottom: 0.1rem;
 
+    .deals-header-left {
+      display: flex;
+      align-items: center;
+      gap: 0.08rem;
+    }
+
     .deals-title {
       font-size: 0.17rem;
       font-weight: 700;
       color: #0f1111;
+    }
+
+    .deals-countdown {
+      display: flex;
+      align-items: center;
+      gap: 0.04rem;
+      background: #cc0c39;
+      color: #fff;
+      font-size: 0.11rem;
+      font-weight: 600;
+      padding: 0.02rem 0.08rem;
+      border-radius: 0.04rem;
+      font-variant-numeric: tabular-nums;
     }
 
     .deals-more {
@@ -184,24 +219,27 @@
   }
 }
 
-/* 推荐商品标题 */
-.amz-section-header {
+/* ── 推荐商品标题（渐变背景） ── */
+.amz-recommend-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0.14rem 0.12rem 0.08rem;
+  margin-top: 0.08rem;
+  background: linear-gradient(180deg, #fff 0%, #eaeded 100%);
 
-  .section-title {
+  .recommend-title {
     font-size: 0.17rem;
     font-weight: 700;
     color: #0f1111;
   }
 
-  .section-more {
+  .recommend-more {
     font-size: 0.13rem;
     color: #007185;
     text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.04rem;
   }
 }
-
-/* 商品网格 + 加载更多 → 已提取到 styles/product.scss（由 product-grid 组件导入） */
