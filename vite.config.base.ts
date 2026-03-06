@@ -27,6 +27,7 @@ export function createAppConfig({ port, root, plugins, manualChunks }: AppConfig
 
   return {
     plugins,
+    envDir: path.resolve(root, '../..'),
     server: {
       port,
       proxy: {
