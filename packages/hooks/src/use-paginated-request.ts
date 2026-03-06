@@ -82,6 +82,8 @@ export function usePaginatedRequest<T>(
     if (immediate) {
       pageRef.current = 1;
       fetchingRef.current = false;
+      setItems([]);
+      setPagination(null);
       fetchPage(1, false);
     }
   }, [fetchPage, immediate]);
