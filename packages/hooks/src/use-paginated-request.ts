@@ -44,6 +44,20 @@ export function usePaginatedRequest<T>(
   const pageRef = useRef(1);
   const seqRef = useRef(0);
 
+  // 在渲染阶段同步检测 deps 变化，立即清空旧数据（不等 useEffect）
+  const [prevDeps, setPrevDeps] = useState(deps);
+  const depsChanged =
+    deps.length !== prevDeps.length ||
+    deps.some((d, i) => !Object.is(d, prevDeps[i]));
+
+  if (depsChanged) {
+    setPrevDeps(deps);
+    setItems([]);
+    setLoading(true);
+    setPagination(null);
+    pageRef.current = 1;
+  }
+
   const fetchPage = useCallback(
     async (page: number, append: boolean) => {
       const seq = ++seqRef.current;
@@ -83,9 +97,6 @@ export function usePaginatedRequest<T>(
 
   useEffect(() => {
     if (immediate) {
-      pageRef.current = 1;
-      setItems([]);
-      setPagination(null);
       fetchPage(1, false);
     }
   }, [fetchPage, immediate]);
