@@ -42,12 +42,11 @@ export function usePaginatedRequest<T>(
   const [error, setError] = useState<Error | null>(null);
   const [pagination, setPagination] = useState<PaginationMeta | null>(null);
   const pageRef = useRef(1);
-  const fetchingRef = useRef(false);
+  const seqRef = useRef(0);
 
   const fetchPage = useCallback(
     async (page: number, append: boolean) => {
-      if (fetchingRef.current) return;
-      fetchingRef.current = true;
+      const seq = ++seqRef.current;
 
       if (append) {
         setLoadingMore(true);
@@ -59,6 +58,8 @@ export function usePaginatedRequest<T>(
       try {
         const result = await fetcher(page, pageSize, undefined as unknown as AbortSignal);
 
+        if (seq !== seqRef.current) return;
+
         if (append) {
           setItems((prev) => [...prev, ...result.items]);
         } else {
@@ -67,11 +68,13 @@ export function usePaginatedRequest<T>(
         setPagination(result.pagination);
         pageRef.current = page;
       } catch (err) {
+        if (seq !== seqRef.current) return;
         setError(err instanceof Error ? err : new Error(String(err)));
       } finally {
-        fetchingRef.current = false;
-        setLoading(false);
-        setLoadingMore(false);
+        if (seq === seqRef.current) {
+          setLoading(false);
+          setLoadingMore(false);
+        }
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -81,7 +84,6 @@ export function usePaginatedRequest<T>(
   useEffect(() => {
     if (immediate) {
       pageRef.current = 1;
-      fetchingRef.current = false;
       setItems([]);
       setPagination(null);
       fetchPage(1, false);
