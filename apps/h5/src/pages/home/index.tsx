@@ -1,11 +1,12 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useRequest, usePaginatedRequest } from '@fe/hooks';
-import { product, category, banner as bannerApi } from '@fe/api-client';
+import { product } from '@fe/api-client';
 import { Skeleton } from '@fe/ui';
 import type { ProductListItem, BannerItem, CategoryNode } from '@fe/shared';
 import { getCategoryEmoji } from '@/constants/category-emoji';
 import { ProductGrid } from '@/components/product-grid';
+import { useHomeStore } from '@/stores/home';
 import {
   bannerPlaceholder,
   productPlaceholder,
@@ -393,23 +394,14 @@ function TopRated({ items }: { items: ProductListItem[] }) {
 // ── 首页主体 ──
 
 export default function Home() {
-  const { data: categories, loading: catLoading } = useRequest(
-    (signal) => category.tree({ signal }),
-  );
+  const { categories, banners: bannerData, dealItems, newArrivalItems, loading: homeLoading, loaded, fetch: fetchHome } = useHomeStore();
 
-  const { data: bannerData, loading: bannerLoading } = useRequest(
-    (signal) => bannerApi.list({ signal }),
-  );
+  useEffect(() => {
+    fetchHome();
+  }, [fetchHome]);
 
-  const { data: dealData } = useRequest(
-    (signal) => product.list({ page: 1, pageSize: 10, sort: 'sales', order: 'desc', signal }),
-  );
-  const dealItems = dealData?.items ?? [];
-
-  const { data: newArrivalData } = useRequest(
-    (signal) => product.list({ page: 1, pageSize: 8, sort: 'createdAt', order: 'desc', signal }),
-  );
-  const newArrivalItems = newArrivalData?.items ?? [];
+  const catLoading = homeLoading && !loaded;
+  const bannerLoading = homeLoading && !loaded;
 
   const {
     items: products,
@@ -423,7 +415,7 @@ export default function Home() {
     { pageSize: PAGE_SIZE },
   );
 
-  const banners = bannerData && bannerData.length > 0
+  const banners = bannerData.length > 0
     ? bannerData.map((b) => ({ id: b.id, title: b.title, imageUrl: b.imageUrl, linkType: b.linkType, linkValue: b.linkValue }))
     : FALLBACK_BANNERS;
 
@@ -432,7 +424,7 @@ export default function Home() {
       {/* 分类金刚区 */}
       {catLoading ? (
         <CategoryGridSkeleton />
-      ) : categories && categories.length > 0 ? (
+      ) : categories.length > 0 ? (
         <CategoryGrid categories={categories} />
       ) : null}
 
@@ -454,7 +446,7 @@ export default function Home() {
       <DealSection items={dealItems} />
 
       {/* 分类精选卡片 */}
-      {categories && categories.length > 0 && (
+      {categories.length > 0 && (
         <CategoryShowcase categories={categories} />
       )}
 
