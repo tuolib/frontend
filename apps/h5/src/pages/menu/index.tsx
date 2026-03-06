@@ -39,6 +39,7 @@ function PopularProducts({ categoryId }: { categoryId: string }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let ignore = false;
     setLoading(true);
     product
       .list({
@@ -48,9 +49,14 @@ function PopularProducts({ categoryId }: { categoryId: string }) {
         order: 'desc',
         filters: { categoryId },
       })
-      .then((res) => setItems(res.items))
+      .then((res) => {
+        if (!ignore) setItems(res.items);
+      })
       .catch(() => {})
-      .finally(() => setLoading(false));
+      .finally(() => {
+        if (!ignore) setLoading(false);
+      });
+    return () => { ignore = true; };
   }, [categoryId]);
 
   if (loading) {
