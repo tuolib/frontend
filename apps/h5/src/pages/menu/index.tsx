@@ -39,7 +39,6 @@ function PopularProducts({ categoryId }: { categoryId: string }) {
 
   useEffect(() => {
     setLoading(true);
-    const controller = new AbortController();
     product
       .list({
         page: 1,
@@ -47,12 +46,10 @@ function PopularProducts({ categoryId }: { categoryId: string }) {
         sort: 'sales',
         order: 'desc',
         filters: { categoryId },
-        signal: controller.signal,
       })
       .then((res) => setItems(res.items))
       .catch(() => {})
       .finally(() => setLoading(false));
-    return () => controller.abort();
   }, [categoryId]);
 
   if (loading) {

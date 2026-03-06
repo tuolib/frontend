@@ -2,7 +2,7 @@
  * useRequest — 通用异步请求 hook，管理 loading/error/data + AbortController
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 interface UseRequestOptions<T> {
   /** 组件挂载时自动执行，默认 true */
@@ -31,8 +31,6 @@ export function useRequest<T>(
   const [data, setData] = useState<T | undefined>(initialData);
   const [loading, setLoading] = useState(immediate);
   const [error, setError] = useState<Error | null>(null);
-  const abortRef = useRef<AbortController | null>(null);
-
   const run = useCallback(async () => {
     setLoading(true);
     setError(null);
