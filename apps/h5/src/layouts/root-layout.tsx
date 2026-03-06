@@ -52,7 +52,7 @@ export default function RootLayout() {
           const isActive =
             tab.path === '/'
               ? location.pathname === '/'
-              : location.pathname.startsWith(tab.path);
+              : location.pathname === tab.path || location.pathname.startsWith(`${tab.path}/`);
           return (
             <button
               key={tab.path}
