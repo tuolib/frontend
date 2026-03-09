@@ -1,13 +1,11 @@
 import { useEffect, Suspense } from 'react';
 import { RouterProvider } from 'react-router';
-import { ConfigProvider, App as AntdApp, Spin, message } from 'antd';
+import { ConfigProvider, App as AntdApp, Spin } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 import { ToastProvider, ErrorBoundary } from '@fe/ui';
 import { useVersionCheck } from '@fe/hooks';
 import { setApiErrorNotifier } from '@fe/api-client';
 import { router } from './router';
-
-setApiErrorNotifier((msg) => message.error(msg));
 import { useAdminAuthStore } from './stores/admin-auth';
 
 const theme = {
@@ -25,6 +23,17 @@ function LoadingFallback() {
   );
 }
 
+/** 在 AntdApp 上下文内注册全局错误提示 */
+function ApiErrorSetup() {
+  const { message } = AntdApp.useApp();
+
+  useEffect(() => {
+    setApiErrorNotifier((msg) => message.error(msg));
+  }, [message]);
+
+  return null;
+}
+
 export function App() {
   const initialize = useAdminAuthStore((s) => s.initialize);
 
@@ -37,6 +46,7 @@ export function App() {
   return (
     <ConfigProvider locale={zhCN} theme={theme}>
       <AntdApp>
+        <ApiErrorSetup />
         <ToastProvider>
           <ErrorBoundary>
             <Suspense fallback={<LoadingFallback />}>

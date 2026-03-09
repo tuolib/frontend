@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router';
-import { Button, Form, Input, message } from 'antd';
+import { Button, Form, Input, App as AntdApp } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { ApiError } from '@fe/api-client';
 import { useAdminAuthStore } from '@/stores/admin-auth';
 
 interface LoginForm {
@@ -19,6 +18,7 @@ interface ChangePasswordForm {
 export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { message } = AntdApp.useApp();
   const login = useAdminAuthStore((s) => s.login);
   const changePassword = useAdminAuthStore((s) => s.changePassword);
   const mustChangePassword = useAdminAuthStore((s) => s.mustChangePassword);
@@ -34,9 +34,8 @@ export default function Login() {
         message.success('登录成功');
         navigate(from, { replace: true });
       }
-    } catch (err) {
-      const msg = err instanceof ApiError ? err.message : '登录失败，请重试';
-      message.error(msg);
+    } catch {
+      // 全局 ApiErrorSetup 已通过 _onError 弹 toast（显示接口返回的 message）
     } finally {
       setLoading(false);
     }
@@ -48,9 +47,8 @@ export default function Login() {
       await changePassword(values.oldPassword, values.newPassword);
       message.success('密码修改成功');
       navigate(from, { replace: true });
-    } catch (err) {
-      const msg = err instanceof ApiError ? err.message : '密码修改失败，请重试';
-      message.error(msg);
+    } catch {
+      // 全局 ApiErrorSetup 已通过 _onError 弹 toast
     } finally {
       setLoading(false);
     }

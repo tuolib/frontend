@@ -2,7 +2,7 @@
  * HTTP Client — ky 实例 + interceptors
  */
 
-import ky, { HTTPError } from 'ky';
+import ky from 'ky';
 import type { Options } from 'ky';
 import type { ApiResponse } from './types';
 import type { PaginationMeta } from '@fe/shared';
@@ -110,23 +110,11 @@ export async function post<T>(
       .post(toKyPath(path), {
         prefixUrl: getBaseUrl(),
         json: body,
+        throwHttpErrors: false,
         ...options,
       })
       .json<ApiResponse<T>>();
-  } catch (error) {
-    // ky 对非 2xx 响应抛出 HTTPError，尝试解析响应体中的业务错误信息
-    if (error instanceof HTTPError) {
-      try {
-        const body = await error.response.json() as ApiResponse<T>;
-        if (!body.success) {
-          const err = new ApiError(body);
-          _onError?.(err.message);
-          throw err;
-        }
-      } catch (parseError) {
-        if (parseError instanceof ApiError) throw parseError;
-      }
-    }
+  } catch {
     _onError?.('网络异常，请检查网络连接');
     throw new Error('Network error');
   }
