@@ -2,8 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { Button, Input, useToast } from '@fe/ui';
 import { useAuthStore } from '@fe/hooks';
-import { ApiError } from '@fe/api-client';
-import { ERROR_CODE, ROUTES } from '@fe/shared';
+import { ROUTES } from '@fe/shared';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -41,18 +40,8 @@ export default function Login() {
       await login(email.trim(), password);
       toast('登录成功', 'success');
       navigate(ROUTES.HOME, { replace: true });
-    } catch (err) {
-      if (err instanceof ApiError) {
-        if (err.is(ERROR_CODE.INVALID_CREDENTIALS)) {
-          toast('邮箱或密码错误', 'error');
-        } else if (err.is(ERROR_CODE.USER_NOT_FOUND)) {
-          toast('用户不存在', 'error');
-        } else {
-          toast(err.message || '登录失败，请稍后重试', 'error');
-        }
-      } else {
-        toast('网络异常，请检查网络连接', 'error');
-      }
+    } catch {
+      // 全局 _onError 已处理 toast 提示（显示接口返回的 message）
     } finally {
       setLoading(false);
     }

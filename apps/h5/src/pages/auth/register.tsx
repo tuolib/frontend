@@ -2,8 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { Button, Input, useToast } from '@fe/ui';
 import { useAuthStore } from '@fe/hooks';
-import { ApiError } from '@fe/api-client';
-import { ERROR_CODE, ROUTES } from '@fe/shared';
+import { ROUTES } from '@fe/shared';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -58,18 +57,8 @@ export default function Register() {
       await register(email.trim(), password, nickname.trim() || undefined);
       toast('注册成功', 'success');
       navigate(ROUTES.HOME, { replace: true });
-    } catch (err) {
-      if (err instanceof ApiError) {
-        if (err.is(ERROR_CODE.USER_ALREADY_EXISTS)) {
-          toast('该邮箱已注册', 'error');
-        } else if (err.is(ERROR_CODE.PASSWORD_TOO_WEAK)) {
-          toast('密码强度不够，请使用更复杂的密码', 'error');
-        } else {
-          toast(err.message || '注册失败，请稍后重试', 'error');
-        }
-      } else {
-        toast('网络异常，请检查网络连接', 'error');
-      }
+    } catch {
+      // 全局 _onError 已处理 toast 提示（显示接口返回的 message）
     } finally {
       setLoading(false);
     }
