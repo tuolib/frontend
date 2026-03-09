@@ -3,26 +3,30 @@
  * Tab 页面，登录后显示购物车内容
  */
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { useRequest } from '@fe/hooks';
 import { cart, ApiError } from '@fe/api-client';
 import { useToast, Skeleton } from '@fe/ui';
 import type { CartListItem } from '@fe/shared';
 import { productPlaceholder } from '@/pages/home/placeholder';
+import { useCartStore } from '@/stores/cart';
 import '@/styles/cart.scss';
 
 export default function Cart() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const { data: items, loading, mutate, run: reload } = useRequest(
-    () => cart.list(),
-  );
+  const { items, loading: storeLoading, loaded, fetch: fetchCart, reload, mutate } = useCartStore();
+
+  useEffect(() => {
+    fetchCart();
+  }, [fetchCart]);
+
+  const loading = storeLoading && !loaded;
 
   if (loading) return <CartSkeleton />;
 
-  if (!items || items.length === 0) {
+  if (items.length === 0) {
     return <CartEmpty onShop={() => navigate('/')} />;
   }
 
@@ -47,8 +51,8 @@ function CartContent({
   navigate,
 }: {
   items: CartListItem[];
-  mutate: (fn: CartListItem[] | undefined | ((prev: CartListItem[] | undefined) => CartListItem[] | undefined)) => void;
-  reload: () => Promise<CartListItem[] | undefined>;
+  mutate: (updater: CartListItem[] | ((prev: CartListItem[]) => CartListItem[])) => void;
+  reload: () => Promise<void>;
   toast: (msg: string, type?: 'success' | 'error' | 'info' | 'warning') => void;
   navigate: ReturnType<typeof useNavigate>;
 }) {
@@ -65,7 +69,7 @@ function CartContent({
 
   // ── Select / Deselect ──
   const handleSelect = async (skuId: string, selected: boolean) => {
-    mutate((prev) => prev?.map((i) => (i.skuId === skuId ? { ...i, selected } : i)));
+    mutate((prev) => prev.map((i) => (i.skuId === skuId ? { ...i, selected } : i)));
     try {
       await cart.select([skuId], selected);
     } catch (err) {
@@ -77,7 +81,7 @@ function CartContent({
   const handleSelectAll = async (selected: boolean) => {
     const availableIds = items.filter((i) => !i.unavailable).map((i) => i.skuId);
     if (availableIds.length === 0) return;
-    mutate((prev) => prev?.map((i) => (i.unavailable ? i : { ...i, selected })));
+    mutate((prev) => prev.map((i) => (i.unavailable ? i : { ...i, selected })));
     try {
       await cart.select(availableIds, selected);
     } catch (err) {
@@ -92,9 +96,9 @@ function CartContent({
 
     // Optimistic UI update
     if (newQty === 0) {
-      mutate((prev) => prev?.filter((i) => i.skuId !== skuId));
+      mutate((prev) => prev.filter((i) => i.skuId !== skuId));
     } else {
-      mutate((prev) => prev?.map((i) => (i.skuId === skuId ? { ...i, quantity: newQty } : i)));
+      mutate((prev) => prev.map((i) => (i.skuId === skuId ? { ...i, quantity: newQty } : i)));
     }
 
     // Debounce API call
@@ -117,7 +121,7 @@ function CartContent({
 
   // ── Delete ──
   const handleDelete = async (skuId: string) => {
-    mutate((prev) => prev?.filter((i) => i.skuId !== skuId));
+    mutate((prev) => prev.filter((i) => i.skuId !== skuId));
     try {
       await cart.remove([skuId]);
     } catch (err) {

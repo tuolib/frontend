@@ -5,7 +5,7 @@
   "type": "module",
   "workspaces": ["apps/*", "packages/*"],
   "scripts": {
-    "dev": "bun run --filter='./apps/*' dev",
+    "dev": "bun run dev:h5 & bun run dev:admin & wait",
     "dev:h5": "bun run --cwd apps/h5 dev",
     "dev:admin": "bun run --cwd apps/admin dev",
     "build": "bun run --cwd apps/h5 build && bun run --cwd apps/admin build",

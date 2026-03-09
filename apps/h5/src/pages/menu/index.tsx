@@ -4,12 +4,12 @@
 
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
-import { useRequest } from '@fe/hooks';
-import { category, product } from '@fe/api-client';
+import { product } from '@fe/api-client';
 import { Skeleton } from '@fe/ui';
 import type { CategoryNode, ProductListItem } from '@fe/shared';
 import { getCategoryEmoji } from '@/constants/category-emoji';
 import { productPlaceholder } from '@/pages/home/placeholder';
+import { useCategoryStore } from '@/stores/category';
 import './menu.scss';
 
 function MenuSkeleton() {
@@ -138,9 +138,13 @@ function SubcategoryGrid({ items, parentId }: { items: CategoryNode[]; parentId:
 }
 
 export default function Menu() {
-  const { data: categories, loading } = useRequest(
-    (signal) => category.tree({ signal }),
-  );
+  const { categories, loading: catLoading, loaded: catLoaded, fetch: fetchCategories } = useCategoryStore();
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
+
+  const loading = catLoading && !catLoaded;
 
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -153,7 +157,7 @@ export default function Menu() {
     );
   }
 
-  if (!categories || categories.length === 0) {
+  if (categories.length === 0) {
     return (
       <div className="amz-menu">
         <div className="menu-header">Menu</div>

@@ -3,10 +3,11 @@
  * Amazon "Your Account" 风格
  */
 
+import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useToast, Skeleton } from '@fe/ui';
-import { useAuthStore, useRequest } from '@fe/hooks';
-import { order, ApiError } from '@fe/api-client';
+import { useAuthStore } from '@fe/hooks';
+import { ApiError } from '@fe/api-client';
 import {
   ROUTES,
   ORDER_STATUS_LABEL,
@@ -15,6 +16,7 @@ import {
 } from '@fe/shared';
 import type { OrderListItem } from '@fe/shared';
 import { productPlaceholder } from '@/pages/home/placeholder';
+import { useProfileStore } from '@/stores/profile';
 import '@/styles/profile.scss';
 
 export default function Profile() {
@@ -25,16 +27,17 @@ export default function Profile() {
   const logout = useAuthStore((s) => s.logout);
   const fetchProfile = useAuthStore((s) => s.fetchProfile);
 
+  const { recentOrders, loading: ordersLoading, loaded: ordersLoaded, fetch: fetchOrders } = useProfileStore();
+
   // Fetch profile on mount if authenticated but no user data
-  useRequest(() => fetchProfile(), {
-    immediate: isAuthenticated && !user,
-  });
+  useEffect(() => {
+    if (isAuthenticated && !user) fetchProfile();
+  }, [isAuthenticated, user, fetchProfile]);
 
   // Fetch recent orders (only when authenticated)
-  const { data: recentOrders, loading: ordersLoading } = useRequest(
-    () => order.list({ page: 1, pageSize: 3 }),
-    { immediate: isAuthenticated },
-  );
+  useEffect(() => {
+    if (isAuthenticated) fetchOrders();
+  }, [isAuthenticated, fetchOrders]);
 
   async function handleLogout() {
     try {
@@ -92,11 +95,11 @@ export default function Profile() {
           </Link>
         </div>
 
-        {ordersLoading ? (
+        {ordersLoading && !ordersLoaded ? (
           <OrdersSkeleton />
-        ) : recentOrders?.items && recentOrders.items.length > 0 ? (
+        ) : recentOrders.length > 0 ? (
           <div className="orders-list">
-            {recentOrders.items.map((item) => (
+            {recentOrders.map((item) => (
               <OrderCard
                 key={item.orderId}
                 order={item}
