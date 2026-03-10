@@ -1,10 +1,6 @@
 package com.example.shop.navigation
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -22,6 +18,7 @@ import com.example.shop.feature.product.detail.ProductDetailScreen
 import com.example.shop.feature.product.list.ProductListScreen
 import com.example.shop.feature.product.search.SearchScreen
 import com.example.shop.feature.user.address.AddressScreen
+import com.example.shop.feature.user.profile.ProfileScreen
 
 @Composable
 fun AppNavGraph(
@@ -40,7 +37,25 @@ fun AppNavGraph(
             )
         }
         composable<ProfileRoute> {
-            PlaceholderScreen("Profile")
+            ProfileScreen(
+                onNavigateToLogin = {
+                    navController.navigate(LoginRoute)
+                },
+                onNavigateToOrders = {
+                    navController.navigate(OrderListRoute)
+                },
+                onNavigateToAddress = {
+                    navController.navigate(AddressManageRoute)
+                },
+                onNavigateToOrderDetail = { orderId ->
+                    navController.navigate(OrderDetailRoute(orderId))
+                },
+                onLogoutSuccess = {
+                    navController.navigate(HomeRoute) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                },
+            )
         }
         composable<CartRoute> {
             CartScreen(
@@ -176,15 +191,5 @@ fun AppNavGraph(
                 onBack = { navController.popBackStack() },
             )
         }
-    }
-}
-
-@Composable
-private fun PlaceholderScreen(name: String) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(text = name)
     }
 }

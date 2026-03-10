@@ -8,6 +8,7 @@ import com.example.shop.feature.order.data.OrderApi
 import com.example.shop.feature.order.data.PaymentApi
 import com.example.shop.feature.product.data.ProductApi
 import com.example.shop.feature.user.data.AddressApi
+import com.example.shop.feature.user.data.UserApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -65,5 +66,11 @@ object RepositoryModule {
     @Singleton
     fun provideAddressApi(retrofit: Retrofit): AddressApi {
         return retrofit.create(AddressApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserApi(retrofit: Retrofit): UserApi {
+        return retrofit.create(UserApi::class.java)
     }
 }
