@@ -21,20 +21,48 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.layout.Box
 import coil3.compose.AsyncImage
 import com.example.shop.core.ui.theme.BackgroundGray
 import com.example.shop.core.ui.theme.Dimens
 import com.example.shop.core.ui.theme.TextPrimary
 import com.example.shop.feature.menu.data.model.CategoryNode
 
-private val categoryEmojis = mapOf(
-    "electronics" to "\uD83D\uDCF1",
-    "clothing" to "\uD83D\uDC55",
-    "food" to "\uD83C\uDF5C",
-    "beauty" to "\uD83D\uDC84",
-    "home" to "\uD83C\uDFE0",
-    "sports" to "\u26BD",
-    "books" to "\uD83D\uDCDA",
+// iconUrl from API is an icon name (e.g. "smartphone"), not a URL
+// Map icon names to emojis for display
+private val iconNameToEmoji = mapOf(
+    "smartphone" to "\uD83D\uDCF1",  // 📱
+    "headphones" to "\uD83C\uDFA7",  // 🎧
+    "watch" to "\u231A",             // ⌚
+    "laptop" to "\uD83D\uDCBB",     // 💻
+    "tablet" to "\uD83D\uDCF1",     // 📱
+    "keyboard" to "\u2328\uFE0F",    // ⌨️
+    "refrigerator" to "\uD83E\uDDCA", // 🧊
+    "fan" to "\uD83C\uDF2C\uFE0F",  // 🌬️
+    "cooking-pot" to "\uD83C\uDF73", // 🍳
+    "shirt" to "\uD83D\uDC55",      // 👕
+    "footprints" to "\uD83D\uDC5F", // 👟
+    "apple" to "\uD83C\uDF4E",      // 🍎
+    "candy" to "\uD83C\uDF6C",      // 🍬
+    "cup-soda" to "\uD83E\uDD64",   // 🥤
+    "salad" to "\uD83E\uDD57",      // 🥗
+    "sparkles" to "\u2728",          // ✨
+    "droplets" to "\uD83D\uDCA7",   // 💧
+    "palette" to "\uD83C\uDFA8",    // 🎨
+    "bath" to "\uD83D\uDEC1",       // 🛁
+    "book-open" to "\uD83D\uDCDA",  // 📚
+    "graduation-cap" to "\uD83C\uDF93", // 🎓
+    "image" to "\uD83D\uDDBC\uFE0F", // 🖼️
+    "dumbbell" to "\uD83C\uDFCB\uFE0F", // 🏋️
+    "tent" to "\u26FA",              // ⛺
+    "bike" to "\uD83D\uDEB2",       // 🚲
+    "baby" to "\uD83D\uDC76",       // 👶
+    "toy-brick" to "\uD83E\uDDE9",  // 🧩
+    "gamepad-2" to "\uD83C\uDFAE",  // 🎮
+    "car" to "\uD83D\uDE97",        // 🚗
+    "sofa" to "\uD83D\uDECB\uFE0F", // 🛋️
+    "lamp" to "\uD83D\uDCA1",       // 💡
+    "bed" to "\uD83D\uDECF\uFE0F",  // 🛏️
 )
 
 @Composable
@@ -66,9 +94,11 @@ private fun CategoryPillItem(
         modifier = Modifier.clickable(onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        if (category.iconUrl != null) {
+        val iconUrl = category.iconUrl
+        if (iconUrl != null && iconUrl.startsWith("http")) {
+            // Real URL — load image
             AsyncImage(
-                model = category.iconUrl,
+                model = iconUrl,
                 contentDescription = category.name,
                 modifier = Modifier
                     .size(48.dp)
@@ -77,8 +107,9 @@ private fun CategoryPillItem(
                 contentScale = ContentScale.Crop,
             )
         } else {
-            val emoji = categoryEmojis[category.slug] ?: "\uD83D\uDCE6"
-            androidx.compose.foundation.layout.Box(
+            // Icon name — map to emoji
+            val emoji = iconNameToEmoji[iconUrl] ?: "\uD83D\uDCE6"
+            Box(
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
