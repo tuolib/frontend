@@ -63,51 +63,41 @@ class CartViewModel @Inject constructor(
                     try {
                         cartRepository.update(skuId, qty)
                     } catch (e: Exception) {
-                        // Reload on failure to sync
                         loadCart()
                         _event.send(CartEvent.ShowMessage(e.message ?: "Update failed"))
                     }
                 }
         }
-        // Initial load (first time ViewModel is created)
-        onScreenVisible()
+        loadCart()
     }
 
-    /**
-     * Called every time the CartScreen enters composition.
-     * Shows loading spinner only if cart is empty (first load);
-     * otherwise silently refreshes in background.
-     * Skips if called again within 500ms (guards against duplicate calls).
-     */
     fun onScreenVisible() {
         val now = System.currentTimeMillis()
         if (now - lastRefreshTime < 500) return
         lastRefreshTime = now
-        loadCart(showLoading = _state.value.items.isEmpty() && !_state.value.isLoading)
+        loadCart()
     }
 
     fun refresh() {
         lastRefreshTime = System.currentTimeMillis()
-        loadCart(showLoading = false)
+        loadCart()
     }
 
-    private fun loadCart(showLoading: Boolean = false) {
+    private fun loadCart() {
         viewModelScope.launch {
-            val isLoggedIn = tokenStore.accessToken.first() != null
-            if (!isLoggedIn) {
-                _state.update { it.copy(isLoading = false, isLoggedIn = false, items = emptyList()) }
-                return@launch
-            }
-            if (showLoading) {
-                _state.update { it.copy(isLoading = true, isLoggedIn = true) }
-            } else {
-                _state.update { it.copy(isLoggedIn = true) }
-            }
-
             try {
-                val items = cartRepository.list()
+                val isLoggedIn = tokenStore.accessToken.first() != null
+                if (!isLoggedIn) {
+                    _state.update { it.copy(isLoading = false, isLoggedIn = false, items = emptyList(), error = null) }
+                    return@launch
+                }
+                // Only show spinner on first load (when no items exist yet)
+                if (_state.value.items.isEmpty()) {
+                    _state.update { it.copy(isLoading = true, isLoggedIn = true, error = null) }
+                }
+                val cartItems = cartRepository.list()
                 _state.update {
-                    it.copy(isLoading = false, items = items, error = null)
+                    it.copy(isLoading = false, isLoggedIn = true, items = cartItems, error = null)
                 }
             } catch (e: Exception) {
                 _state.update {

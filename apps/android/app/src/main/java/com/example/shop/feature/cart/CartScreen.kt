@@ -150,6 +150,21 @@ fun CartScreen(
                         },
                     )
                 }
+                state.error != null && state.items.isEmpty() -> {
+                    EmptyState(
+                        title = "Failed to load cart",
+                        subtitle = state.error,
+                        icon = Icons.Outlined.ShoppingCart,
+                        modifier = Modifier.fillMaxSize(),
+                        action = {
+                            LoadingButton(
+                                text = "Retry",
+                                onClick = { viewModel.refresh() },
+                                modifier = Modifier.width(200.dp),
+                            )
+                        },
+                    )
+                }
                 state.items.isEmpty() -> {
                     EmptyState(
                         title = "Your cart is empty",

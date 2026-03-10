@@ -4,6 +4,7 @@ import com.example.shop.core.network.requireSuccess
 import com.example.shop.core.network.unwrap
 import com.example.shop.feature.cart.data.model.CartAddRequest
 import com.example.shop.feature.cart.data.model.CartItem
+import com.example.shop.feature.cart.data.model.CartItemResponse
 import com.example.shop.feature.cart.data.model.CartRemoveRequest
 import com.example.shop.feature.cart.data.model.CartSelectRequest
 import com.example.shop.feature.cart.data.model.CartUpdateRequest
@@ -16,8 +17,20 @@ class CartRepository @Inject constructor(
     private val api: CartApi,
 ) {
     suspend fun list(): List<CartItem> {
-        return api.list().unwrap()
+        return api.list().unwrap().map { it.toDomain() }
     }
+
+    private fun CartItemResponse.toDomain() = CartItem(
+        skuId = skuId,
+        quantity = quantity,
+        selected = selected,
+        productId = snapshot.productId,
+        productTitle = snapshot.productTitle,
+        price = currentPrice.toDoubleOrNull() ?: snapshot.price.toDoubleOrNull() ?: 0.0,
+        stock = currentStock,
+        attributes = snapshot.skuAttrs,
+        imageUrl = snapshot.imageUrl,
+    )
 
     suspend fun add(skuId: String, quantity: Int) {
         api.add(CartAddRequest(skuId, quantity)).requireSuccess()
