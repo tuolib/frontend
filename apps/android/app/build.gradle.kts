@@ -94,4 +94,8 @@ dependencies {
     // Image
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
+
+    // Debug — Chucker (network inspector)
+    debugImplementation(libs.chucker.debug)
+    releaseImplementation(libs.chucker.release)
 }
