@@ -1,5 +1,6 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef, useCallback, type MouseEvent } from 'react';
 import { Link, useNavigate } from 'react-router';
+import { ROUTES } from '@fe/shared';
 import { useRequest, usePaginatedRequest } from '@fe/hooks';
 import { product } from '@fe/api-client';
 import { Skeleton } from '@fe/ui';
@@ -392,6 +393,36 @@ function TopRated({ items }: { items: ProductListItem[] }) {
   );
 }
 
+// ── App 下载推广横幅 ──
+
+function AppDownloadBanner() {
+  const [dismissed, setDismissed] = useState(false);
+  const navigate = useNavigate();
+
+  if (dismissed) return null;
+
+  function handleDismiss(e: MouseEvent) {
+    e.stopPropagation();
+    setDismissed(true);
+  }
+
+  return (
+    <div className="app-download-banner" onClick={() => navigate(ROUTES.DOWNLOAD)}>
+      <div className="app-download-icon">
+        <span className="i-carbon-shopping-bag w-24 h-24 text-[#ff9900]" />
+      </div>
+      <div className="app-download-text">
+        <span className="app-download-title">下载 ShopMall App</span>
+        <span className="app-download-desc">更流畅的购物体验</span>
+      </div>
+      <span className="app-download-action">下载</span>
+      <button type="button" className="app-download-close" onClick={handleDismiss}>
+        <span className="i-carbon-close w-14 h-14" />
+      </button>
+    </div>
+  );
+}
+
 // ── 首页主体 ──
 
 export default function Home() {
@@ -437,6 +468,9 @@ export default function Home() {
       ) : (
         <BannerCarousel banners={banners} />
       )}
+
+      {/* App 下载推广 */}
+      <AppDownloadBanner />
 
       {/* Promo 广告条 */}
       <PromoBanner

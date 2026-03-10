@@ -3,6 +3,81 @@
 .amz-home {
   background: #eaeded;
   min-height: 100vh;
+
+/* ── App 下载推广横幅 ── */
+.app-download-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.10rem;
+  margin: 0.08rem 0.12rem;
+  padding: 0.10rem 0.36rem 0.10rem 0.12rem;
+  background: #fff;
+  border-radius: 0.08rem;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  position: relative;
+
+  &:active {
+    background: #f9f9f9;
+  }
+}
+
+.app-download-icon {
+  width: 0.40rem;
+  height: 0.40rem;
+  border-radius: 0.10rem;
+  background: #131921;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.app-download-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.02rem;
+}
+
+.app-download-title {
+  font-size: 0.14rem;
+  font-weight: 600;
+  color: #0f1111;
+}
+
+.app-download-desc {
+  font-size: 0.11rem;
+  color: #565959;
+}
+
+.app-download-action {
+  flex-shrink: 0;
+  padding: 0.05rem 0.14rem;
+  background: linear-gradient(to bottom, #ffd814, #ff9900);
+  color: #0f1111;
+  font-size: 0.12rem;
+  font-weight: 600;
+  border-radius: 0.06rem;
+  border: 1px solid #c89411;
+}
+
+.app-download-close {
+  position: absolute;
+  top: 0.04rem;
+  right: 0.04rem;
+  width: 0.20rem;
+  height: 0.20rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  padding: 0;
+}
 }
 
 /* ── 通用板块头 ── */
