@@ -53,7 +53,12 @@ class TokenAuthenticator(
                 try {
                     val result = performRefresh(refreshToken)
                     if (result != null) {
-                        tokenStore.saveTokens(result.accessToken, result.refreshToken)
+                        tokenStore.saveTokens(
+                            accessToken = result.accessToken,
+                            refreshToken = result.refreshToken,
+                            accessTokenExpiresAt = result.accessTokenExpiresAt,
+                            refreshTokenExpiresAt = result.refreshTokenExpiresAt,
+                        )
                         response.request.newBuilder()
                             .header("Authorization", "Bearer ${result.accessToken}")
                             .header("X-Refresh-Attempted", "true")

@@ -15,3 +15,17 @@ fun <T> ApiResponse<T>.unwrap(): T {
     }
     return data
 }
+
+/**
+ * For endpoints that return null data (logout, cart/update, etc.).
+ * Only checks success flag without requiring data.
+ */
+fun <T> ApiResponse<T>.requireSuccess() {
+    if (!success) {
+        throw ApiError(
+            code = code,
+            errorCode = meta?.code,
+            message = message.ifEmpty { "Request failed" },
+        )
+    }
+}
