@@ -8,6 +8,6 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface HomeApi {
-    @POST("api/v1/banner/list")
+    @POST("/api/v1/banner/list")
     suspend fun getBanners(@Body body: JsonObject = buildJsonObject {}): ApiResponse<List<Banner>>
 }

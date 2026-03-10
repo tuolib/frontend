@@ -8,6 +8,6 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface CategoryApi {
-    @POST("api/v1/category/tree")
+    @POST("/api/v1/category/tree")
     suspend fun tree(@Body body: JsonObject = buildJsonObject {}): ApiResponse<List<CategoryNode>>
 }

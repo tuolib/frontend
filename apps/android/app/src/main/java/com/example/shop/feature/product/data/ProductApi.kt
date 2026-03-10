@@ -8,6 +8,6 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface ProductApi {
-    @POST("api/v1/product/list")
+    @POST("/api/v1/product/list")
     suspend fun list(@Body request: ProductListRequest): ApiResponse<PaginatedResult<ProductListItem>>
 }

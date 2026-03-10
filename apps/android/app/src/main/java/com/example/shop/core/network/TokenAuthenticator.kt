@@ -82,7 +82,7 @@ class TokenAuthenticator(
         ).toRequestBody("application/json".toMediaType())
 
         val request = Request.Builder()
-            .url("${baseUrl}api/v1/auth/refresh")
+            .url("${baseUrl.trimEnd('/')}/api/v1/auth/refresh")
             .post(body)
             .build()
 
