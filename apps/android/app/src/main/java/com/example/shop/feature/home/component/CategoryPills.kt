@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,7 +27,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import com.example.shop.core.ui.theme.BackgroundGray
 import com.example.shop.core.ui.theme.Dimens
 import com.example.shop.core.ui.theme.TextPrimary
 import com.example.shop.feature.menu.data.model.CategoryNode
@@ -79,7 +80,7 @@ fun CategoryPills(
         rows = GridCells.Fixed(2),
         modifier = modifier.height(ROW_HEIGHT * 2 + Dimens.SpacingSm),
         contentPadding = PaddingValues(horizontal = Dimens.SpacingMd),
-        horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingLg),
+        horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingSm),
         verticalArrangement = Arrangement.spacedBy(Dimens.SpacingSm),
     ) {
         items(categories, key = { it.id }) { category ->
@@ -98,10 +99,16 @@ private fun CategoryPillItem(
 ) {
     Column(
         modifier = Modifier
-            .width(56.dp)
+            .width(66.dp)
             .clickable(onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        val iconBg = Brush.linearGradient(
+            colors = listOf(
+                Color(0xFFF0F6F6),
+                Color(0xFFE3EEEE),
+            ),
+        )
         val iconUrl = category.iconUrl
         if (iconUrl != null && iconUrl.startsWith("http")) {
             // Real URL — load image
@@ -111,7 +118,7 @@ private fun CategoryPillItem(
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
-                    .background(BackgroundGray),
+                    .background(iconBg),
                 contentScale = ContentScale.Crop,
             )
         } else {
@@ -121,7 +128,7 @@ private fun CategoryPillItem(
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
-                    .background(BackgroundGray),
+                    .background(iconBg),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(text = emoji, fontSize = 22.sp)
