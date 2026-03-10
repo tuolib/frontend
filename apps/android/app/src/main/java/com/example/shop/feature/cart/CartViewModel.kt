@@ -64,11 +64,13 @@ class CartViewModel @Inject constructor(
                         cartRepository.update(skuId, qty)
                     } catch (e: Exception) {
                         // Reload on failure to sync
-                        loadCart(showLoading = false)
+                        loadCart()
                         _event.send(CartEvent.ShowMessage(e.message ?: "Update failed"))
                     }
                 }
         }
+        // Initial load (first time ViewModel is created)
+        onScreenVisible()
     }
 
     /**
