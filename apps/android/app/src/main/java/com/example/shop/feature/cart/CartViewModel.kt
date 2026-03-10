@@ -71,17 +71,21 @@ class CartViewModel @Inject constructor(
     }
 
     fun refresh() {
-        loadCart()
+        loadCart(showLoading = false)
     }
 
-    private fun loadCart() {
+    private fun loadCart(showLoading: Boolean = true) {
         viewModelScope.launch {
             val isLoggedIn = tokenStore.accessToken.first() != null
             if (!isLoggedIn) {
-                _state.update { it.copy(isLoading = false, isLoggedIn = false) }
+                _state.update { it.copy(isLoading = false, isLoggedIn = false, items = emptyList()) }
                 return@launch
             }
-            _state.update { it.copy(isLoggedIn = true) }
+            if (showLoading) {
+                _state.update { it.copy(isLoading = true, isLoggedIn = true) }
+            } else {
+                _state.update { it.copy(isLoggedIn = true) }
+            }
 
             try {
                 val items = cartRepository.list()
