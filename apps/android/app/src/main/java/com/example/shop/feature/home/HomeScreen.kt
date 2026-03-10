@@ -233,7 +233,11 @@ fun HomeScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = Dimens.SpacingMd),
+                        .padding(
+                            start = Dimens.SpacingMd,
+                            end = Dimens.SpacingMd,
+                            bottom = Dimens.SpacingSm,
+                        ),
                     horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingSm),
                 ) {
                     val firstIndex = rowIndex * 2

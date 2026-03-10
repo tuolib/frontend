@@ -111,6 +111,7 @@ private fun NewArrivalCard(
             fontSize = 12.sp,
             color = TextPrimary,
             maxLines = 2,
+            minLines = 2,
             overflow = TextOverflow.Ellipsis,
             lineHeight = 16.sp,
         )
