@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.shop.feature.auth.login.LoginScreen
 import com.example.shop.feature.auth.register.RegisterScreen
+import com.example.shop.feature.home.HomeScreen
 
 @Composable
 fun AppNavGraph(
@@ -24,7 +25,9 @@ fun AppNavGraph(
     ) {
         // ── Tab pages ──
         composable<HomeRoute> {
-            PlaceholderScreen("Home")
+            HomeScreen(
+                onNavigate = { route -> navController.navigate(route) },
+            )
         }
         composable<ProfileRoute> {
             PlaceholderScreen("Profile")
