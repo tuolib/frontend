@@ -89,7 +89,7 @@ class CartViewModel @Inject constructor(
         loadCart(showLoading = false)
     }
 
-    private fun loadCart(showLoading: Boolean) {
+    private fun loadCart(showLoading: Boolean = false) {
         viewModelScope.launch {
             val isLoggedIn = tokenStore.accessToken.first() != null
             if (!isLoggedIn) {
