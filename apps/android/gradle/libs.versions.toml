@@ -26,9 +26,6 @@ kotlinxSerialization = "1.7.3"
 # Image
 coil = "3.0.4"
 
-# Debug
-chucker = "4.1.0"
-
 # Coroutines
 coroutines = "1.9.0"
 
@@ -78,10 +75,6 @@ kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 # Image
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
 coil-network-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
-
-# Debug
-chucker-debug = { group = "com.github.chuckerteam.chucker", name = "library", version.ref = "chucker" }
-chucker-release = { group = "com.github.chuckerteam.chucker", name = "library-no-op", version.ref = "chucker" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
