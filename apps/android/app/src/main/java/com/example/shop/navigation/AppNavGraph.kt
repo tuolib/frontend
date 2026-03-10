@@ -12,6 +12,9 @@ import androidx.navigation.compose.composable
 import com.example.shop.feature.auth.login.LoginScreen
 import com.example.shop.feature.auth.register.RegisterScreen
 import com.example.shop.feature.home.HomeScreen
+import com.example.shop.feature.menu.MenuScreen
+import com.example.shop.feature.product.list.ProductListScreen
+import com.example.shop.feature.product.search.SearchScreen
 
 @Composable
 fun AppNavGraph(
@@ -36,7 +39,16 @@ fun AppNavGraph(
             PlaceholderScreen("Cart")
         }
         composable<MenuRoute> {
-            PlaceholderScreen("Menu")
+            MenuScreen(
+                onCategoryClick = { categoryId, categoryName ->
+                    navController.navigate(
+                        ProductListRoute(
+                            categoryId = categoryId,
+                            categoryName = categoryName,
+                        )
+                    )
+                },
+            )
         }
 
         // ── Auth pages ──
@@ -65,12 +77,22 @@ fun AppNavGraph(
             )
         }
 
-        // ── Standalone pages (placeholders for future phases) ──
+        // ── Standalone pages ──
         composable<SearchRoute> {
-            PlaceholderScreen("Search")
+            SearchScreen(
+                onBack = { navController.popBackStack() },
+                onProductClick = { id ->
+                    navController.navigate(ProductDetailRoute(id))
+                },
+            )
         }
         composable<ProductListRoute> {
-            PlaceholderScreen("Product List")
+            ProductListScreen(
+                onBack = { navController.popBackStack() },
+                onProductClick = { id ->
+                    navController.navigate(ProductDetailRoute(id))
+                },
+            )
         }
         composable<ProductDetailRoute> {
             PlaceholderScreen("Product Detail")
