@@ -54,6 +54,7 @@ fun ProductCard(
             fontSize = 13.sp,
             color = TextPrimary,
             maxLines = 2,
+            minLines = 2,
             overflow = TextOverflow.Ellipsis,
             lineHeight = 18.sp,
         )
