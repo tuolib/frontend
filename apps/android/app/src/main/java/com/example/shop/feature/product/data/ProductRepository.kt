@@ -2,6 +2,8 @@ package com.example.shop.feature.product.data
 
 import com.example.shop.core.model.PaginatedResult
 import com.example.shop.core.network.unwrap
+import com.example.shop.feature.product.data.model.ProductDetail
+import com.example.shop.feature.product.data.model.ProductDetailRequest
 import com.example.shop.feature.product.data.model.ProductListItem
 import com.example.shop.feature.product.data.model.ProductListRequest
 import com.example.shop.feature.product.data.model.SearchRequest
@@ -14,6 +16,10 @@ class ProductRepository @Inject constructor(
 ) {
     suspend fun list(request: ProductListRequest): PaginatedResult<ProductListItem> {
         return api.list(request).unwrap()
+    }
+
+    suspend fun detail(productId: String): ProductDetail {
+        return api.detail(ProductDetailRequest(productId)).unwrap()
     }
 
     suspend fun search(request: SearchRequest): PaginatedResult<ProductListItem> {

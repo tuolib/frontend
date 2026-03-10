@@ -11,8 +11,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.shop.feature.auth.login.LoginScreen
 import com.example.shop.feature.auth.register.RegisterScreen
+import com.example.shop.feature.cart.CartScreen
 import com.example.shop.feature.home.HomeScreen
 import com.example.shop.feature.menu.MenuScreen
+import com.example.shop.feature.product.detail.ProductDetailScreen
 import com.example.shop.feature.product.list.ProductListScreen
 import com.example.shop.feature.product.search.SearchScreen
 
@@ -36,7 +38,17 @@ fun AppNavGraph(
             PlaceholderScreen("Profile")
         }
         composable<CartRoute> {
-            PlaceholderScreen("Cart")
+            CartScreen(
+                onNavigateToLogin = {
+                    navController.navigate(LoginRoute)
+                },
+                onNavigateToCheckout = {
+                    navController.navigate(OrderCreateRoute)
+                },
+                onNavigateToProduct = { productId ->
+                    navController.navigate(ProductDetailRoute(productId))
+                },
+            )
         }
         composable<MenuRoute> {
             MenuScreen(
@@ -95,7 +107,18 @@ fun AppNavGraph(
             )
         }
         composable<ProductDetailRoute> {
-            PlaceholderScreen("Product Detail")
+            ProductDetailScreen(
+                onBack = { navController.popBackStack() },
+                onNavigateToCart = {
+                    navController.navigate(CartRoute) {
+                        popUpTo(HomeRoute) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
+            )
         }
         composable<OrderCreateRoute> {
             PlaceholderScreen("Order Create")
