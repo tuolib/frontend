@@ -53,6 +53,8 @@ class CartViewModel @Inject constructor(
     // Debounced quantity updates
     private val quantityUpdates = MutableSharedFlow<Pair<String, Int>>()
 
+    private var lastRefreshTime = 0L
+
     init {
         viewModelScope.launch {
             quantityUpdates
@@ -62,19 +64,32 @@ class CartViewModel @Inject constructor(
                         cartRepository.update(skuId, qty)
                     } catch (e: Exception) {
                         // Reload on failure to sync
-                        loadCart()
+                        loadCart(showLoading = false)
                         _event.send(CartEvent.ShowMessage(e.message ?: "Update failed"))
                     }
                 }
         }
-        loadCart()
+    }
+
+    /**
+     * Called every time the CartScreen enters composition.
+     * Shows loading spinner only if cart is empty (first load);
+     * otherwise silently refreshes in background.
+     * Skips if called again within 500ms (guards against duplicate calls).
+     */
+    fun onScreenVisible() {
+        val now = System.currentTimeMillis()
+        if (now - lastRefreshTime < 500) return
+        lastRefreshTime = now
+        loadCart(showLoading = _state.value.items.isEmpty() && !_state.value.isLoading)
     }
 
     fun refresh() {
+        lastRefreshTime = System.currentTimeMillis()
         loadCart(showLoading = false)
     }
 
-    private fun loadCart(showLoading: Boolean = true) {
+    private fun loadCart(showLoading: Boolean) {
         viewModelScope.launch {
             val isLoggedIn = tokenStore.accessToken.first() != null
             if (!isLoggedIn) {
