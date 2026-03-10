@@ -90,15 +90,21 @@ fun BannerSkeleton(modifier: Modifier = Modifier) {
 
 @Composable
 fun CategoryPillsSkeleton(modifier: Modifier = Modifier) {
-    Row(
+    Column(
         modifier = modifier.fillMaxWidth().padding(horizontal = Dimens.SpacingMd),
-        horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMd),
+        verticalArrangement = Arrangement.spacedBy(Dimens.SpacingSm),
     ) {
-        repeat(5) {
-            Column(horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally) {
-                SkeletonBox(width = 48.dp, height = 48.dp)
-                Spacer(modifier = Modifier.height(4.dp))
-                SkeletonBox(width = 40.dp, height = 12.dp)
+        repeat(2) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingLg),
+            ) {
+                repeat(5) {
+                    Column(horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally) {
+                        SkeletonBox(width = 48.dp, height = 48.dp)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        SkeletonBox(width = 40.dp, height = 12.dp)
+                    }
+                }
             }
         }
     }

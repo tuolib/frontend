@@ -3,13 +3,16 @@ package com.example.shop.feature.home.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,7 +24,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.layout.Box
 import coil3.compose.AsyncImage
 import com.example.shop.core.ui.theme.BackgroundGray
 import com.example.shop.core.ui.theme.Dimens
@@ -65,16 +67,20 @@ private val iconNameToEmoji = mapOf(
     "bed" to "\uD83D\uDECF\uFE0F",  // 🛏️
 )
 
+private val ROW_HEIGHT = 72.dp
+
 @Composable
 fun CategoryPills(
     categories: List<CategoryNode>,
     onCategoryClick: (CategoryNode) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    LazyRow(
-        modifier = modifier,
+    LazyHorizontalGrid(
+        rows = GridCells.Fixed(2),
+        modifier = modifier.height(ROW_HEIGHT * 2 + Dimens.SpacingSm),
         contentPadding = PaddingValues(horizontal = Dimens.SpacingMd),
         horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingLg),
+        verticalArrangement = Arrangement.spacedBy(Dimens.SpacingSm),
     ) {
         items(categories, key = { it.id }) { category ->
             CategoryPillItem(
@@ -91,7 +97,9 @@ private fun CategoryPillItem(
     onClick: () -> Unit,
 ) {
     Column(
-        modifier = Modifier.clickable(onClick = onClick),
+        modifier = Modifier
+            .width(56.dp)
+            .clickable(onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         val iconUrl = category.iconUrl
