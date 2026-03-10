@@ -14,9 +14,14 @@ import com.example.shop.feature.auth.register.RegisterScreen
 import com.example.shop.feature.cart.CartScreen
 import com.example.shop.feature.home.HomeScreen
 import com.example.shop.feature.menu.MenuScreen
+import com.example.shop.feature.order.create.OrderCreateScreen
+import com.example.shop.feature.order.detail.OrderDetailScreen
+import com.example.shop.feature.order.list.OrderListScreen
+import com.example.shop.feature.order.payment.PaymentScreen
 import com.example.shop.feature.product.detail.ProductDetailScreen
 import com.example.shop.feature.product.list.ProductListScreen
 import com.example.shop.feature.product.search.SearchScreen
+import com.example.shop.feature.user.address.AddressScreen
 
 @Composable
 fun AppNavGraph(
@@ -120,20 +125,56 @@ fun AppNavGraph(
                 },
             )
         }
+
+        // ── Order pages ──
         composable<OrderCreateRoute> {
-            PlaceholderScreen("Order Create")
+            OrderCreateScreen(
+                onBack = { navController.popBackStack() },
+                onNavigateToPayment = { orderId ->
+                    navController.navigate(PaymentRoute(orderId)) {
+                        popUpTo(CartRoute) { inclusive = false }
+                    }
+                },
+                onNavigateToAddressManage = {
+                    navController.navigate(AddressManageRoute)
+                },
+            )
         }
         composable<OrderListRoute> {
-            PlaceholderScreen("Order List")
+            OrderListScreen(
+                onBack = { navController.popBackStack() },
+                onOrderClick = { orderId ->
+                    navController.navigate(OrderDetailRoute(orderId))
+                },
+            )
         }
         composable<OrderDetailRoute> {
-            PlaceholderScreen("Order Detail")
+            OrderDetailScreen(
+                onBack = { navController.popBackStack() },
+                onNavigateToPayment = { orderId ->
+                    navController.navigate(PaymentRoute(orderId))
+                },
+            )
         }
         composable<PaymentRoute> {
-            PlaceholderScreen("Payment")
+            PaymentScreen(
+                onBack = { navController.popBackStack() },
+                onNavigateToOrderDetail = { orderId ->
+                    navController.navigate(OrderDetailRoute(orderId)) {
+                        popUpTo(HomeRoute) { saveState = true }
+                    }
+                },
+                onNavigateToHome = {
+                    navController.navigate(HomeRoute) {
+                        popUpTo(HomeRoute) { inclusive = true }
+                    }
+                },
+            )
         }
         composable<AddressManageRoute> {
-            PlaceholderScreen("Address Management")
+            AddressScreen(
+                onBack = { navController.popBackStack() },
+            )
         }
     }
 }

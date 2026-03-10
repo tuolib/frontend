@@ -2,6 +2,7 @@ package com.example.shop.core.di
 
 import com.example.shop.BuildConfig
 import com.example.shop.core.network.AuthInterceptor
+import com.example.shop.core.network.IdempotencyInterceptor
 import com.example.shop.core.network.TokenAuthenticator
 import com.example.shop.core.storage.TokenStore
 import dagger.Module
@@ -49,6 +50,7 @@ object NetworkModule {
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(authInterceptor)
+            .addInterceptor(IdempotencyInterceptor())
             .addInterceptor(
                 HttpLoggingInterceptor().apply {
                     level = if (BuildConfig.DEBUG) {

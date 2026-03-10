@@ -4,7 +4,10 @@ import com.example.shop.feature.auth.data.AuthApi
 import com.example.shop.feature.cart.data.CartApi
 import com.example.shop.feature.home.data.HomeApi
 import com.example.shop.feature.menu.data.CategoryApi
+import com.example.shop.feature.order.data.OrderApi
+import com.example.shop.feature.order.data.PaymentApi
 import com.example.shop.feature.product.data.ProductApi
+import com.example.shop.feature.user.data.AddressApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,5 +47,23 @@ object RepositoryModule {
     @Singleton
     fun provideCartApi(retrofit: Retrofit): CartApi {
         return retrofit.create(CartApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideOrderApi(retrofit: Retrofit): OrderApi {
+        return retrofit.create(OrderApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun providePaymentApi(retrofit: Retrofit): PaymentApi {
+        return retrofit.create(PaymentApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAddressApi(retrofit: Retrofit): AddressApi {
+        return retrofit.create(AddressApi::class.java)
     }
 }

@@ -15,6 +15,7 @@ export const ROUTES = {
   ADDRESS: '/me/address',
   LOGIN: '/login',
   REGISTER: '/register',
+  DOWNLOAD: '/download',
 } as const;
 
 /**

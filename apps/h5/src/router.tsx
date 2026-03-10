@@ -21,6 +21,7 @@ const Profile = lazy(() => import('./pages/user/profile'));
 const Address = lazy(() => import('./pages/user/address'));
 const Login = lazy(() => import('./pages/auth/login'));
 const Register = lazy(() => import('./pages/auth/register'));
+const Download = lazy(() => import('./pages/download'));
 const NotFound = lazy(() => import('./pages/error/not-found'));
 const ScrollToTop = lazy(() => import('./components/scroll-to-top'));
 
@@ -61,6 +62,7 @@ export const router = createBrowserRouter([
           { path: 'product', element: <RouteErrorBoundary><ProductList /></RouteErrorBoundary> },
           { path: 'dp/:id', element: <RouteErrorBoundary><ProductDetail /></RouteErrorBoundary> },
           { path: 'search', element: <RouteErrorBoundary><Search /></RouteErrorBoundary> },
+          { path: 'download', element: <RouteErrorBoundary><Download /></RouteErrorBoundary> },
         ],
       },
       // 需要登录

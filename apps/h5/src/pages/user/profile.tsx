@@ -75,9 +75,9 @@ export default function Profile() {
           onClick={() => navigate(ROUTES.ADDRESS)}
         />
         <ActionCard
-          icon="i-carbon-user-profile"
-          label="Account"
-          onClick={() => {}}
+          icon="i-carbon-download"
+          label="Download App"
+          onClick={() => navigate(ROUTES.DOWNLOAD)}
         />
         <ActionCard
           icon="i-carbon-logout"
@@ -134,6 +134,10 @@ function GuestView() {
         <span>New customer? </span>
         <Link to={ROUTES.REGISTER} className="register-link">Start here</Link>
       </div>
+      <Link to={ROUTES.DOWNLOAD} className="profile-download-entry">
+        <span className="i-carbon-download action-icon" />
+        <span className="action-label">Download App</span>
+      </Link>
     </div>
   );
 }

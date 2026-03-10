@@ -23,6 +23,9 @@ android {
     }
 
     buildTypes {
+        debug {
+            applicationIdSuffix = ".debug"
+        }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
@@ -30,6 +33,8 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            // 使用 debug 签名，方便分发（无需单独管理 keystore）
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 
