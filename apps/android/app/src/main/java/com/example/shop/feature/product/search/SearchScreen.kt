@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -27,8 +28,6 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -39,6 +38,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -105,41 +105,20 @@ fun SearchScreen(
                 )
             }
 
-            TextField(
+            BasicTextField(
                 value = state.query,
                 onValueChange = viewModel::onQueryChange,
                 modifier = Modifier
                     .weight(1f)
-                    .height(44.dp)
+                    .height(40.dp)
+                    .clip(RoundedCornerShape(Dimens.RadiusMd))
+                    .background(Color.White)
                     .focusRequester(focusRequester),
-                placeholder = {
-                    Text(
-                        text = "Search products...",
-                        fontSize = 14.sp,
-                        color = TextSecondary,
-                    )
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = null,
-                        modifier = Modifier.size(20.dp),
-                        tint = Teal,
-                    )
-                },
-                trailingIcon = {
-                    if (state.query.isNotEmpty()) {
-                        IconButton(onClick = { viewModel.onClearSearch() }) {
-                            Icon(
-                                imageVector = Icons.Default.Clear,
-                                contentDescription = "Clear",
-                                modifier = Modifier.size(18.dp),
-                                tint = TextSecondary,
-                            )
-                        }
-                    }
-                },
                 singleLine = true,
+                textStyle = androidx.compose.ui.text.TextStyle(
+                    fontSize = 14.sp,
+                    color = TextPrimary,
+                ),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                 keyboardActions = KeyboardActions(
                     onSearch = {
@@ -147,15 +126,43 @@ fun SearchScreen(
                         keyboardController?.hide()
                     },
                 ),
-                shape = RoundedCornerShape(Dimens.RadiusMd),
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    cursorColor = Teal,
-                ),
-                textStyle = androidx.compose.ui.text.TextStyle(fontSize = 14.sp),
+                cursorBrush = SolidColor(Teal),
+                decorationBox = { innerTextField ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = Dimens.SpacingMd),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp),
+                            tint = Teal,
+                        )
+                        Spacer(modifier = Modifier.width(Dimens.SpacingSm))
+                        Box(modifier = Modifier.weight(1f)) {
+                            if (state.query.isEmpty()) {
+                                Text(
+                                    text = "Search products...",
+                                    fontSize = 14.sp,
+                                    color = TextSecondary,
+                                )
+                            }
+                            innerTextField()
+                        }
+                        if (state.query.isNotEmpty()) {
+                            Icon(
+                                imageVector = Icons.Default.Clear,
+                                contentDescription = "Clear",
+                                modifier = Modifier
+                                    .size(18.dp)
+                                    .clickable { viewModel.onClearSearch() },
+                                tint = TextSecondary,
+                            )
+                        }
+                    }
+                },
             )
 
             Spacer(modifier = Modifier.width(Dimens.SpacingSm))
