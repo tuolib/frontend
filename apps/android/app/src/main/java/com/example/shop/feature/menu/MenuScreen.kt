@@ -2,6 +2,7 @@ package com.example.shop.feature.menu
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,9 +18,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
@@ -42,14 +46,18 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.example.shop.core.ui.theme.Dimens
+import com.example.shop.core.ui.theme.PriceRed
 import com.example.shop.core.ui.theme.Teal
 import com.example.shop.core.ui.theme.TextPrimary
 import com.example.shop.core.ui.theme.TextSecondary
+import com.example.shop.core.util.PriceFormatter
 import com.example.shop.feature.menu.data.model.CategoryNode
+import com.example.shop.feature.product.data.model.ProductListItem
 
 @Composable
 fun MenuScreen(
     onCategoryClick: (categoryId: String, categoryName: String) -> Unit,
+    onProductClick: ((productId: String) -> Unit)? = null,
     viewModel: MenuViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -99,130 +107,225 @@ fun MenuScreen(
                         Box(
                             modifier = Modifier
                                 .width(3.dp)
-                                .height(32.dp)
+                                .height(40.dp)
                                 .background(Teal)
                                 .align(Alignment.CenterStart),
                         )
                     }
 
-                    Text(
-                        text = category.name,
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = Dimens.SpacingLg, horizontal = Dimens.SpacingSm),
-                        fontSize = 13.sp,
-                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                        color = if (isSelected) TextPrimary else TextSecondary,
-                        textAlign = TextAlign.Center,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
+                            .padding(vertical = Dimens.SpacingMd, horizontal = Dimens.SpacingXs),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        // Emoji icon
+                        val emoji = CategoryEmoji.get(category.slug)
+                        if (emoji != null) {
+                            Text(
+                                text = emoji,
+                                fontSize = 22.sp,
+                            )
+                            Spacer(Modifier.height(Dimens.SpacingXs))
+                        }
+
+                        Text(
+                            text = category.name,
+                            fontSize = 12.sp,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                            color = if (isSelected) TextPrimary else TextSecondary,
+                            textAlign = TextAlign.Center,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                }
+            }
+        }
+
+        // Right: subcategories grid + popular products
+        val selectedCategory = state.categories.getOrNull(state.selectedIndex)
+
+        if (selectedCategory != null) {
+            RightPanel(
+                category = selectedCategory,
+                popularProducts = state.popularProducts,
+                popularLoading = state.popularLoading,
+                onCategoryClick = onCategoryClick,
+                onProductClick = onProductClick,
+            )
+        }
+    }
+}
+
+@Composable
+private fun RightPanel(
+    category: CategoryNode,
+    popularProducts: List<ProductListItem>,
+    popularLoading: Boolean,
+    onCategoryClick: (String, String) -> Unit,
+    onProductClick: ((String) -> Unit)?,
+) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3),
+        modifier = Modifier
+            .fillMaxHeight()
+            .background(Color.White)
+            .padding(horizontal = Dimens.SpacingMd),
+        contentPadding = PaddingValues(vertical = Dimens.SpacingMd),
+        horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingSm),
+        verticalArrangement = Arrangement.spacedBy(Dimens.SpacingLg),
+    ) {
+        // Subcategory items
+        if (category.children.isNotEmpty()) {
+            items(category.children) { child ->
+                SubcategoryItem(
+                    category = child,
+                    onClick = { onCategoryClick(child.id, child.name) },
+                )
+            }
+        }
+
+        // Popular products section
+        item(span = { GridItemSpan(3) }) {
+            PopularSection(
+                products = popularProducts,
+                isLoading = popularLoading,
+                onProductClick = onProductClick,
+            )
+        }
+
+        // "See all" button
+        item(span = { GridItemSpan(3) }) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(Dimens.RadiusMd))
+                    .background(Color(0xFFF5F5F5))
+                    .clickable { onCategoryClick(category.id, category.name) }
+                    .padding(Dimens.SpacingMd),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "See all ${category.name}",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Teal,
+                )
+                Spacer(modifier = Modifier.width(Dimens.SpacingXs))
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp),
+                    tint = Teal,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun PopularSection(
+    products: List<ProductListItem>,
+    isLoading: Boolean,
+    onProductClick: ((String) -> Unit)?,
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Spacer(Modifier.height(Dimens.SpacingSm))
+
+        Text(
+            text = "Popular",
+            fontSize = 15.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = TextPrimary,
+        )
+
+        Spacer(Modifier.height(Dimens.SpacingSm))
+
+        if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                CircularProgressIndicator(color = Teal, modifier = Modifier.size(20.dp))
+            }
+        } else if (products.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = Dimens.SpacingLg),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = "No products yet",
+                    fontSize = 13.sp,
+                    color = TextSecondary,
+                )
+            }
+        } else {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingSm),
+            ) {
+                products.forEach { product ->
+                    PopularProductItem(
+                        product = product,
+                        onClick = { onProductClick?.invoke(product.id) },
                     )
                 }
             }
         }
 
-        // Right: subcategories grid
-        val selectedCategory = state.categories.getOrNull(state.selectedIndex)
+        Spacer(Modifier.height(Dimens.SpacingSm))
+    }
+}
 
-        Column(
+@Composable
+private fun PopularProductItem(
+    product: ProductListItem,
+    onClick: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .width(100.dp)
+            .clip(RoundedCornerShape(Dimens.RadiusMd))
+            .clickable(onClick = onClick)
+            .padding(Dimens.SpacingXs),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        AsyncImage(
+            model = product.primaryImage,
+            contentDescription = product.title,
             modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight()
-                .background(Color.White)
-                .padding(Dimens.SpacingMd),
-        ) {
-            if (selectedCategory != null && selectedCategory.children.isNotEmpty()) {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(3),
-                    modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(vertical = Dimens.SpacingSm),
-                    horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingSm),
-                    verticalArrangement = Arrangement.spacedBy(Dimens.SpacingLg),
-                ) {
-                    items(selectedCategory.children) { child ->
-                        SubcategoryItem(
-                            category = child,
-                            onClick = { onCategoryClick(child.id, child.name) },
-                        )
-                    }
-                }
+                .size(80.dp)
+                .clip(RoundedCornerShape(Dimens.RadiusMd))
+                .background(Color(0xFFF5F5F5)),
+            contentScale = ContentScale.Crop,
+        )
 
-                // "See all" button
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(Dimens.RadiusMd))
-                        .background(Color(0xFFF5F5F5))
-                        .clickable {
-                            onCategoryClick(
-                                selectedCategory.id,
-                                selectedCategory.name,
-                            )
-                        }
-                        .padding(Dimens.SpacingMd),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = "See all ${selectedCategory.name}",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Teal,
-                    )
-                    Spacer(modifier = Modifier.width(Dimens.SpacingXs))
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp),
-                        tint = Teal,
-                    )
-                }
-            } else if (selectedCategory != null) {
-                // No children, show "See all" directly
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            text = "Browse all products in",
-                            fontSize = 14.sp,
-                            color = TextSecondary,
-                        )
-                        Spacer(modifier = Modifier.height(Dimens.SpacingSm))
-                        Text(
-                            text = selectedCategory.name,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = TextPrimary,
-                        )
-                        Spacer(modifier = Modifier.height(Dimens.SpacingLg))
-                        Row(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(Dimens.RadiusMd))
-                                .background(Teal)
-                                .clickable {
-                                    onCategoryClick(
-                                        selectedCategory.id,
-                                        selectedCategory.name,
-                                    )
-                                }
-                                .padding(
-                                    horizontal = Dimens.SpacingXl,
-                                    vertical = Dimens.SpacingMd,
-                                ),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Text(
-                                text = "See all",
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = Color.White,
-                            )
-                        }
-                    }
-                }
-            }
+        Spacer(Modifier.height(Dimens.SpacingXs))
+
+        Text(
+            text = product.title,
+            fontSize = 11.sp,
+            color = TextPrimary,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center,
+        )
+
+        product.minPrice?.let { price ->
+            Text(
+                text = "¥${PriceFormatter.format(price)}",
+                fontSize = 13.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = PriceRed,
+            )
         }
     }
 }
@@ -239,20 +342,36 @@ private fun SubcategoryItem(
             .padding(Dimens.SpacingXs),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        if (category.iconUrl != null) {
+        val emoji = CategoryEmoji.get(category.slug)
+        if (emoji != null) {
+            // Emoji icon in circle
+            Box(
+                modifier = Modifier
+                    .size(56.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFFF0F0F0)),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = emoji,
+                    fontSize = 24.sp,
+                )
+            }
+        } else if (category.iconUrl != null) {
             AsyncImage(
                 model = category.iconUrl,
                 contentDescription = category.name,
                 modifier = Modifier
                     .size(56.dp)
-                    .clip(RoundedCornerShape(Dimens.RadiusMd)),
+                    .clip(CircleShape),
                 contentScale = ContentScale.Crop,
             )
         } else {
+            // Fallback: first letter
             Box(
                 modifier = Modifier
                     .size(56.dp)
-                    .clip(RoundedCornerShape(Dimens.RadiusMd))
+                    .clip(CircleShape)
                     .background(Color(0xFFF0F0F0)),
                 contentAlignment = Alignment.Center,
             ) {

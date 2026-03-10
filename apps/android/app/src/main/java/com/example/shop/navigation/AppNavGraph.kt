@@ -80,6 +80,9 @@ fun AppNavGraph(
                         )
                     )
                 },
+                onProductClick = { productId ->
+                    navController.navigate(ProductDetailRoute(productId))
+                },
             )
         }
 
