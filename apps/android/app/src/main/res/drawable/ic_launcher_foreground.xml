@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Background circle -->
+    <path
+        android:fillColor="#131921"
+        android:pathData="M54,54m-40,0a40,40 0,1 1,80 0a40,40 0,1 1,-80 0" />
+    <!-- "S" letter for Shop -->
+    <path
+        android:fillColor="#FF9900"
+        android:pathData="M44.5,42.5c0,-3.6 2.9,-6.5 6.5,-6.5h6c3.6,0 6.5,2.9 6.5,6.5v1h-5v-1c0,-0.8 -0.7,-1.5 -1.5,-1.5h-6c-0.8,0 -1.5,0.7 -1.5,1.5s0.7,1.5 1.5,1.5h6c3.6,0 6.5,2.9 6.5,6.5s-2.9,6.5 -6.5,6.5h-6c-3.6,0 -6.5,-2.9 -6.5,-6.5v-1h5v1c0,0.8 0.7,1.5 1.5,1.5h6c0.8,0 1.5,-0.7 1.5,-1.5s-0.7,-1.5 -1.5,-1.5h-6c-3.6,0 -6.5,-2.9 -6.5,-6.5z" />
+</vector>
