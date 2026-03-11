@@ -19,7 +19,8 @@ struct ImageCarousel: View {
                                 }
                         }
                         .resizable()
-                        .scaledToFit()
+                        .scaledToFill()
+                        .clipped()
                         .tag(index)
                 }
             }
@@ -36,7 +37,8 @@ struct ImageCarousel: View {
                     .padding(ShopDimens.spacingMD)
             }
         }
-        .frame(height: 300)
+        .aspectRatio(1, contentMode: .fit)
+        .clipped()
         .background(Color.shopCard)
     }
 }

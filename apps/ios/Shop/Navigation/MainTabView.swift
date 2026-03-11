@@ -10,8 +10,10 @@ struct MainTabView: View {
     @State private var profilePath = NavigationPath()
     @State private var cartPath = NavigationPath()
     @State private var menuPath = NavigationPath()
+    @State private var homeStore = Store(initialState: HomeFeature.State()) { HomeFeature() }
     @State private var cartStore = Store(initialState: CartFeature.State()) { CartFeature() }
     @State private var profileStore = Store(initialState: ProfileFeature.State()) { ProfileFeature() }
+    @State private var menuStore = Store(initialState: MenuFeature.State()) { MenuFeature() }
 
     /// Tapping any tab (including the current one) pops it to root — Amazon pattern.
     private var tabSelection: Binding<AppTab> {
@@ -33,9 +35,7 @@ struct MainTabView: View {
             // Home Tab
             NavigationStack(path: $homePath) {
                 HomeView(
-                    store: Store(initialState: HomeFeature.State()) {
-                        HomeFeature()
-                    },
+                    store: homeStore,
                     onSearchTap: {
                         homePath.append(AppRoute.search)
                     },
@@ -103,9 +103,7 @@ struct MainTabView: View {
             // Menu Tab
             NavigationStack(path: $menuPath) {
                 MenuView(
-                    store: Store(initialState: MenuFeature.State()) {
-                        MenuFeature()
-                    },
+                    store: menuStore,
                     onCategoryTap: { id, name in
                         menuPath.append(AppRoute.productList(categoryId: id, categoryName: name))
                     },
