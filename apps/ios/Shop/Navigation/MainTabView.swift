@@ -117,6 +117,34 @@ struct MainTabView: View {
         }
     }
 
+    /// Replace the current (last) route with a new one
+    private func replaceLastRoute(with route: AppRoute) {
+        switch selectedTab {
+        case .home:
+            if !homePath.isEmpty { homePath.removeLast() }
+            homePath.append(route)
+        case .profile:
+            if !profilePath.isEmpty { profilePath.removeLast() }
+            profilePath.append(route)
+        case .cart:
+            if !cartPath.isEmpty { cartPath.removeLast() }
+            cartPath.append(route)
+        case .menu:
+            if !menuPath.isEmpty { menuPath.removeLast() }
+            menuPath.append(route)
+        }
+    }
+
+    /// Pop to root of the current tab
+    private func popToRoot() {
+        switch selectedTab {
+        case .home: homePath = NavigationPath()
+        case .profile: profilePath = NavigationPath()
+        case .cart: cartPath = NavigationPath()
+        case .menu: menuPath = NavigationPath()
+        }
+    }
+
     @ViewBuilder
     private func routeView(_ route: AppRoute) -> some View {
         routeContent(route)
@@ -178,7 +206,8 @@ struct MainTabView: View {
                     OrderCreateFeature()
                 },
                 onPayment: { orderId in
-                    appendRoute(.payment(orderId: orderId))
+                    // Replace checkout page with payment (don't stack)
+                    replaceLastRoute(with: .payment(orderId: orderId))
                 }
             )
 
@@ -213,8 +242,17 @@ struct MainTabView: View {
                 store: Store(initialState: PaymentFeature.State(orderId: orderId)) {
                     PaymentFeature()
                 },
-                onComplete: { orderId in
-                    appendRoute(.orderDetail(id: orderId))
+                onViewOrder: { orderId in
+                    // Pop to root, switch to profile tab, navigate to order detail
+                    popToRoot()
+                    selectedTab = .profile
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        profilePath.append(AppRoute.orderDetail(id: orderId))
+                    }
+                },
+                onContinueShopping: {
+                    popToRoot()
+                    selectedTab = .home
                 }
             )
 

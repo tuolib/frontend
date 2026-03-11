@@ -3,12 +3,15 @@ import ComposableArchitecture
 
 struct PaymentView: View {
     @Bindable var store: StoreOf<PaymentFeature>
-    var onComplete: (String) -> Void
+    var onViewOrder: (String) -> Void
+    var onContinueShopping: () -> Void
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         Group {
-            if store.isLoading {
+            if store.paymentSuccess {
+                paymentSuccessView
+            } else if store.isLoading {
                 ProgressView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else if let order = store.order {
@@ -23,14 +26,61 @@ struct PaymentView: View {
             }
         }
         .background(Color.shopBackground)
-        .navigationTitle("Payment")
+        .navigationTitle(store.paymentSuccess ? "" : "Payment")
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(store.paymentSuccess)
         .onAppear { store.send(.onAppear) }
-        .onChange(of: store.paymentSuccess) { _, success in
-            if success {
-                onComplete(store.orderId)
+    }
+
+    // MARK: - Payment Success
+
+    private var paymentSuccessView: some View {
+        VStack(spacing: ShopDimens.spacingLG) {
+            Spacer()
+
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 64))
+                .foregroundStyle(Color.green)
+
+            Text("Payment Successful")
+                .font(ShopFonts.title3)
+                .foregroundStyle(Color.shopText)
+
+            Text("Your order has been confirmed")
+                .font(ShopFonts.subheadline)
+                .foregroundStyle(Color.shopTextSecondary)
+
+            VStack(spacing: ShopDimens.spacingMD) {
+                Button {
+                    onViewOrder(store.orderId)
+                } label: {
+                    Text("View Order")
+                        .font(ShopFonts.subheadlineSemibold)
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(Color.shopTeal)
+                        .clipShape(RoundedRectangle(cornerRadius: ShopDimens.radiusFull))
+                }
+
+                Button {
+                    onContinueShopping()
+                } label: {
+                    Text("Continue Shopping")
+                        .font(ShopFonts.subheadlineSemibold)
+                        .foregroundStyle(Color.shopTeal)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(Color.shopTeal.opacity(0.1))
+                        .clipShape(RoundedRectangle(cornerRadius: ShopDimens.radiusFull))
+                }
             }
+            .padding(.horizontal, 48)
+            .padding(.top, ShopDimens.spacingMD)
+
+            Spacer()
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private func paymentContent(_ order: Order) -> some View {

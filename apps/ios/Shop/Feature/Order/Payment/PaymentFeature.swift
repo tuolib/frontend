@@ -29,7 +29,6 @@ struct PaymentFeature {
         case selectMethod(String)
         case payNow
         case paymentCreated(Result<PaymentInfo, Error>)
-        case paymentCompleted(orderId: String)
     }
 
     @Dependency(\.orderClient) var orderClient
@@ -92,9 +91,8 @@ struct PaymentFeature {
             case .paymentCreated(.success):
                 state.isPaying = false
                 state.paymentSuccess = true
-                return .run { [orderId = state.orderId] send in
+                return .run { _ in
                     await ToastManager.shared.show("Payment successful!", type: .success)
-                    await send(.paymentCompleted(orderId: orderId))
                 }
 
             case .paymentCreated(.failure):
@@ -102,9 +100,6 @@ struct PaymentFeature {
                 return .run { _ in
                     await ToastManager.shared.show("Payment failed", type: .error)
                 }
-
-            case .paymentCompleted:
-                return .none
             }
         }
     }

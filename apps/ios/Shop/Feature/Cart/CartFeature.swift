@@ -53,7 +53,10 @@ struct CartFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                guard !state.hasLoaded else { return .none }
+                if state.hasLoaded {
+                    // Silently refresh without showing loading spinner
+                    return loadCart()
+                }
                 state.isLoading = true
                 return loadCart()
 

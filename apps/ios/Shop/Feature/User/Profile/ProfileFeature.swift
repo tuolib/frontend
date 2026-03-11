@@ -32,7 +32,19 @@ struct ProfileFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                guard !state.hasLoaded else { return .none }
+                if state.hasLoaded {
+                    // Silently refresh without showing loading spinner
+                    return .merge(
+                        .run { send in
+                            let result = await Result { try await userClient.profile() }
+                            await send(.profileLoaded(result))
+                        },
+                        .run { send in
+                            let result = await Result { try await orderClient.list(1, 3, nil) }
+                            await send(.recentOrdersLoaded(result))
+                        }
+                    )
+                }
                 state.isLoading = true
                 return .merge(
                     .run { send in

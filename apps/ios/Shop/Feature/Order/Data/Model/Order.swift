@@ -116,4 +116,12 @@ struct OrderFirstItem: Codable, Equatable, Sendable {
     let productTitle: String
     let imageUrl: String?
     let skuAttrs: [String: String]?
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        productTitle = try container.decode(String.self, forKey: .productTitle)
+        imageUrl = try container.decodeIfPresent(String.self, forKey: .imageUrl)
+        // skuAttrs typed as `unknown` in backend — silently fall back to nil
+        skuAttrs = try? container.decodeIfPresent([String: String].self, forKey: .skuAttrs)
+    }
 }

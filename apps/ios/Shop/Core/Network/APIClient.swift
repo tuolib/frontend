@@ -137,7 +137,13 @@ struct APIClient: Sendable {
     }
 
     private func decodeResponse<T: Decodable>(_ data: Data) throws -> T {
-        let apiResponse = try JSONDecoder.shop.decode(APIResponse<T>.self, from: data)
+        let apiResponse: APIResponse<T>
+        do {
+            apiResponse = try JSONDecoder.shop.decode(APIResponse<T>.self, from: data)
+        } catch {
+            logger.error("✘ Decode error for \(T.self): \(error)")
+            throw error
+        }
 
         guard apiResponse.success, let result = apiResponse.data else {
             let error = APIError(
