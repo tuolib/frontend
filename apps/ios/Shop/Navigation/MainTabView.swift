@@ -13,8 +13,23 @@ struct MainTabView: View {
     @State private var cartStore = Store(initialState: CartFeature.State()) { CartFeature() }
     @State private var profileStore = Store(initialState: ProfileFeature.State()) { ProfileFeature() }
 
+    /// Tapping any tab (including the current one) pops it to root — Amazon pattern.
+    private var tabSelection: Binding<AppTab> {
+        Binding(
+            get: { selectedTab },
+            set: { newTab in
+                if newTab == selectedTab {
+                    popToRoot()
+                } else {
+                    resetTab(newTab)
+                    selectedTab = newTab
+                }
+            }
+        )
+    }
+
     var body: some View {
-        TabView(selection: $selectedTab) {
+        TabView(selection: tabSelection) {
             // Home Tab
             NavigationStack(path: $homePath) {
                 HomeView(
@@ -137,7 +152,12 @@ struct MainTabView: View {
 
     /// Pop to root of the current tab
     private func popToRoot() {
-        switch selectedTab {
+        resetTab(selectedTab)
+    }
+
+    /// Reset a specific tab's navigation stack to root
+    private func resetTab(_ tab: AppTab) {
+        switch tab {
         case .home: homePath = NavigationPath()
         case .profile: profilePath = NavigationPath()
         case .cart: cartPath = NavigationPath()
