@@ -11,6 +11,7 @@ struct MainTabView: View {
     @State private var cartPath = NavigationPath()
     @State private var menuPath = NavigationPath()
     @State private var cartStore = Store(initialState: CartFeature.State()) { CartFeature() }
+    @State private var profileStore = Store(initialState: ProfileFeature.State()) { ProfileFeature() }
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -39,9 +40,23 @@ struct MainTabView: View {
 
             // Profile Tab
             NavigationStack(path: $profilePath) {
-                ProfilePlaceholderView(
+                ProfileView(
+                    store: profileStore,
                     isLoggedIn: isLoggedIn,
-                    onSignInTapped: { showLoginSheet = true }
+                    onSignInTapped: { showLoginSheet = true },
+                    onOrdersTap: {
+                        profilePath.append(AppRoute.orderList)
+                    },
+                    onAddressTap: {
+                        profilePath.append(AppRoute.addressManage)
+                    },
+                    onOrderTap: { id in
+                        profilePath.append(AppRoute.orderDetail(id: id))
+                    },
+                    onLogout: {
+                        isLoggedIn = false
+                        selectedTab = .home
+                    }
                 )
                 .navigationDestination(for: AppRoute.self) { route in
                     routeView(route)
@@ -204,42 +219,6 @@ struct MainTabView: View {
                 }
             )
         }
-    }
-}
-
-// MARK: - Placeholder Views (replaced in later phases)
-
-private struct ProfilePlaceholderView: View {
-    let isLoggedIn: Bool
-    let onSignInTapped: () -> Void
-
-    var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "person.fill")
-                .font(.system(size: 48))
-                .foregroundStyle(Color.shopAccent)
-            Text("You")
-                .font(ShopFonts.title)
-                .foregroundStyle(Color.shopText)
-
-            if isLoggedIn {
-                Text("Coming in Phase 7")
-                    .font(ShopFonts.subheadline)
-                    .foregroundStyle(Color.shopTextSecondary)
-            } else {
-                Button("Sign In") {
-                    onSignInTapped()
-                }
-                .fontWeight(.semibold)
-                .padding(.horizontal, 32)
-                .padding(.vertical, 12)
-                .background(Color.shopAccent)
-                .foregroundStyle(.white)
-                .clipShape(RoundedRectangle(cornerRadius: ShopDimens.radiusMD))
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.shopBackground)
     }
 }
 

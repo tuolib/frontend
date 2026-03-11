@@ -107,6 +107,11 @@
 		B30619AA0000000600000013 /* AddressAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30619AA0000000600000013 /* AddressAPI.swift */; };
 		B30620AA0000000600000014 /* AddressClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30620AA0000000600000014 /* AddressClient.swift */; };
 		B30621AA0000000600000015 /* Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30621AA0000000600000015 /* Address.swift */; };
+		B30701AA0000000700000001 /* ProfileFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30701AA0000000700000001 /* ProfileFeature.swift */; };
+		B30702AA0000000700000002 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30702AA0000000700000002 /* ProfileView.swift */; };
+		B30703AA0000000700000003 /* UserAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30703AA0000000700000003 /* UserAPI.swift */; };
+		B30704AA0000000700000004 /* UserClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30704AA0000000700000004 /* UserClient.swift */; };
+		B30705AA0000000700000005 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30705AA0000000700000005 /* User.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -210,6 +215,11 @@
 		F30619AA0000000600000013 /* AddressAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressAPI.swift; sourceTree = "<group>"; };
 		F30620AA0000000600000014 /* AddressClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressClient.swift; sourceTree = "<group>"; };
 		F30621AA0000000600000015 /* Address.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Address.swift; sourceTree = "<group>"; };
+		F30701AA0000000700000001 /* ProfileFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileFeature.swift; sourceTree = "<group>"; };
+		F30702AA0000000700000002 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		F30703AA0000000700000003 /* UserAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAPI.swift; sourceTree = "<group>"; };
+		F30704AA0000000700000004 /* UserClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserClient.swift; sourceTree = "<group>"; };
+		F30705AA0000000700000005 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -660,6 +670,7 @@
 			children = (
 				A30609AA000000060000F009 /* Address */,
 				A30610AA000000060000F00A /* Data */,
+				A30701AA000000070000F001 /* Profile */,
 			);
 			path = User;
 			sourceTree = "<group>";
@@ -678,6 +689,8 @@
 			children = (
 				F30619AA0000000600000013 /* AddressAPI.swift */,
 				F30620AA0000000600000014 /* AddressClient.swift */,
+				F30703AA0000000700000003 /* UserAPI.swift */,
+				F30704AA0000000700000004 /* UserClient.swift */,
 				A30611AA000000060000F00B /* Model */,
 			);
 			path = Data;
@@ -687,8 +700,18 @@
 			isa = PBXGroup;
 			children = (
 				F30621AA0000000600000015 /* Address.swift */,
+				F30705AA0000000700000005 /* User.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		A30701AA000000070000F001 /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				F30701AA0000000700000001 /* ProfileFeature.swift */,
+				F30702AA0000000700000002 /* ProfileView.swift */,
+			);
+			path = Profile;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -854,6 +877,11 @@
 				B30612AA000000060000000C /* PaymentClient.swift in Sources */,
 				B30603AA0000000600000003 /* PaymentFeature.swift in Sources */,
 				B30604AA0000000600000004 /* PaymentView.swift in Sources */,
+				B30701AA0000000700000001 /* ProfileFeature.swift in Sources */,
+				B30702AA0000000700000002 /* ProfileView.swift in Sources */,
+				B30705AA0000000700000005 /* User.swift in Sources */,
+				B30703AA0000000700000003 /* UserAPI.swift in Sources */,
+				B30704AA0000000700000004 /* UserClient.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
