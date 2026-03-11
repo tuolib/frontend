@@ -6,7 +6,7 @@ struct OrderListFeature {
     @ObservableState
     struct State: Equatable {
         var selectedTab: OrderStatus = .all
-        var pagination = PaginationState<Order>()
+        var pagination = PaginationState<OrderSummary>()
         var hasLoaded = false
     }
 
@@ -15,7 +15,7 @@ struct OrderListFeature {
         case refresh
         case selectTab(OrderStatus)
         case loadPage(Int)
-        case ordersLoaded(Result<PaginatedResult<Order>, Error>)
+        case ordersLoaded(Result<PaginatedResult<OrderSummary>, Error>)
         case loadMore
         case cancelOrder(String)
         case orderCancelled(String, Result<VoidResult, Error>)
@@ -65,15 +65,11 @@ struct OrderListFeature {
                     await send(.orderCancelled(orderId, result))
                 }
 
-            case let .orderCancelled(orderId, .success):
-                if var order = state.pagination.items[id: orderId] {
-                    // Update status locally — the real model is let, so reload
-                    return .run { send in
-                        await ToastManager.shared.show("Order cancelled", type: .success)
-                        await send(.refresh)
-                    }
+            case .orderCancelled(_, .success):
+                return .run { send in
+                    await ToastManager.shared.show("Order cancelled", type: .success)
+                    await send(.refresh)
                 }
-                return .none
 
             case .orderCancelled(_, .failure):
                 return .run { _ in

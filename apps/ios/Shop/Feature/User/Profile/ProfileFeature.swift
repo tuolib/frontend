@@ -6,7 +6,7 @@ struct ProfileFeature {
     @ObservableState
     struct State: Equatable {
         var user: User?
-        var recentOrders: [Order] = []
+        var recentOrders: [OrderSummary] = []
         var isLoading = false
         var hasLoaded = false
         var isLoggingOut = false
@@ -17,7 +17,7 @@ struct ProfileFeature {
         case onAppear
         case refresh
         case profileLoaded(Result<User, Error>)
-        case recentOrdersLoaded(Result<PaginatedResult<Order>, Error>)
+        case recentOrdersLoaded(Result<PaginatedResult<OrderSummary>, Error>)
         case showLogoutConfirmation
         case dismissLogoutConfirmation
         case confirmLogout

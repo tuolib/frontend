@@ -215,7 +215,7 @@ struct ProfileView: View {
         }
     }
 
-    private func recentOrderRow(_ order: Order) -> some View {
+    private func recentOrderRow(_ order: OrderSummary) -> some View {
         VStack(alignment: .leading, spacing: ShopDimens.spacingSM) {
             HStack {
                 Text("#\(order.orderNo)")
@@ -227,7 +227,7 @@ struct ProfileView: View {
                     .foregroundStyle(order.orderStatus.color)
             }
 
-            if let firstItem = order.items.first {
+            if let firstItem = order.firstItem {
                 HStack(spacing: ShopDimens.spacingSM) {
                     KFImage(URL(string: firstItem.imageUrl ?? ""))
                         .placeholder {
@@ -249,9 +249,9 @@ struct ProfileView: View {
                             .foregroundStyle(Color.shopText)
                             .lineLimit(1)
                         HStack {
-                            PriceText(order.payAmount, size: .small)
-                            if order.items.count > 1 {
-                                Text("\(order.items.count) items")
+                            PriceText(order.payAmountValue, size: .small)
+                            if order.itemCount > 1 {
+                                Text("\(order.itemCount) items")
                                     .font(ShopFonts.caption)
                                     .foregroundStyle(Color.shopTextSecondary)
                             }

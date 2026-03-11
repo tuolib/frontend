@@ -95,9 +95,9 @@ struct OrderListView: View {
 
     // MARK: - Order Card
 
-    private func orderCard(_ order: Order) -> some View {
+    private func orderCard(_ order: OrderSummary) -> some View {
         Button {
-            onOrderTap(order.id)
+            onOrderTap(order.orderId)
         } label: {
             VStack(alignment: .leading, spacing: ShopDimens.spacingSM) {
                 // Header
@@ -113,10 +113,10 @@ struct OrderListView: View {
 
                 Divider()
 
-                // Items preview (first 2)
-                ForEach(order.items.prefix(2)) { item in
+                // First item preview
+                if let firstItem = order.firstItem {
                     HStack(spacing: ShopDimens.spacingSM) {
-                        KFImage(URL(string: item.imageUrl ?? ""))
+                        KFImage(URL(string: firstItem.imageUrl ?? ""))
                             .placeholder {
                                 Color.shopBackground
                                     .overlay {
@@ -131,15 +131,14 @@ struct OrderListView: View {
                             .clipShape(RoundedRectangle(cornerRadius: ShopDimens.radiusSM))
 
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(item.productTitle)
+                            Text(firstItem.productTitle)
                                 .font(ShopFonts.caption)
                                 .foregroundStyle(Color.shopText)
                                 .lineLimit(1)
 
-                            HStack {
-                                PriceText(item.price, size: .small)
-                                Text("x\(item.quantity)")
-                                    .font(ShopFonts.caption)
+                            if let attrs = firstItem.skuAttrs, !attrs.isEmpty {
+                                Text(attrs.map { "\($0.key): \($0.value)" }.joined(separator: ", "))
+                                    .font(.system(size: 11))
                                     .foregroundStyle(Color.shopTextSecondary)
                             }
                         }
@@ -148,8 +147,8 @@ struct OrderListView: View {
                     }
                 }
 
-                if order.items.count > 2 {
-                    Text("\(order.items.count) items in total")
+                if order.itemCount > 1 {
+                    Text("\(order.itemCount) items in total")
                         .font(ShopFonts.caption)
                         .foregroundStyle(Color.shopTextSecondary)
                 }
@@ -161,14 +160,14 @@ struct OrderListView: View {
                     Text("Total: ")
                         .font(ShopFonts.caption)
                         .foregroundStyle(Color.shopTextSecondary)
-                    PriceText(order.payAmount, size: .small)
+                    PriceText(order.payAmountValue, size: .small)
 
                     Spacer()
 
                     // Action buttons
                     if order.orderStatus == .pending {
                         Button {
-                            store.send(.cancelOrder(order.id))
+                            store.send(.cancelOrder(order.orderId))
                         } label: {
                             Text("Cancel")
                                 .font(ShopFonts.caption)
@@ -182,7 +181,7 @@ struct OrderListView: View {
                         }
 
                         Button {
-                            onPayment(order.id)
+                            onPayment(order.orderId)
                         } label: {
                             Text("Pay Now")
                                 .font(ShopFonts.captionSemibold)

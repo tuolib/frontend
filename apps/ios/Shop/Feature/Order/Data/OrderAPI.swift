@@ -22,7 +22,7 @@ enum OrderAPI {
         let status: String?
     }
 
-    static func list(_ request: ListRequest) async throws -> PaginatedResult<Order> {
+    static func list(_ request: ListRequest) async throws -> PaginatedResult<OrderSummary> {
         try await APIClient.shared.request(.orderList, body: request, needsAuth: true)
     }
 
