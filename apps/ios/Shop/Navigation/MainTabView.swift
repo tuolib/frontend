@@ -116,6 +116,12 @@ struct MainTabView: View {
 
     @ViewBuilder
     private func routeView(_ route: AppRoute) -> some View {
+        routeContent(route)
+            .toolbar(.hidden, for: .tabBar)
+    }
+
+    @ViewBuilder
+    private func routeContent(_ route: AppRoute) -> some View {
         switch route {
         case .login:
             LoginView(

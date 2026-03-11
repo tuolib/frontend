@@ -13,6 +13,13 @@ struct ProductDetailView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else if let detail = store.detail {
                 detailContent(detail)
+            } else {
+                EmptyStateView(
+                    icon: "exclamationmark.triangle",
+                    title: "Failed to load product",
+                    actionTitle: "Retry",
+                    action: { store.send(.retry) }
+                )
             }
         }
         .background(Color.shopBackground)

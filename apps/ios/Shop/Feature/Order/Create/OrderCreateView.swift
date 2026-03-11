@@ -152,14 +152,14 @@ struct OrderCreateView: View {
                             .foregroundStyle(Color.shopText)
                             .lineLimit(2)
 
-                        if let attrs = item.attributes, !attrs.isEmpty {
+                        if let attrs = item.skuAttrs, !attrs.isEmpty {
                             Text(attrs.map { "\($0.key): \($0.value)" }.joined(separator: ", "))
                                 .font(ShopFonts.caption)
                                 .foregroundStyle(Color.shopTextSecondary)
                         }
 
                         HStack {
-                            PriceText(item.price, size: .small)
+                            PriceText(item.priceValue, size: .small)
                             Spacer()
                             Text("x\(item.quantity)")
                                 .font(ShopFonts.caption)
@@ -199,15 +199,18 @@ struct OrderCreateView: View {
 
     private func summarySection(_ preview: CheckoutPreview) -> some View {
         VStack(spacing: ShopDimens.spacingSM) {
-            summaryRow("Subtotal (\(preview.totalQuantity) items)", value: preview.totalAmount)
-            summaryRow("Shipping", valueText: "Free")
+            summaryRow("Subtotal (\(preview.totalQuantity) items)", value: preview.summary.itemsTotalValue)
+            summaryRow("Shipping", value: preview.summary.shippingFeeValue)
+            if preview.summary.discountAmountValue > 0 {
+                summaryRow("Discount", value: -preview.summary.discountAmountValue)
+            }
             Divider()
             HStack {
                 Text("Total")
                     .font(ShopFonts.subheadlineSemibold)
                     .foregroundStyle(Color.shopText)
                 Spacer()
-                PriceText(preview.totalAmount, size: .normal)
+                PriceText(preview.summary.payAmountValue, size: .normal)
             }
         }
         .padding(ShopDimens.spacingMD)
@@ -248,7 +251,7 @@ struct OrderCreateView: View {
                 Text("Total")
                     .font(ShopFonts.caption)
                     .foregroundStyle(Color.shopTextSecondary)
-                PriceText(preview.totalAmount, size: .large)
+                PriceText(preview.summary.payAmountValue, size: .large)
             }
 
             Spacer()

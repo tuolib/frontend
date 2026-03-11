@@ -10,6 +10,7 @@ struct ProductDetailFeature {
         var selectedAttributes: [String: String] = [:]
         var quantity: Int = 1
         var isLoading = false
+        var hasError = false
         var isAddingToCart = false
 
         /// Extract attribute dimensions from SKUs
@@ -67,6 +68,7 @@ struct ProductDetailFeature {
 
     enum Action {
         case onAppear
+        case retry
         case detailLoaded(Result<ProductDetail, Error>)
         case selectAttribute(String, String)
         case setQuantity(Int)
@@ -84,6 +86,15 @@ struct ProductDetailFeature {
             case .onAppear:
                 guard state.detail == nil else { return .none }
                 state.isLoading = true
+                state.hasError = false
+                return .run { [id = state.productId] send in
+                    let result = await Result { try await productClient.detail(id) }
+                    await send(.detailLoaded(result))
+                }
+
+            case .retry:
+                state.isLoading = true
+                state.hasError = false
                 return .run { [id = state.productId] send in
                     let result = await Result { try await productClient.detail(id) }
                     await send(.detailLoaded(result))
@@ -102,6 +113,7 @@ struct ProductDetailFeature {
 
             case .detailLoaded(.failure):
                 state.isLoading = false
+                state.hasError = true
                 return .run { _ in
                     await ToastManager.shared.show("Failed to load product", type: .error)
                 }
