@@ -28,6 +28,18 @@ struct CheckoutItem: Codable, Equatable, Sendable {
     var subtotalValue: Double {
         priceValue * Double(quantity)
     }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        skuId = try container.decode(String.self, forKey: .skuId)
+        quantity = try container.decode(Int.self, forKey: .quantity)
+        currentPrice = try container.decodePrice(forKey: .currentPrice)
+        currentStock = try container.decode(Int.self, forKey: .currentStock)
+        productId = try container.decode(String.self, forKey: .productId)
+        productTitle = try container.decode(String.self, forKey: .productTitle)
+        skuAttrs = try? container.decodeIfPresent([String: String].self, forKey: .skuAttrs)
+        imageUrl = try container.decodeIfPresent(String.self, forKey: .imageUrl)
+    }
 }
 
 struct CheckoutSummary: Codable, Equatable, Sendable {
@@ -50,6 +62,14 @@ struct CheckoutSummary: Codable, Equatable, Sendable {
 
     var discountAmountValue: Double {
         Double(discountAmount) ?? 0
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        itemsTotal = try container.decodePrice(forKey: .itemsTotal)
+        shippingFee = try container.decodePrice(forKey: .shippingFee)
+        discountAmount = try container.decodePrice(forKey: .discountAmount)
+        payAmount = try container.decodePrice(forKey: .payAmount)
     }
 }
 

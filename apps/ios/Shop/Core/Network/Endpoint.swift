@@ -18,7 +18,7 @@ enum Endpoint {
     // Order
     case orderCreate, orderList, orderDetail, orderCancel
     // Payment
-    case paymentCreate, paymentQuery
+    case paymentCreate, paymentQuery, paymentNotify
 
     var path: String {
         switch self {
@@ -50,6 +50,7 @@ enum Endpoint {
         case .orderCancel:         "/api/v1/order/cancel"
         case .paymentCreate:       "/api/v1/payment/create"
         case .paymentQuery:        "/api/v1/payment/query"
+        case .paymentNotify:       "/api/v1/payment/notify"
         }
     }
 

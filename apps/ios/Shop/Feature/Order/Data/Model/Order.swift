@@ -10,6 +10,14 @@ struct CreateOrderResult: Codable, Equatable, Sendable {
     var payAmountValue: Double {
         Double(payAmount) ?? 0
     }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        orderId = try container.decode(String.self, forKey: .orderId)
+        orderNo = try container.decode(String.self, forKey: .orderNo)
+        payAmount = try container.decodePrice(forKey: .payAmount)
+        expiresAt = try container.decode(String.self, forKey: .expiresAt)
+    }
 }
 
 /// Full order — returned by order/detail
@@ -49,6 +57,27 @@ struct Order: Codable, Equatable, Identifiable, Sendable {
     var discountAmountValue: Double {
         Double(discountAmount ?? "0") ?? 0
     }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        orderId = try container.decode(String.self, forKey: .orderId)
+        orderNo = try container.decode(String.self, forKey: .orderNo)
+        status = try container.decode(String.self, forKey: .status)
+        totalAmount = try container.decodePrice(forKey: .totalAmount)
+        discountAmount = try container.decodePriceIfPresent(forKey: .discountAmount)
+        payAmount = try container.decodePrice(forKey: .payAmount)
+        remark = try container.decodeIfPresent(String.self, forKey: .remark)
+        expiresAt = try container.decodeIfPresent(String.self, forKey: .expiresAt)
+        paidAt = try container.decodeIfPresent(String.self, forKey: .paidAt)
+        shippedAt = try container.decodeIfPresent(String.self, forKey: .shippedAt)
+        deliveredAt = try container.decodeIfPresent(String.self, forKey: .deliveredAt)
+        completedAt = try container.decodeIfPresent(String.self, forKey: .completedAt)
+        cancelledAt = try container.decodeIfPresent(String.self, forKey: .cancelledAt)
+        cancelReason = try container.decodeIfPresent(String.self, forKey: .cancelReason)
+        createdAt = try container.decode(String.self, forKey: .createdAt)
+        items = try container.decode([OrderItem].self, forKey: .items)
+        address = try container.decodeIfPresent(OrderAddress.self, forKey: .address)
+    }
 }
 
 /// Simplified order — returned by order/list
@@ -69,6 +98,17 @@ struct OrderSummary: Codable, Equatable, Identifiable, Sendable {
 
     var payAmountValue: Double {
         Double(payAmount) ?? 0
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        orderId = try container.decode(String.self, forKey: .orderId)
+        orderNo = try container.decode(String.self, forKey: .orderNo)
+        status = try container.decode(String.self, forKey: .status)
+        payAmount = try container.decodePrice(forKey: .payAmount)
+        itemCount = try container.decode(Int.self, forKey: .itemCount)
+        firstItem = try container.decodeIfPresent(OrderFirstItem.self, forKey: .firstItem)
+        createdAt = try container.decode(String.self, forKey: .createdAt)
     }
 }
 

@@ -70,9 +70,21 @@ struct PaymentFeature {
                 state.isPaying = true
                 let orderId = state.orderId
                 let method = state.selectedMethod
+                let payAmount = state.order?.payAmountValue ?? 0
                 return .run { send in
                     let result = await Result {
-                        try await paymentClient.create(orderId, method)
+                        let payInfo = try await paymentClient.create(orderId, method)
+                        // For mock payment, simulate callback to complete payment
+                        if method == "mock" {
+                            try await paymentClient.notify(
+                                orderId,
+                                "tx-mock-\(payInfo.paymentId)",
+                                "success",
+                                payAmount,
+                                "mock"
+                            )
+                        }
+                        return payInfo
                     }
                     await send(.paymentCreated(result))
                 }

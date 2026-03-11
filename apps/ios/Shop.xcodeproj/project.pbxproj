@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B30801001234567890ABCDEF /* FlexibleDecoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30801001234567890ABCDEF /* FlexibleDecoding.swift */; };
 		03D70C7142F6827FE0AF32DB /* RegisterFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5A84A206DE14EE2CC4F430F /* RegisterFeature.swift */; };
 		0A24A1D3936762ECED522F05 /* IdempotencyKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2667426CFB1713C55D7996 /* IdempotencyKey.swift */; };
 		0C3D89ED82ED54057A4E18B8 /* AuthToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0EAA31C374F9535AD3635A /* AuthToken.swift */; };
@@ -116,6 +117,7 @@
 
 /* Begin PBXFileReference section */
 		04A6269031DD7AEB239485C6 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		F30801001234567890ABCDEF /* FlexibleDecoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlexibleDecoding.swift; sourceTree = "<group>"; };
 		0E40DB9E6547FEA8DAC8259F /* ShopColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopColors.swift; sourceTree = "<group>"; };
 		0E637027EC6199A229802300 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		1E7379985AD1D4E7C1176B27 /* AuthAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthAPI.swift; sourceTree = "<group>"; };
@@ -390,6 +392,7 @@
 				8526D1EE8751182FEA46DFE4 /* APIError.swift */,
 				DED22531B4308B5B116677D6 /* APIResponse.swift */,
 				BCE1F9D515E6C7C4780D0AA6 /* AuthManager.swift */,
+				F30801001234567890ABCDEF /* FlexibleDecoding.swift */,
 				68BFB46E5B1AE3FD75FF5C46 /* Endpoint.swift */,
 				CD2667426CFB1713C55D7996 /* IdempotencyKey.swift */,
 			);
@@ -817,6 +820,7 @@
 				B30111AA000000010000000B /* HomeFeature.swift in Sources */,
 				B30112AA000000010000000C /* HomeView.swift in Sources */,
 				0A24A1D3936762ECED522F05 /* IdempotencyKey.swift in Sources */,
+				B30801001234567890ABCDEF /* FlexibleDecoding.swift in Sources */,
 				2F33E3583F00BA60842ECCDD /* KeychainStore.swift in Sources */,
 				B30127AA0000000100000021 /* LoadingButton.swift in Sources */,
 				550664C519172E6367A8BB93 /* LoginFeature.swift in Sources */,
