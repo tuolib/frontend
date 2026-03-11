@@ -26,14 +26,14 @@ struct HomeView: View {
                 // Search bar
                 searchBar
 
-                // Category pills
+                // Category pills (2-row grid)
                 if !store.categories.isEmpty {
                     CategoryPills(categories: store.categories) { category in
                         onCategoryTap(category.id, category.name)
                     }
                 }
 
-                // Banner
+                // Banner carousel
                 if !store.banners.isEmpty {
                     BannerCarousel(banners: store.banners) { banner in
                         handleBannerTap(banner)
@@ -41,18 +41,29 @@ struct HomeView: View {
                     .padding(.horizontal, ShopDimens.spacingLG)
                 }
 
-                // Deal of the Day
+                // Promo banner — free shipping
+                promoBanner(
+                    icon: "shippingbox.fill",
+                    text: "Free shipping on orders over ¥99",
+                    gradient: [Color(hex: "#232F3E"), Color(hex: "#37475A")]
+                )
+
+                // Deal of the Day (with countdown)
                 if !store.deals.isEmpty {
                     DealSection(
                         title: "Deal of the Day",
                         products: store.deals,
+                        showCountdown: true,
                         onProductTap: { onProductTap($0.id) }
                     )
                 }
 
-                // Category showcase
+                // Category showcase (with product images)
                 if !store.categories.isEmpty {
-                    CategoryShowcase(categories: store.categories) { category in
+                    CategoryShowcase(
+                        categories: store.categories,
+                        categoryProducts: store.categoryProducts
+                    ) { category in
                         onCategoryTap(category.id, category.name)
                     }
                 }
@@ -63,6 +74,13 @@ struct HomeView: View {
                         onProductTap(product.id)
                     }
                 }
+
+                // Promo banner — returns
+                promoBanner(
+                    icon: "arrow.uturn.left.circle.fill",
+                    text: "30-day hassle-free returns",
+                    gradient: [Color(hex: "#007185"), Color(hex: "#005F73")]
+                )
 
                 // Top Rated
                 if !store.topRated.isEmpty {
@@ -98,6 +116,27 @@ struct HomeView: View {
             .clipShape(RoundedRectangle(cornerRadius: ShopDimens.radiusMD))
         }
         .buttonStyle(.plain)
+        .padding(.horizontal, ShopDimens.spacingLG)
+    }
+
+    // MARK: - Promo Banner
+
+    private func promoBanner(icon: String, text: String, gradient: [Color]) -> some View {
+        HStack(spacing: ShopDimens.spacingMD) {
+            Image(systemName: icon)
+                .font(.system(size: 20))
+                .foregroundStyle(.white)
+            Text(text)
+                .font(ShopFonts.subheadlineSemibold)
+                .foregroundStyle(.white)
+            Spacer()
+        }
+        .padding(.horizontal, ShopDimens.spacingLG)
+        .padding(.vertical, ShopDimens.spacingMD)
+        .background(
+            LinearGradient(colors: gradient, startPoint: .leading, endPoint: .trailing)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: ShopDimens.radiusMD))
         .padding(.horizontal, ShopDimens.spacingLG)
     }
 

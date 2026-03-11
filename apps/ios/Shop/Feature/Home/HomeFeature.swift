@@ -12,6 +12,7 @@ struct HomeFeature {
         var deals: [Product] = []
         var newArrivals: [Product] = []
         var topRated: [Product] = []
+        var categoryProducts: [String: [Product]] = [:]
         var recommended = PaginationState<Product>()
         var hasLoaded = false
     }
@@ -20,6 +21,7 @@ struct HomeFeature {
         case onAppear
         case refresh
         case dataLoaded(Result<HomeData, Error>)
+        case categoryProductsLoaded(String, Result<PaginatedResult<Product>, Error>)
         case loadMoreRecommended
         case recommendedLoaded(Result<PaginatedResult<Product>, Error>)
     }
@@ -101,6 +103,24 @@ struct HomeFeature {
                     data.recommended.items,
                     pagination: data.recommended.pagination
                 )
+                // Load top 4 products for each of the first 4 categories
+                let topCategories = Array(data.categories.prefix(4))
+                return .merge(topCategories.map { cat in
+                    .run { [id = cat.id] send in
+                        let result = await Result {
+                            try await productClient.list(
+                                .init(pageSize: 4, categoryId: id, sort: "sales", order: "desc")
+                            )
+                        }
+                        await send(.categoryProductsLoaded(id, result))
+                    }
+                })
+
+            case let .categoryProductsLoaded(categoryId, .success(result)):
+                state.categoryProducts[categoryId] = result.items
+                return .none
+
+            case .categoryProductsLoaded(_, .failure):
                 return .none
 
             case let .dataLoaded(.failure(error)):
