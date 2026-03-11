@@ -12,7 +12,7 @@ enum OrderAPI {
         }
     }
 
-    static func create(_ request: CreateRequest) async throws -> CreateOrderResult {
+    static func create(_ request: CreateRequest) async throws -> Order {
         try await APIClient.shared.request(.orderCreate, body: request, needsAuth: true)
     }
 

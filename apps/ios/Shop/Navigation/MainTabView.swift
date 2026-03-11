@@ -12,6 +12,7 @@ struct MainTabView: View {
     @State private var menuPath = NavigationPath()
     @State private var cartStore = Store(initialState: CartFeature.State()) { CartFeature() }
     @State private var profileStore = Store(initialState: ProfileFeature.State()) { ProfileFeature() }
+    @State private var pendingPaymentOrder: Order?
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -205,8 +206,9 @@ struct MainTabView: View {
                 store: Store(initialState: OrderCreateFeature.State()) {
                     OrderCreateFeature()
                 },
-                onPayment: { orderId in
-                    appendRoute(.payment(orderId: orderId))
+                onPayment: { order in
+                    pendingPaymentOrder = order
+                    appendRoute(.payment(orderId: order.orderId))
                 }
             )
 
@@ -238,7 +240,10 @@ struct MainTabView: View {
 
         case let .payment(orderId):
             PaymentView(
-                store: Store(initialState: PaymentFeature.State(orderId: orderId)) {
+                store: Store(initialState: PaymentFeature.State(
+                    orderId: orderId,
+                    order: pendingPaymentOrder?.orderId == orderId ? pendingPaymentOrder : nil
+                )) {
                     PaymentFeature()
                 },
                 onViewOrder: { orderId in

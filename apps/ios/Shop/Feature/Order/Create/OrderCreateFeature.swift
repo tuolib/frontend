@@ -14,7 +14,7 @@ struct OrderCreateFeature {
         var showAddressSheet = false
         var showAddressForm = false
         var editingAddress: Address?
-        var createdOrderId: String?
+        var createdOrder: Order?
 
         var selectedAddress: Address? {
             guard let selectedAddressId else { return nil }
@@ -30,7 +30,7 @@ struct OrderCreateFeature {
         case setRemark(String)
         case toggleAddressSheet
         case placeOrder
-        case orderCreated(Result<CreateOrderResult, Error>)
+        case orderCreated(Result<Order, Error>)
         // Address form
         case showAddressForm(Address?)
         case dismissAddressForm
@@ -116,9 +116,9 @@ struct OrderCreateFeature {
                     await send(.orderCreated(result))
                 }
 
-            case let .orderCreated(.success(result)):
+            case let .orderCreated(.success(order)):
                 state.isSubmitting = false
-                state.createdOrderId = result.orderId
+                state.createdOrder = order
                 return .run { _ in
                     await ToastManager.shared.show("Order placed!", type: .success)
                 }

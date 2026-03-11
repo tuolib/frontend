@@ -39,6 +39,7 @@ struct PaymentFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
+                guard state.order == nil else { return .none }
                 state.isLoading = true
                 state.loadFailed = false
                 let orderId = state.orderId
