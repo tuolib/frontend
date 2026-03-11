@@ -25,14 +25,16 @@ struct ProductCard: View {
                     .aspectRatio(1, contentMode: .fit)
                     .clipped()
 
-                // Info
+                // Info — fixed height so cards align in grid
                 VStack(alignment: .leading, spacing: 4) {
-                    // Title
+                    // Title — always 2 lines height
                     Text(product.title)
                         .font(ShopFonts.subheadline)
                         .foregroundStyle(Color.shopText)
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .frame(height: 36, alignment: .top)
 
                     // Price
                     if let price = product.minPrice {

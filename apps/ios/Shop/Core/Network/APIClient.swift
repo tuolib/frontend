@@ -9,8 +9,16 @@ struct APIClient: Sendable {
     private let session: URLSession
     private let authManager: AuthManager
 
+    private static var defaultBaseURL: URL {
+        #if DEBUG
+        URL(string: "https://api.find345.site")!
+        #else
+        URL(string: "https://api.find345.site")!
+        #endif
+    }
+
     init(
-        baseURL: URL = URL(string: "http://localhost:3000")!,
+        baseURL: URL = APIClient.defaultBaseURL,
         session: URLSession = .shared,
         authManager: AuthManager = .shared
     ) {
@@ -115,10 +123,16 @@ struct APIClient: Sendable {
         urlRequest.httpMethod = "POST"
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.httpBody = try? JSONEncoder().encode(body)
+        #if DEBUG
+        logRequest(urlRequest)
+        #endif
         return urlRequest
     }
 
     private func decodeResponse<T: Decodable>(_ data: Data) throws -> T {
+        #if DEBUG
+        logResponse(data)
+        #endif
         let apiResponse = try JSONDecoder.shop.decode(APIResponse<T>.self, from: data)
 
         guard apiResponse.success, let result = apiResponse.data else {
@@ -131,4 +145,21 @@ struct APIClient: Sendable {
 
         return result
     }
+
+    // MARK: - Debug Logging
+
+    #if DEBUG
+    private func logRequest(_ request: URLRequest) {
+        let url = request.url?.absoluteString ?? "?"
+        let body = request.httpBody.flatMap { String(data: $0, encoding: .utf8) } ?? "{}"
+        print("🌐 → POST \(url)")
+        print("   Body: \(body)")
+    }
+
+    private func logResponse(_ data: Data) {
+        let text = String(data: data, encoding: .utf8) ?? "?"
+        let preview = text.count > 500 ? String(text.prefix(500)) + "..." : text
+        print("🌐 ← \(preview)")
+    }
+    #endif
 }
