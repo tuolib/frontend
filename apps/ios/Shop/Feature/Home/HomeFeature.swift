@@ -44,20 +44,18 @@ struct HomeFeature {
                             .init(pageSize: 10, sort: "sales", order: "desc")
                         )
                         async let newArrivals = productClient.list(
-                            .init(pageSize: 10, sort: "createdAt", order: "desc")
-                        )
-                        async let topRated = productClient.list(
-                            .init(pageSize: 10, sort: "createdAt", order: "desc")
+                            .init(pageSize: 8, sort: "createdAt", order: "desc")
                         )
                         async let recommended = productClient.list(.init(page: 1))
 
-                        return try await HomeData(
-                            banners: banners,
-                            categories: categories,
-                            deals: deals.items,
-                            newArrivals: newArrivals.items,
-                            topRated: topRated.items,
-                            recommended: recommended
+                        let dealItems = try await deals.items
+                        return HomeData(
+                            banners: try await banners,
+                            categories: try await categories,
+                            deals: dealItems,
+                            newArrivals: try await newArrivals.items,
+                            topRated: dealItems,
+                            recommended: try await recommended
                         )
                     }))
                 }
@@ -72,20 +70,18 @@ struct HomeFeature {
                             .init(pageSize: 10, sort: "sales", order: "desc")
                         )
                         async let newArrivals = productClient.list(
-                            .init(pageSize: 10, sort: "createdAt", order: "desc")
-                        )
-                        async let topRated = productClient.list(
-                            .init(pageSize: 10, sort: "createdAt", order: "desc")
+                            .init(pageSize: 8, sort: "createdAt", order: "desc")
                         )
                         async let recommended = productClient.list(.init(page: 1))
 
-                        return try await HomeData(
-                            banners: banners,
-                            categories: categories,
-                            deals: deals.items,
-                            newArrivals: newArrivals.items,
-                            topRated: topRated.items,
-                            recommended: recommended
+                        let dealItems = try await deals.items
+                        return HomeData(
+                            banners: try await banners,
+                            categories: try await categories,
+                            deals: dealItems,
+                            newArrivals: try await newArrivals.items,
+                            topRated: dealItems,
+                            recommended: try await recommended
                         )
                     }))
                 }

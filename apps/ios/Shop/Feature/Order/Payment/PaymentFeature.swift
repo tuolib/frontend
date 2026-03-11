@@ -11,6 +11,7 @@ struct PaymentFeature {
         var isLoading = false
         var isPaying = false
         var paymentSuccess = false
+        var loadFailed = false
 
         var expireDate: Date? {
             guard let expiresAt = order?.expiresAt else { return nil }
@@ -39,6 +40,7 @@ struct PaymentFeature {
             switch action {
             case .onAppear:
                 state.isLoading = true
+                state.loadFailed = false
                 let orderId = state.orderId
                 return .run { send in
                     let result = await Result { try await orderClient.detail(orderId) }
@@ -52,6 +54,7 @@ struct PaymentFeature {
 
             case .orderLoaded(.failure):
                 state.isLoading = false
+                state.loadFailed = true
                 return .run { _ in
                     await ToastManager.shared.show("Failed to load order", type: .error)
                 }

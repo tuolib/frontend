@@ -11,18 +11,18 @@ struct PaymentView: View {
         Group {
             if store.paymentSuccess {
                 paymentSuccessView
-            } else if store.isLoading {
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else if let order = store.order {
                 paymentContent(order)
-            } else {
+            } else if store.loadFailed {
                 EmptyStateView(
                     icon: "exclamationmark.triangle",
                     title: "Failed to load order",
                     actionTitle: "Retry",
                     action: { store.send(.onAppear) }
                 )
+            } else {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
         .background(Color.shopBackground)

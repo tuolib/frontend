@@ -82,9 +82,10 @@ struct HomeView: View {
                     gradient: [Color(hex: "#007185"), Color(hex: "#005F73")]
                 )
 
-                // Top Rated
-                if !store.topRated.isEmpty {
-                    TopRatedSection(products: store.topRated) { product in
+                // Top Rated (only products with ratings)
+                let ratedProducts = store.topRated.filter { (Double($0.avgRating) ?? 0) > 0 }
+                if !ratedProducts.isEmpty {
+                    TopRatedSection(products: ratedProducts) { product in
                         onProductTap(product.id)
                     }
                 }
