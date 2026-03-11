@@ -4,33 +4,39 @@ struct CategoryPills: View {
     let categories: [CategoryNode]
     var onCategoryTap: ((CategoryNode) -> Void)?
 
+    private let rows = 2
+
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: ShopDimens.spacingSM) {
-                ForEach(categories) { category in
-                    Button {
-                        onCategoryTap?(category)
-                    } label: {
-                        VStack(spacing: 4) {
-                            Image(systemName: categoryIcon(category.iconUrl))
-                                .font(.system(size: 20))
-                                .foregroundStyle(Color.shopTeal)
-                                .frame(width: 28, height: 28)
-                            Text(category.name)
-                                .font(ShopFonts.caption)
-                                .foregroundStyle(Color.shopText)
-                                .lineLimit(1)
-                        }
-                        .frame(width: 72)
-                        .padding(.vertical, 8)
-                        .background(Color.shopCard)
-                        .clipShape(RoundedRectangle(cornerRadius: ShopDimens.radiusMD))
+        let columnCount = max(1, (categories.count + rows - 1) / rows)
+        let gridColumns = Array(
+            repeating: GridItem(.flexible(), spacing: ShopDimens.spacingSM),
+            count: columnCount
+        )
+
+        LazyVGrid(columns: gridColumns, spacing: ShopDimens.spacingSM) {
+            ForEach(categories) { category in
+                Button {
+                    onCategoryTap?(category)
+                } label: {
+                    VStack(spacing: 4) {
+                        Image(systemName: categoryIcon(category.iconUrl))
+                            .font(.system(size: 20))
+                            .foregroundStyle(Color.shopTeal)
+                            .frame(width: 28, height: 28)
+                        Text(category.name)
+                            .font(ShopFonts.caption)
+                            .foregroundStyle(Color.shopText)
+                            .lineLimit(1)
                     }
-                    .buttonStyle(.plain)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                    .background(Color.shopCard)
+                    .clipShape(RoundedRectangle(cornerRadius: ShopDimens.radiusMD))
                 }
+                .buttonStyle(.plain)
             }
-            .padding(.horizontal, ShopDimens.spacingLG)
         }
+        .padding(.horizontal, ShopDimens.spacingLG)
     }
 
     private func categoryIcon(_ iconUrl: String?) -> String {
