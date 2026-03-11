@@ -45,7 +45,7 @@ struct CartFeature {
     @Dependency(\.cartClient) var cartClient
     @Dependency(\.continuousClock) var clock
 
-    private enum CancelID {
+    private enum CancelID: Hashable {
         case debounce(String)
     }
 
