@@ -6,7 +6,6 @@ struct MainTabView: View {
     @Binding var isLoggedIn: Bool
 
     @State private var selectedTab: AppTab = .home
-    @State private var previousTab: AppTab = .home
     @State private var homePath = NavigationPath()
     @State private var profilePath = NavigationPath()
     @State private var cartPath = NavigationPath()
@@ -16,10 +15,23 @@ struct MainTabView: View {
         TabView(selection: $selectedTab) {
             // Home Tab
             NavigationStack(path: $homePath) {
-                HomePlaceholderView()
-                    .navigationDestination(for: AppRoute.self) { route in
-                        routeView(route)
+                HomeView(
+                    store: Store(initialState: HomeFeature.State()) {
+                        HomeFeature()
+                    },
+                    onSearchTap: {
+                        homePath.append(AppRoute.search)
+                    },
+                    onCategoryTap: { id, name in
+                        homePath.append(AppRoute.productList(categoryId: id, categoryName: name))
+                    },
+                    onProductTap: { id in
+                        homePath.append(AppRoute.productDetail(id: id))
                     }
+                )
+                .navigationDestination(for: AppRoute.self) { route in
+                    routeView(route)
+                }
             }
             .tabItem { Label(AppTab.home.title, systemImage: AppTab.home.icon) }
             .tag(AppTab.home)
@@ -90,24 +102,6 @@ struct MainTabView: View {
 }
 
 // MARK: - Placeholder Views (replaced in later phases)
-
-private struct HomePlaceholderView: View {
-    var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "house.fill")
-                .font(.system(size: 48))
-                .foregroundStyle(Color.shopAccent)
-            Text("Home")
-                .font(ShopFonts.title)
-                .foregroundStyle(Color.shopText)
-            Text("Coming in Phase 3")
-                .font(ShopFonts.subheadline)
-                .foregroundStyle(Color.shopTextSecondary)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.shopBackground)
-    }
-}
 
 private struct ProfilePlaceholderView: View {
     let isLoggedIn: Bool
