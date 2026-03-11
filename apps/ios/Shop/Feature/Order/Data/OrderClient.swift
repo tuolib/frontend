@@ -2,7 +2,7 @@ import ComposableArchitecture
 
 @DependencyClient
 struct OrderClient: Sendable {
-    var create: @Sendable (_ items: [OrderAPI.CreateRequest.CreateItem], _ addressId: String, _ remark: String?) async throws -> Order
+    var create: @Sendable (_ items: [OrderAPI.CreateRequest.CreateItem], _ addressId: String, _ remark: String?) async throws -> CreateOrderResult
     var list: @Sendable (_ page: Int, _ pageSize: Int, _ status: String?) async throws -> PaginatedResult<OrderSummary>
     var detail: @Sendable (_ orderId: String) async throws -> Order
     var cancel: @Sendable (_ orderId: String, _ reason: String?) async throws -> Void

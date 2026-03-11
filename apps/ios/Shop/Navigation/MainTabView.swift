@@ -12,7 +12,9 @@ struct MainTabView: View {
     @State private var menuPath = NavigationPath()
     @State private var cartStore = Store(initialState: CartFeature.State()) { CartFeature() }
     @State private var profileStore = Store(initialState: ProfileFeature.State()) { ProfileFeature() }
-    @State private var pendingPaymentOrder: Order?
+    // Stores created in navigation callbacks to survive NavigationStack re-renders
+    @State private var orderCreateStore: StoreOf<OrderCreateFeature>?
+    @State private var paymentStore: StoreOf<PaymentFeature>?
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -76,6 +78,9 @@ struct MainTabView: View {
                         cartPath.append(AppRoute.productDetail(id: id))
                     },
                     onCheckout: {
+                        orderCreateStore = Store(initialState: OrderCreateFeature.State()) {
+                            OrderCreateFeature()
+                        }
                         cartPath.append(AppRoute.orderCreate)
                     }
                 )
@@ -202,15 +207,17 @@ struct MainTabView: View {
             )
 
         case .orderCreate:
-            OrderCreateView(
-                store: Store(initialState: OrderCreateFeature.State()) {
-                    OrderCreateFeature()
-                },
-                onPayment: { order in
-                    pendingPaymentOrder = order
-                    appendRoute(.payment(orderId: order.orderId))
-                }
-            )
+            if let store = orderCreateStore {
+                OrderCreateView(
+                    store: store,
+                    onPayment: { orderId in
+                        paymentStore = Store(initialState: PaymentFeature.State(
+                            orderId: orderId
+                        )) { PaymentFeature() }
+                        appendRoute(.payment(orderId: orderId))
+                    }
+                )
+            }
 
         case .orderList:
             OrderListView(
@@ -221,6 +228,9 @@ struct MainTabView: View {
                     appendRoute(.orderDetail(id: id))
                 },
                 onPayment: { orderId in
+                    paymentStore = Store(initialState: PaymentFeature.State(orderId: orderId)) {
+                        PaymentFeature()
+                    }
                     appendRoute(.payment(orderId: orderId))
                 }
             )
@@ -231,6 +241,9 @@ struct MainTabView: View {
                     OrderDetailFeature()
                 },
                 onPayment: { orderId in
+                    paymentStore = Store(initialState: PaymentFeature.State(orderId: orderId)) {
+                        PaymentFeature()
+                    }
                     appendRoute(.payment(orderId: orderId))
                 },
                 onProductTap: { productId in
@@ -239,26 +252,22 @@ struct MainTabView: View {
             )
 
         case let .payment(orderId):
-            PaymentView(
-                store: Store(initialState: PaymentFeature.State(
-                    orderId: orderId,
-                    order: pendingPaymentOrder?.orderId == orderId ? pendingPaymentOrder : nil
-                )) {
-                    PaymentFeature()
-                },
-                onViewOrder: { orderId in
-                    // Pop to root, switch to profile tab, navigate to order detail
-                    popToRoot()
-                    selectedTab = .profile
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                        profilePath.append(AppRoute.orderDetail(id: orderId))
+            if let store = paymentStore, store.orderId == orderId {
+                PaymentView(
+                    store: store,
+                    onViewOrder: { orderId in
+                        popToRoot()
+                        selectedTab = .profile
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            profilePath.append(AppRoute.orderDetail(id: orderId))
+                        }
+                    },
+                    onContinueShopping: {
+                        popToRoot()
+                        selectedTab = .home
                     }
-                },
-                onContinueShopping: {
-                    popToRoot()
-                    selectedTab = .home
-                }
-            )
+                )
+            }
 
         case .addressManage:
             AddressView(

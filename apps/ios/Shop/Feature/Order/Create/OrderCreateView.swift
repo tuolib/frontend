@@ -4,7 +4,7 @@ import Kingfisher
 
 struct OrderCreateView: View {
     @Bindable var store: StoreOf<OrderCreateFeature>
-    var onPayment: (Order) -> Void
+    var onPayment: (String) -> Void
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -45,9 +45,9 @@ struct OrderCreateView: View {
         )) {
             addressFormSheet
         }
-        .onChange(of: store.createdOrder) { _, order in
-            if let order {
-                onPayment(order)
+        .onChange(of: store.createdOrderId) { _, orderId in
+            if let orderId {
+                onPayment(orderId)
             }
         }
     }
