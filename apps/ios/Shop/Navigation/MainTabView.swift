@@ -151,11 +151,58 @@ struct MainTabView: View {
                 }
             )
 
-        case .orderCreate, .orderList, .orderDetail,
-             .payment, .addressManage:
-            // Placeholder for future phases
-            Text("Coming soon")
-                .foregroundStyle(Color.shopTextSecondary)
+        case .orderCreate:
+            OrderCreateView(
+                store: Store(initialState: OrderCreateFeature.State()) {
+                    OrderCreateFeature()
+                },
+                onPayment: { orderId in
+                    appendRoute(.payment(orderId: orderId))
+                }
+            )
+
+        case .orderList:
+            OrderListView(
+                store: Store(initialState: OrderListFeature.State()) {
+                    OrderListFeature()
+                },
+                onOrderTap: { id in
+                    appendRoute(.orderDetail(id: id))
+                },
+                onPayment: { orderId in
+                    appendRoute(.payment(orderId: orderId))
+                }
+            )
+
+        case let .orderDetail(id):
+            OrderDetailView(
+                store: Store(initialState: OrderDetailFeature.State(orderId: id)) {
+                    OrderDetailFeature()
+                },
+                onPayment: { orderId in
+                    appendRoute(.payment(orderId: orderId))
+                },
+                onProductTap: { productId in
+                    appendRoute(.productDetail(id: productId))
+                }
+            )
+
+        case let .payment(orderId):
+            PaymentView(
+                store: Store(initialState: PaymentFeature.State(orderId: orderId)) {
+                    PaymentFeature()
+                },
+                onComplete: { orderId in
+                    appendRoute(.orderDetail(id: orderId))
+                }
+            )
+
+        case .addressManage:
+            AddressView(
+                store: Store(initialState: AddressFeature.State()) {
+                    AddressFeature()
+                }
+            )
         }
     }
 }

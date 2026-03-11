@@ -86,6 +86,27 @@
 		B30510AA000000050000000A /* CheckoutPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30510AA000000050000000A /* CheckoutPreview.swift */; };
 		B30511AA000000050000000B /* CategoryIconMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30511AA000000050000000B /* CategoryIconMapper.swift */; };
 		B30512AA000000050000000C /* CategoryEmojiMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30512AA000000050000000C /* CategoryEmojiMapper.swift */; };
+		B30601AA0000000600000001 /* OrderCreateFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30601AA0000000600000001 /* OrderCreateFeature.swift */; };
+		B30602AA0000000600000002 /* OrderCreateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30602AA0000000600000002 /* OrderCreateView.swift */; };
+		B30603AA0000000600000003 /* PaymentFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30603AA0000000600000003 /* PaymentFeature.swift */; };
+		B30604AA0000000600000004 /* PaymentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30604AA0000000600000004 /* PaymentView.swift */; };
+		B30605AA0000000600000005 /* OrderListFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30605AA0000000600000005 /* OrderListFeature.swift */; };
+		B30606AA0000000600000006 /* OrderListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30606AA0000000600000006 /* OrderListView.swift */; };
+		B30607AA0000000600000007 /* OrderDetailFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30607AA0000000600000007 /* OrderDetailFeature.swift */; };
+		B30608AA0000000600000008 /* OrderDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30608AA0000000600000008 /* OrderDetailView.swift */; };
+		B30609AA0000000600000009 /* OrderAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30609AA0000000600000009 /* OrderAPI.swift */; };
+		B30610AA000000060000000A /* OrderClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30610AA000000060000000A /* OrderClient.swift */; };
+		B30611AA000000060000000B /* PaymentAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30611AA000000060000000B /* PaymentAPI.swift */; };
+		B30612AA000000060000000C /* PaymentClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30612AA000000060000000C /* PaymentClient.swift */; };
+		B30613AA000000060000000D /* Order.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30613AA000000060000000D /* Order.swift */; };
+		B30614AA000000060000000E /* OrderItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30614AA000000060000000E /* OrderItem.swift */; };
+		B30615AA000000060000000F /* OrderStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30615AA000000060000000F /* OrderStatus.swift */; };
+		B30616AA0000000600000010 /* Payment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30616AA0000000600000010 /* Payment.swift */; };
+		B30617AA0000000600000011 /* AddressFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30617AA0000000600000011 /* AddressFeature.swift */; };
+		B30618AA0000000600000012 /* AddressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30618AA0000000600000012 /* AddressView.swift */; };
+		B30619AA0000000600000013 /* AddressAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30619AA0000000600000013 /* AddressAPI.swift */; };
+		B30620AA0000000600000014 /* AddressClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30620AA0000000600000014 /* AddressClient.swift */; };
+		B30621AA0000000600000015 /* Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30621AA0000000600000015 /* Address.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -168,6 +189,27 @@
 		F30510AA000000050000000A /* CheckoutPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckoutPreview.swift; sourceTree = "<group>"; };
 		F30511AA000000050000000B /* CategoryIconMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryIconMapper.swift; sourceTree = "<group>"; };
 		F30512AA000000050000000C /* CategoryEmojiMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryEmojiMapper.swift; sourceTree = "<group>"; };
+		F30601AA0000000600000001 /* OrderCreateFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderCreateFeature.swift; sourceTree = "<group>"; };
+		F30602AA0000000600000002 /* OrderCreateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderCreateView.swift; sourceTree = "<group>"; };
+		F30603AA0000000600000003 /* PaymentFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentFeature.swift; sourceTree = "<group>"; };
+		F30604AA0000000600000004 /* PaymentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentView.swift; sourceTree = "<group>"; };
+		F30605AA0000000600000005 /* OrderListFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderListFeature.swift; sourceTree = "<group>"; };
+		F30606AA0000000600000006 /* OrderListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderListView.swift; sourceTree = "<group>"; };
+		F30607AA0000000600000007 /* OrderDetailFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailFeature.swift; sourceTree = "<group>"; };
+		F30608AA0000000600000008 /* OrderDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailView.swift; sourceTree = "<group>"; };
+		F30609AA0000000600000009 /* OrderAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderAPI.swift; sourceTree = "<group>"; };
+		F30610AA000000060000000A /* OrderClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderClient.swift; sourceTree = "<group>"; };
+		F30611AA000000060000000B /* PaymentAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentAPI.swift; sourceTree = "<group>"; };
+		F30612AA000000060000000C /* PaymentClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentClient.swift; sourceTree = "<group>"; };
+		F30613AA000000060000000D /* Order.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Order.swift; sourceTree = "<group>"; };
+		F30614AA000000060000000E /* OrderItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderItem.swift; sourceTree = "<group>"; };
+		F30615AA000000060000000F /* OrderStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderStatus.swift; sourceTree = "<group>"; };
+		F30616AA0000000600000010 /* Payment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Payment.swift; sourceTree = "<group>"; };
+		F30617AA0000000600000011 /* AddressFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressFeature.swift; sourceTree = "<group>"; };
+		F30618AA0000000600000012 /* AddressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressView.swift; sourceTree = "<group>"; };
+		F30619AA0000000600000013 /* AddressAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressAPI.swift; sourceTree = "<group>"; };
+		F30620AA0000000600000014 /* AddressClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressClient.swift; sourceTree = "<group>"; };
+		F30621AA0000000600000015 /* Address.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Address.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -216,7 +258,9 @@
 				A30503AA000000050000F003 /* Cart */,
 				A30101AA000000010000F001 /* Home */,
 				A30102AA000000010000F002 /* Menu */,
+				A30601AA000000060000F001 /* Order */,
 				A30103AA000000010000F003 /* Product */,
+				A30608AA000000060000F008 /* User */,
 			);
 			path = Feature;
 			sourceTree = "<group>";
@@ -540,6 +584,113 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		A30601AA000000060000F001 /* Order */ = {
+			isa = PBXGroup;
+			children = (
+				A30602AA000000060000F002 /* Create */,
+				A30606AA000000060000F006 /* Data */,
+				A30605AA000000060000F005 /* Detail */,
+				A30604AA000000060000F004 /* List */,
+				A30603AA000000060000F003 /* Payment */,
+			);
+			path = Order;
+			sourceTree = "<group>";
+		};
+		A30602AA000000060000F002 /* Create */ = {
+			isa = PBXGroup;
+			children = (
+				F30601AA0000000600000001 /* OrderCreateFeature.swift */,
+				F30602AA0000000600000002 /* OrderCreateView.swift */,
+			);
+			path = Create;
+			sourceTree = "<group>";
+		};
+		A30603AA000000060000F003 /* Payment */ = {
+			isa = PBXGroup;
+			children = (
+				F30603AA0000000600000003 /* PaymentFeature.swift */,
+				F30604AA0000000600000004 /* PaymentView.swift */,
+			);
+			path = Payment;
+			sourceTree = "<group>";
+		};
+		A30604AA000000060000F004 /* List */ = {
+			isa = PBXGroup;
+			children = (
+				F30605AA0000000600000005 /* OrderListFeature.swift */,
+				F30606AA0000000600000006 /* OrderListView.swift */,
+			);
+			path = List;
+			sourceTree = "<group>";
+		};
+		A30605AA000000060000F005 /* Detail */ = {
+			isa = PBXGroup;
+			children = (
+				F30607AA0000000600000007 /* OrderDetailFeature.swift */,
+				F30608AA0000000600000008 /* OrderDetailView.swift */,
+			);
+			path = Detail;
+			sourceTree = "<group>";
+		};
+		A30606AA000000060000F006 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				F30609AA0000000600000009 /* OrderAPI.swift */,
+				F30610AA000000060000000A /* OrderClient.swift */,
+				F30611AA000000060000000B /* PaymentAPI.swift */,
+				F30612AA000000060000000C /* PaymentClient.swift */,
+				A30607AA000000060000F007 /* Model */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		A30607AA000000060000F007 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				F30613AA000000060000000D /* Order.swift */,
+				F30614AA000000060000000E /* OrderItem.swift */,
+				F30615AA000000060000000F /* OrderStatus.swift */,
+				F30616AA0000000600000010 /* Payment.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		A30608AA000000060000F008 /* User */ = {
+			isa = PBXGroup;
+			children = (
+				A30609AA000000060000F009 /* Address */,
+				A30610AA000000060000F00A /* Data */,
+			);
+			path = User;
+			sourceTree = "<group>";
+		};
+		A30609AA000000060000F009 /* Address */ = {
+			isa = PBXGroup;
+			children = (
+				F30617AA0000000600000011 /* AddressFeature.swift */,
+				F30618AA0000000600000012 /* AddressView.swift */,
+			);
+			path = Address;
+			sourceTree = "<group>";
+		};
+		A30610AA000000060000F00A /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				F30619AA0000000600000013 /* AddressAPI.swift */,
+				F30620AA0000000600000014 /* AddressClient.swift */,
+				A30611AA000000060000F00B /* Model */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		A30611AA000000060000F00B /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				F30621AA0000000600000015 /* Address.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -682,6 +833,27 @@
 				B00051386C6F6827D9986219 /* ToastView.swift in Sources */,
 				B30118AA0000000100000012 /* TopRatedSection.swift in Sources */,
 				848F866D406CAB10136E6B68 /* View+Extensions.swift in Sources */,
+				B30621AA0000000600000015 /* Address.swift in Sources */,
+				B30619AA0000000600000013 /* AddressAPI.swift in Sources */,
+				B30620AA0000000600000014 /* AddressClient.swift in Sources */,
+				B30617AA0000000600000011 /* AddressFeature.swift in Sources */,
+				B30618AA0000000600000012 /* AddressView.swift in Sources */,
+				B30613AA000000060000000D /* Order.swift in Sources */,
+				B30609AA0000000600000009 /* OrderAPI.swift in Sources */,
+				B30610AA000000060000000A /* OrderClient.swift in Sources */,
+				B30601AA0000000600000001 /* OrderCreateFeature.swift in Sources */,
+				B30602AA0000000600000002 /* OrderCreateView.swift in Sources */,
+				B30607AA0000000600000007 /* OrderDetailFeature.swift in Sources */,
+				B30608AA0000000600000008 /* OrderDetailView.swift in Sources */,
+				B30614AA000000060000000E /* OrderItem.swift in Sources */,
+				B30605AA0000000600000005 /* OrderListFeature.swift in Sources */,
+				B30606AA0000000600000006 /* OrderListView.swift in Sources */,
+				B30615AA000000060000000F /* OrderStatus.swift in Sources */,
+				B30616AA0000000600000010 /* Payment.swift in Sources */,
+				B30611AA000000060000000B /* PaymentAPI.swift in Sources */,
+				B30612AA000000060000000C /* PaymentClient.swift in Sources */,
+				B30603AA0000000600000003 /* PaymentFeature.swift in Sources */,
+				B30604AA0000000600000004 /* PaymentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
