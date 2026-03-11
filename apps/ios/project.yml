@@ -20,11 +20,15 @@ targets:
     platform: iOS
     sources:
       - Shop
+    info:
+      path: Shop/Info.plist
+      properties:
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.example.shop
-        GENERATE_INFOPLIST_FILE: "YES"
-        INFOPLIST_GENERATION_MODE: GeneratedFile
         MARKETING_VERSION: "1.0.0"
         CURRENT_PROJECT_VERSION: "1"
         SWIFT_VERSION: "6.0"
