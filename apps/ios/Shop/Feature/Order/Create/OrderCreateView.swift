@@ -14,6 +14,19 @@ struct OrderCreateView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else if let preview = store.checkoutPreview {
                 orderContent(preview)
+            } else {
+                VStack(spacing: ShopDimens.spacingMD) {
+                    EmptyStateView(
+                        icon: "exclamationmark.triangle",
+                        title: "Unable to load checkout"
+                    )
+                    Button("Retry") {
+                        store.send(.onAppear)
+                    }
+                    .font(ShopFonts.subheadlineSemibold)
+                    .foregroundStyle(Color.shopTeal)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
         .background(Color.shopBackground)
@@ -139,8 +152,8 @@ struct OrderCreateView: View {
                             .foregroundStyle(Color.shopText)
                             .lineLimit(2)
 
-                        if !item.attributes.isEmpty {
-                            Text(item.attributes.map { "\($0.key): \($0.value)" }.joined(separator: ", "))
+                        if let attrs = item.attributes, !attrs.isEmpty {
+                            Text(attrs.map { "\($0.key): \($0.value)" }.joined(separator: ", "))
                                 .font(ShopFonts.caption)
                                 .foregroundStyle(Color.shopTextSecondary)
                         }

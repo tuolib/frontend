@@ -176,8 +176,8 @@ struct OrderDetailView: View {
                                 .foregroundStyle(Color.shopText)
                                 .lineLimit(2)
 
-                            if !item.skuAttributes.isEmpty {
-                                Text(item.skuAttributes.map { "\($0.key): \($0.value)" }.joined(separator: ", "))
+                            if let attrs = item.skuAttributes, !attrs.isEmpty {
+                                Text(attrs.map { "\($0.key): \($0.value)" }.joined(separator: ", "))
                                     .font(ShopFonts.caption)
                                     .foregroundStyle(Color.shopTextSecondary)
                             }

@@ -13,7 +13,7 @@ struct CheckoutItem: Codable, Equatable, Sendable {
     let productTitle: String
     let skuCode: String
     let price: Double
-    let attributes: [String: String]
+    let attributes: [String: String]?
     let imageUrl: String?
     let subtotal: Double
 }
