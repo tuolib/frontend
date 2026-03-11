@@ -10,6 +10,7 @@ struct MainTabView: View {
     @State private var profilePath = NavigationPath()
     @State private var cartPath = NavigationPath()
     @State private var menuPath = NavigationPath()
+    @State private var cartStore = Store(initialState: CartFeature.State()) { CartFeature() }
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -51,9 +52,16 @@ struct MainTabView: View {
 
             // Cart Tab
             NavigationStack(path: $cartPath) {
-                CartPlaceholderView(
+                CartView(
+                    store: cartStore,
                     isLoggedIn: isLoggedIn,
-                    onSignInTapped: { showLoginSheet = true }
+                    onSignInTapped: { showLoginSheet = true },
+                    onProductTap: { id in
+                        cartPath.append(AppRoute.productDetail(id: id))
+                    },
+                    onCheckout: {
+                        cartPath.append(AppRoute.orderCreate)
+                    }
                 )
                 .navigationDestination(for: AppRoute.self) { route in
                     routeView(route)
@@ -130,10 +138,18 @@ struct MainTabView: View {
                 }
             )
 
-        case .productDetail:
-            // Placeholder for Phase 5
-            Text("Product Detail — Coming in Phase 5")
-                .foregroundStyle(Color.shopTextSecondary)
+        case let .productDetail(id):
+            ProductDetailView(
+                store: Store(initialState: ProductDetailFeature.State(productId: id)) {
+                    ProductDetailFeature()
+                },
+                onCartTap: {
+                    selectedTab = .cart
+                },
+                onBuyNow: {
+                    appendRoute(.orderCreate)
+                }
+            )
 
         case .orderCreate, .orderList, .orderDetail,
              .payment, .addressManage:
@@ -177,45 +193,6 @@ private struct ProfilePlaceholderView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.shopBackground)
-    }
-}
-
-private struct CartPlaceholderView: View {
-    let isLoggedIn: Bool
-    let onSignInTapped: () -> Void
-
-    var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "cart.fill")
-                .font(.system(size: 48))
-                .foregroundStyle(Color.shopAccent)
-
-            if isLoggedIn {
-                Text("Cart")
-                    .font(ShopFonts.title)
-                    .foregroundStyle(Color.shopText)
-                Text("Coming in Phase 5")
-                    .font(ShopFonts.subheadline)
-                    .foregroundStyle(Color.shopTextSecondary)
-            } else {
-                Text("Sign in to see your cart")
-                    .font(ShopFonts.body)
-                    .foregroundStyle(Color.shopTextSecondary)
-
-                Button("Sign In") {
-                    onSignInTapped()
-                }
-                .fontWeight(.semibold)
-                .padding(.horizontal, 32)
-                .padding(.vertical, 12)
-                .background(Color.shopAccent)
-                .foregroundStyle(.white)
-                .clipShape(RoundedRectangle(cornerRadius: ShopDimens.radiusMD))
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.shopBackground)
-        .navigationTitle("Cart")
     }
 }
 
