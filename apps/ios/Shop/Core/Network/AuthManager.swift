@@ -77,4 +77,9 @@ actor AuthManager {
     var isLoggedIn: Bool {
         keychain.getAccessToken() != nil
     }
+
+    /// Synchronous check — safe to call from non-async context since KeychainStore is Sendable
+    nonisolated var isLoggedInSync: Bool {
+        keychain.getAccessToken() != nil
+    }
 }

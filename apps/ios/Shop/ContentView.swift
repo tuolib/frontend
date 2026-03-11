@@ -1,23 +1,41 @@
 import SwiftUI
+import ComposableArchitecture
 
 struct ContentView: View {
+    @State private var isLoggedIn: Bool
+    @State private var showLoginSheet = false
+
+    init() {
+        _isLoggedIn = State(initialValue: AuthManager.shared.isLoggedInSync)
+    }
+
     var body: some View {
-        VStack(spacing: 24) {
-            Image(systemName: "cart.fill")
-                .font(.system(size: 60))
-                .foregroundStyle(Color.shopAccent)
-
-            Text("Shop")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .foregroundStyle(Color.shopText)
-
-            Text("Phase 1 — Core Infrastructure Ready")
-                .font(.subheadline)
-                .foregroundStyle(Color.shopTextSecondary)
+        MainTabView(
+            showLoginSheet: $showLoginSheet,
+            isLoggedIn: $isLoggedIn
+        )
+        .sheet(isPresented: $showLoginSheet) {
+            NavigationStack {
+                LoginView(
+                    store: Store(initialState: LoginFeature.State()) {
+                        LoginFeature()
+                    },
+                    onDismiss: {
+                        showLoginSheet = false
+                        isLoggedIn = AuthManager.shared.isLoggedInSync
+                    }
+                )
+            }
+            .interactiveDismissDisabled(false)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.shopBackground)
+    }
+
+    func requireAuth(then action: @escaping () -> Void) {
+        if isLoggedIn {
+            action()
+        } else {
+            showLoginSheet = true
+        }
     }
 }
 

@@ -68,6 +68,46 @@ struct APIClient: Sendable {
         return try decodeResponse(data)
     }
 
+    /// Request for endpoints that return `data: null` (e.g. logout)
+    func requestVoid(
+        _ endpoint: Endpoint,
+        body: some Encodable & Sendable = EmptyBody(),
+        needsAuth: Bool = false
+    ) async throws {
+        var urlRequest = buildRequest(endpoint, body: body)
+
+        if needsAuth {
+            let token = try await authManager.validAccessToken()
+            urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+
+        if endpoint.requiresIdempotency {
+            urlRequest.setValue(
+                IdempotencyKey.generate(),
+                forHTTPHeaderField: "X-Idempotency-Key"
+            )
+        }
+
+        let (data, response) = try await session.data(for: urlRequest)
+
+        // 401 auto-refresh retry (once)
+        if let httpResponse = response as? HTTPURLResponse,
+           httpResponse.statusCode == 401, needsAuth {
+            try await authManager.refreshAccessToken()
+            return try await requestVoid(endpoint, body: body, needsAuth: true)
+        }
+
+        let apiResponse = try JSONDecoder.shop.decode(APIResponse<AnyCodable>.self, from: data)
+
+        guard apiResponse.success else {
+            throw APIError(
+                code: apiResponse.code,
+                errorCode: apiResponse.meta?.code,
+                message: apiResponse.message
+            )
+        }
+    }
+
     // MARK: - Private
 
     private func buildRequest(_ endpoint: Endpoint, body: some Encodable) -> URLRequest {
