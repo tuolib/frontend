@@ -104,9 +104,9 @@ struct CartView: View {
 
             // Product image
             Button {
-                onProductTap(item.productId)
+                onProductTap(item.snapshot.productId)
             } label: {
-                KFImage(URL(string: item.imageUrl ?? ""))
+                KFImage(URL(string: item.snapshot.imageUrl ?? ""))
                     .placeholder {
                         Color.shopBackground
                             .overlay {
@@ -123,27 +123,29 @@ struct CartView: View {
 
             // Info
             VStack(alignment: .leading, spacing: 4) {
-                Text(item.productTitle)
+                Text(item.snapshot.productTitle)
                     .font(ShopFonts.subheadline)
                     .foregroundStyle(Color.shopText)
                     .lineLimit(2)
 
                 // SKU attributes
-                let attrText = item.attributes.values.joined(separator: " / ")
-                if !attrText.isEmpty {
-                    Text(attrText)
-                        .font(ShopFonts.caption)
-                        .foregroundStyle(Color.shopTextSecondary)
-                        .lineLimit(1)
+                if let attrs = item.snapshot.skuAttrs {
+                    let attrText = attrs.values.joined(separator: " / ")
+                    if !attrText.isEmpty {
+                        Text(attrText)
+                            .font(ShopFonts.caption)
+                            .foregroundStyle(Color.shopTextSecondary)
+                            .lineLimit(1)
+                    }
                 }
 
                 HStack {
-                    PriceText(item.price, comparePrice: item.comparePrice, size: .small)
+                    PriceText(item.currentPrice, size: .small)
                     Spacer()
                     QuantityStepper(
                         quantity: item.quantity,
                         min: 1,
-                        max: item.stock,
+                        max: item.currentStock,
                         onChange: { store.send(.updateQuantity(skuId: item.skuId, quantity: $0)) }
                     )
                 }

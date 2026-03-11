@@ -1,4 +1,7 @@
 import Foundation
+import OSLog
+
+private let logger = Logger(subsystem: "com.example.shop", category: "API")
 
 struct EmptyBody: Encodable, Sendable {}
 
@@ -48,10 +51,12 @@ struct APIClient: Sendable {
         }
 
         let (data, response) = try await session.data(for: urlRequest)
+        logResponse(endpoint, response: response, data: data)
 
         // 401 auto-refresh retry (once)
         if let httpResponse = response as? HTTPURLResponse,
            httpResponse.statusCode == 401, needsAuth {
+            logger.info("↻ 401 retrying after token refresh: \(endpoint.path)")
             try await authManager.refreshAccessToken()
             return try await rawRequest(endpoint, body: body, needsAuth: true)
         }
@@ -72,7 +77,8 @@ struct APIClient: Sendable {
             urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
 
-        let (data, _) = try await session.data(for: urlRequest)
+        let (data, response) = try await session.data(for: urlRequest)
+        logResponse(endpoint, response: response, data: data)
         return try decodeResponse(data)
     }
 
@@ -97,10 +103,12 @@ struct APIClient: Sendable {
         }
 
         let (data, response) = try await session.data(for: urlRequest)
+        logResponse(endpoint, response: response, data: data)
 
         // 401 auto-refresh retry (once)
         if let httpResponse = response as? HTTPURLResponse,
            httpResponse.statusCode == 401, needsAuth {
+            logger.info("↻ 401 retrying after token refresh: \(endpoint.path)")
             try await authManager.refreshAccessToken()
             return try await requestVoid(endpoint, body: body, needsAuth: true)
         }
@@ -123,43 +131,41 @@ struct APIClient: Sendable {
         urlRequest.httpMethod = "POST"
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.httpBody = try? JSONEncoder().encode(body)
-        #if DEBUG
-        logRequest(urlRequest)
-        #endif
+        logRequest(endpoint, urlRequest: urlRequest)
         return urlRequest
     }
 
     private func decodeResponse<T: Decodable>(_ data: Data) throws -> T {
-        #if DEBUG
-        logResponse(data)
-        #endif
         let apiResponse = try JSONDecoder.shop.decode(APIResponse<T>.self, from: data)
 
         guard apiResponse.success, let result = apiResponse.data else {
-            throw APIError(
+            let error = APIError(
                 code: apiResponse.code,
                 errorCode: apiResponse.meta?.code,
                 message: apiResponse.message
             )
+            logger.error("✘ API error: \(error.message ?? "unknown") (code: \(apiResponse.code))")
+            throw error
         }
 
         return result
     }
 
-    // MARK: - Debug Logging
+    // MARK: - OSLog
 
-    #if DEBUG
-    private func logRequest(_ request: URLRequest) {
-        let url = request.url?.absoluteString ?? "?"
-        let body = request.httpBody.flatMap { String(data: $0, encoding: .utf8) } ?? "{}"
-        print("🌐 → POST \(url)")
-        print("   Body: \(body)")
+    private func logRequest(_ endpoint: Endpoint, urlRequest: URLRequest) {
+        let body = urlRequest.httpBody.flatMap { String(data: $0, encoding: .utf8) } ?? "{}"
+        logger.debug("→ POST \(endpoint.path)\n  Body: \(body)")
     }
 
-    private func logResponse(_ data: Data) {
-        let text = String(data: data, encoding: .utf8) ?? "?"
-        let preview = text.count > 500 ? String(text.prefix(500)) + "..." : text
-        print("🌐 ← \(preview)")
+    private func logResponse(_ endpoint: Endpoint, response: URLResponse, data: Data) {
+        let status = (response as? HTTPURLResponse)?.statusCode ?? 0
+        let size = data.count
+        if status >= 400 {
+            let body = String(data: data.prefix(500), encoding: .utf8) ?? "?"
+            logger.error("← \(status) \(endpoint.path) (\(size)B)\n  \(body)")
+        } else {
+            logger.debug("← \(status) \(endpoint.path) (\(size)B)")
+        }
     }
-    #endif
 }

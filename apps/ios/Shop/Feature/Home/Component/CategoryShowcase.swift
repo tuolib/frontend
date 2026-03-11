@@ -1,5 +1,4 @@
 import SwiftUI
-import Kingfisher
 
 struct CategoryShowcase: View {
     let categories: [CategoryNode]
@@ -23,17 +22,10 @@ struct CategoryShowcase: View {
                         onCategoryTap?(category)
                     } label: {
                         VStack(spacing: 8) {
-                            if let iconUrl = category.iconUrl, let url = URL(string: iconUrl) {
-                                KFImage(url)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(height: 60)
-                            } else {
-                                Image(systemName: "square.grid.2x2.fill")
-                                    .font(.system(size: 32))
-                                    .foregroundStyle(Color.shopTeal)
-                                    .frame(height: 60)
-                            }
+                            Image(systemName: CategoryIconMapper.icon(for: category.slug))
+                                .font(.system(size: 32))
+                                .foregroundStyle(Color.shopTeal)
+                                .frame(height: 60)
 
                             Text(category.name)
                                 .font(ShopFonts.subheadlineSemibold)

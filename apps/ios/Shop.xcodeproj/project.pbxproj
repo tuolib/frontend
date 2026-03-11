@@ -84,6 +84,7 @@
 		B30508AA0000000500000008 /* CartClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30508AA0000000500000008 /* CartClient.swift */; };
 		B30509AA0000000500000009 /* CartItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30509AA0000000500000009 /* CartItem.swift */; };
 		B30510AA000000050000000A /* CheckoutPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30510AA000000050000000A /* CheckoutPreview.swift */; };
+		B30511AA000000050000000B /* CategoryIconMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30511AA000000050000000B /* CategoryIconMapper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -164,6 +165,7 @@
 		F30508AA0000000500000008 /* CartClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartClient.swift; sourceTree = "<group>"; };
 		F30509AA0000000500000009 /* CartItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartItem.swift; sourceTree = "<group>"; };
 		F30510AA000000050000000A /* CheckoutPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckoutPreview.swift; sourceTree = "<group>"; };
+		F30511AA000000050000000B /* CategoryIconMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryIconMapper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -258,6 +260,7 @@
 		4B6C1BA65293BCB6A67057B7 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				F30511AA000000050000000B /* CategoryIconMapper.swift */,
 				16A6B2E630856E00C9141EEC /* Component */,
 				53AB652EB0AD705ED145AC11 /* Theme */,
 			);
@@ -618,6 +621,7 @@
 				B30510AA000000050000000A /* CheckoutPreview.swift in Sources */,
 				B30113AA000000010000000D /* BannerCarousel.swift in Sources */,
 				B30103AA0000000100000003 /* Category.swift in Sources */,
+				B30511AA000000050000000B /* CategoryIconMapper.swift in Sources */,
 				B30107AA0000000100000007 /* CategoryAPI.swift in Sources */,
 				B30108AA0000000100000008 /* CategoryClient.swift in Sources */,
 				B30114AA000000010000000E /* CategoryPills.swift in Sources */,
