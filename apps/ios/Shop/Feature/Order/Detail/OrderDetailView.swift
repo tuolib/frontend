@@ -176,14 +176,14 @@ struct OrderDetailView: View {
                                 .foregroundStyle(Color.shopText)
                                 .lineLimit(2)
 
-                            if let attrs = item.skuAttributes, !attrs.isEmpty {
+                            if let attrs = item.skuAttrs, !attrs.isEmpty {
                                 Text(attrs.map { "\($0.key): \($0.value)" }.joined(separator: ", "))
                                     .font(ShopFonts.caption)
                                     .foregroundStyle(Color.shopTextSecondary)
                             }
 
                             HStack {
-                                PriceText(item.price, size: .small)
+                                PriceText(item.unitPriceValue, size: .small)
                                 Spacer()
                                 Text("x\(item.quantity)")
                                     .font(ShopFonts.caption)
@@ -210,7 +210,10 @@ struct OrderDetailView: View {
 
     private func priceSection(_ order: Order) -> some View {
         VStack(spacing: ShopDimens.spacingSM) {
-            priceRow("Subtotal", value: order.totalAmount)
+            priceRow("Subtotal", value: order.totalAmountValue)
+            if order.discountAmountValue > 0 {
+                priceRow("Discount", value: -order.discountAmountValue)
+            }
             priceRow("Shipping", valueText: "Free")
             Divider()
             HStack {
@@ -218,7 +221,7 @@ struct OrderDetailView: View {
                     .font(ShopFonts.subheadlineSemibold)
                     .foregroundStyle(Color.shopText)
                 Spacer()
-                PriceText(order.payAmount, size: .normal)
+                PriceText(order.payAmountValue, size: .normal)
             }
         }
         .padding(ShopDimens.spacingMD)

@@ -2,8 +2,8 @@ import ComposableArchitecture
 
 @DependencyClient
 struct PaymentClient: Sendable {
-    var create: @Sendable (_ orderId: String, _ method: String) async throws -> Payment
-    var query: @Sendable (_ orderId: String) async throws -> Payment
+    var create: @Sendable (_ orderId: String, _ method: String) async throws -> PaymentInfo
+    var query: @Sendable (_ orderId: String) async throws -> PaymentStatusResult
 }
 
 extension PaymentClient: DependencyKey {

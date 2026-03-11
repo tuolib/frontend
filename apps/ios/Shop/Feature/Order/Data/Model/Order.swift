@@ -1,22 +1,53 @@
 import Foundation
 
-/// Full order — returned by order/create and order/detail
-struct Order: Codable, Equatable, Identifiable, Sendable {
-    let id: String
+/// Minimal result from order/create
+struct CreateOrderResult: Codable, Equatable, Sendable {
+    let orderId: String
     let orderNo: String
-    let userId: String
+    let payAmount: String
+    let expiresAt: String
+
+    var payAmountValue: Double {
+        Double(payAmount) ?? 0
+    }
+}
+
+/// Full order — returned by order/detail
+struct Order: Codable, Equatable, Identifiable, Sendable {
+    let orderId: String
+    let orderNo: String
     let status: String
-    let totalAmount: Double
-    let payAmount: Double
+    let totalAmount: String
+    let discountAmount: String
+    let payAmount: String
     let remark: String?
-    let expiredAt: String?
+    let expiresAt: String
+    let paidAt: String?
+    let shippedAt: String?
+    let deliveredAt: String?
+    let completedAt: String?
+    let cancelledAt: String?
+    let cancelReason: String?
     let createdAt: String
-    let updatedAt: String
     let items: [OrderItem]
     let address: OrderAddress?
 
+    var id: String { orderId }
+
     var orderStatus: OrderStatus {
         OrderStatus(rawValue: status) ?? .pending
+    }
+
+    var totalAmountValue: Double {
+        Double(totalAmount) ?? 0
+    }
+
+    var payAmountValue: Double {
+        Double(payAmount) ?? 0
+    }
+
+    var discountAmountValue: Double {
+        Double(discountAmount) ?? 0
     }
 }
 

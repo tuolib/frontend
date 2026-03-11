@@ -62,7 +62,7 @@ struct PaymentView: View {
                 .font(ShopFonts.subheadline)
                 .foregroundStyle(Color.shopTextSecondary)
 
-            PriceText(order.payAmount, size: .large)
+            PriceText(order.payAmountValue, size: .large)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, ShopDimens.spacingLG)
@@ -171,7 +171,7 @@ struct PaymentView: View {
 
             infoRow("Order No.", value: order.orderNo)
             infoRow("Items", value: "\(order.items.count)")
-            infoRow("Total", value: "¥\(String(format: "%.2f", order.payAmount))")
+            infoRow("Total", value: "¥\(String(format: "%.2f", order.payAmountValue))")
         }
         .padding(ShopDimens.spacingMD)
         .background(Color.shopCard)
@@ -202,7 +202,7 @@ struct PaymentView: View {
                     ProgressView()
                         .tint(.white)
                 } else {
-                    Text("Pay Now  ¥\(String(format: "%.2f", order.payAmount))")
+                    Text("Pay Now  ¥\(String(format: "%.2f", order.payAmountValue))")
                 }
             }
             .font(ShopFonts.subheadlineSemibold)

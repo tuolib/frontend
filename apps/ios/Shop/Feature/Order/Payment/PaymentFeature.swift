@@ -13,8 +13,8 @@ struct PaymentFeature {
         var paymentSuccess = false
 
         var expireDate: Date? {
-            guard let expiredAt = order?.expiredAt else { return nil }
-            return ISO8601DateFormatter().date(from: expiredAt)
+            guard let expiresAt = order?.expiresAt else { return nil }
+            return ISO8601DateFormatter().date(from: expiresAt)
         }
 
         var isExpired: Bool {
@@ -28,7 +28,7 @@ struct PaymentFeature {
         case orderLoaded(Result<Order, Error>)
         case selectMethod(String)
         case payNow
-        case paymentCreated(Result<Payment, Error>)
+        case paymentCreated(Result<PaymentInfo, Error>)
         case paymentCompleted(orderId: String)
     }
 
