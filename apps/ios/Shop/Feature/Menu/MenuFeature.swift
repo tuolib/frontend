@@ -80,7 +80,8 @@ struct MenuFeature {
         .run { send in
             let result = await Result {
                 try await productClient.list(
-                    .init(pageSize: 6, categoryId: categoryId, sort: "sales", order: "desc")
+                    .init(pageSize: 6, sort: "sales", order: "desc",
+                          filters: .init(categoryId: categoryId))
                 )
             }
             await send(.popularLoaded(result))

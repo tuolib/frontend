@@ -109,7 +109,8 @@ struct HomeFeature {
                     .run { [id = cat.id] send in
                         let result = await Result {
                             try await productClient.list(
-                                .init(pageSize: 4, categoryId: id, sort: "sales", order: "desc")
+                                .init(pageSize: 4, sort: "sales", order: "desc",
+                                      filters: .init(categoryId: id))
                             )
                         }
                         await send(.categoryProductsLoaded(id, result))

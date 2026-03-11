@@ -5,6 +5,7 @@ import Kingfisher
 struct MenuView: View {
     @Bindable var store: StoreOf<MenuFeature>
     var onCategoryTap: (String, String) -> Void
+    var onProductTap: (String) -> Void
 
     var body: some View {
         Group {
@@ -108,7 +109,7 @@ struct MenuView: View {
                 HStack(spacing: ShopDimens.spacingSM) {
                     ForEach(store.popularProducts) { product in
                         Button {
-                            onCategoryTap(product.id, product.title)
+                            onProductTap(product.id)
                         } label: {
                             popularProductCard(product)
                         }

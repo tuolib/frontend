@@ -4,9 +4,15 @@ enum ProductAPI {
     struct ListRequest: Encodable, Sendable {
         var page: Int = 1
         var pageSize: Int = 20
-        var categoryId: String?
         var sort: String?
         var order: String?
+        var filters: Filters?
+
+        struct Filters: Encodable, Sendable {
+            var categoryId: String?
+            var status: String?
+            var brand: String?
+        }
     }
 
     static func list(_ request: ListRequest) async throws -> PaginatedResult<Product> {

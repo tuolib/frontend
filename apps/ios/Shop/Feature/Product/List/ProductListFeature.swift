@@ -62,7 +62,8 @@ struct ProductListFeature {
         .run { [sort = state.sort, order = state.order, categoryId = state.categoryId] send in
             let result = await Result {
                 try await productClient.list(
-                    .init(page: page, categoryId: categoryId, sort: sort, order: order)
+                    .init(page: page, sort: sort, order: order,
+                          filters: .init(categoryId: categoryId))
                 )
             }
             await send(.productsLoaded(result))

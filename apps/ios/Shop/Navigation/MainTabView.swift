@@ -93,6 +93,9 @@ struct MainTabView: View {
                     },
                     onCategoryTap: { id, name in
                         menuPath.append(AppRoute.productList(categoryId: id, categoryName: name))
+                    },
+                    onProductTap: { id in
+                        menuPath.append(AppRoute.productDetail(id: id))
                     }
                 )
                 .navigationDestination(for: AppRoute.self) { route in
