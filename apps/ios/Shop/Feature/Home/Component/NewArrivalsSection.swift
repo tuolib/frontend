@@ -55,6 +55,8 @@ struct NewArrivalsSection: View {
                                 if let price = product.minPrice {
                                     PriceText(price, size: .small)
                                 }
+
+                                Spacer(minLength: 0)
                             }
                             .frame(width: 130)
                         }
