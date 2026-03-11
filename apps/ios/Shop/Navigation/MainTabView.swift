@@ -173,137 +173,108 @@ struct MainTabView: View {
     private func routeContent(_ route: AppRoute) -> some View {
         switch route {
         case .login:
-            LoginView(
-                store: Store(initialState: LoginFeature.State()) {
-                    LoginFeature()
-                },
-                onDismiss: nil
-            )
+            StoreContainer(LoginFeature.State(), LoginFeature()) { store in
+                LoginView(store: store, onDismiss: nil)
+            }
         case .register:
-            RegisterView(
-                store: Store(initialState: RegisterFeature.State()) {
-                    RegisterFeature()
-                }
-            )
+            StoreContainer(RegisterFeature.State(), RegisterFeature()) { store in
+                RegisterView(store: store)
+            }
         case .search:
-            SearchView(
-                store: Store(initialState: SearchFeature.State()) {
-                    SearchFeature()
-                },
-                onProductTap: { id in
-                    appendRoute(.productDetail(id: id))
-                }
-            )
+            StoreContainer(SearchFeature.State(), SearchFeature()) { store in
+                SearchView(
+                    store: store,
+                    onProductTap: { id in appendRoute(.productDetail(id: id)) }
+                )
+            }
 
         case let .productList(categoryId, categoryName):
-            ProductListView(
-                store: Store(initialState: ProductListFeature.State(
-                    categoryId: categoryId,
-                    categoryName: categoryName
-                )) {
-                    ProductListFeature()
-                },
-                onProductTap: { id in
-                    appendRoute(.productDetail(id: id))
-                }
-            )
+            StoreContainer(
+                ProductListFeature.State(categoryId: categoryId, categoryName: categoryName),
+                ProductListFeature()
+            ) { store in
+                ProductListView(
+                    store: store,
+                    onProductTap: { id in appendRoute(.productDetail(id: id)) }
+                )
+            }
 
         case let .productDetail(id):
-            ProductDetailView(
-                store: Store(initialState: ProductDetailFeature.State(productId: id)) {
-                    ProductDetailFeature()
-                },
-                onCartTap: {
-                    selectedTab = .cart
-                }
-            )
+            StoreContainer(ProductDetailFeature.State(productId: id), ProductDetailFeature()) { store in
+                ProductDetailView(store: store, onCartTap: { selectedTab = .cart })
+            }
 
         case .orderCreate:
-            OrderCreateContainer(
-                onPayment: { orderId in
-                    appendRoute(.payment(orderId: orderId))
-                }
-            )
+            StoreContainer(OrderCreateFeature.State(), OrderCreateFeature()) { store in
+                OrderCreateView(
+                    store: store,
+                    onPayment: { orderId in appendRoute(.payment(orderId: orderId)) }
+                )
+            }
 
         case .orderList:
-            OrderListView(
-                store: Store(initialState: OrderListFeature.State()) {
-                    OrderListFeature()
-                },
-                onOrderTap: { id in
-                    appendRoute(.orderDetail(id: id))
-                },
-                onPayment: { orderId in
-                    appendRoute(.payment(orderId: orderId))
-                }
-            )
+            StoreContainer(OrderListFeature.State(), OrderListFeature()) { store in
+                OrderListView(
+                    store: store,
+                    onOrderTap: { id in appendRoute(.orderDetail(id: id)) },
+                    onPayment: { orderId in appendRoute(.payment(orderId: orderId)) }
+                )
+            }
 
         case let .orderDetail(id):
-            OrderDetailView(
-                store: Store(initialState: OrderDetailFeature.State(orderId: id)) {
-                    OrderDetailFeature()
-                },
-                onPayment: { orderId in
-                    appendRoute(.payment(orderId: orderId))
-                },
-                onProductTap: { productId in
-                    appendRoute(.productDetail(id: productId))
-                }
-            )
+            StoreContainer(OrderDetailFeature.State(orderId: id), OrderDetailFeature()) { store in
+                OrderDetailView(
+                    store: store,
+                    onPayment: { orderId in appendRoute(.payment(orderId: orderId)) },
+                    onProductTap: { productId in appendRoute(.productDetail(id: productId)) }
+                )
+            }
 
         case let .payment(orderId):
-            PaymentContainer(
-                orderId: orderId,
-                onViewOrder: { orderId in
-                    popToRoot()
-                    selectedTab = .profile
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                        profilePath.append(AppRoute.orderDetail(id: orderId))
+            StoreContainer(PaymentFeature.State(orderId: orderId), PaymentFeature()) { store in
+                PaymentView(
+                    store: store,
+                    onViewOrder: { orderId in
+                        popToRoot()
+                        selectedTab = .profile
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            profilePath.append(AppRoute.orderDetail(id: orderId))
+                        }
+                    },
+                    onContinueShopping: {
+                        popToRoot()
+                        selectedTab = .home
                     }
-                },
-                onContinueShopping: {
-                    popToRoot()
-                    selectedTab = .home
-                }
-            )
+                )
+            }
 
         case .addressManage:
-            AddressView(
-                store: Store(initialState: AddressFeature.State()) {
-                    AddressFeature()
-                }
-            )
+            StoreContainer(AddressFeature.State(), AddressFeature()) { store in
+                AddressView(store: store)
+            }
         }
     }
 }
 
-// MARK: - Container Views
-// Own their Store as @State so NavigationStack re-renders don't recreate them.
+// MARK: - Generic Store Container
+// Owns a TCA Store as @State so NavigationStack ViewBuilder re-evaluations
+// don't recreate the Store and cancel in-flight effects.
 
-private struct OrderCreateContainer: View {
-    let onPayment: (String) -> Void
-    @State private var store = Store(initialState: OrderCreateFeature.State()) { OrderCreateFeature() }
+private struct StoreContainer<R: Reducer, Content: View>: View where R.State: Equatable {
+    @State private var store: StoreOf<R>
+    let content: (StoreOf<R>) -> Content
 
-    var body: some View {
-        OrderCreateView(store: store, onPayment: onPayment)
-    }
-}
-
-private struct PaymentContainer: View {
-    let orderId: String
-    let onViewOrder: (String) -> Void
-    let onContinueShopping: () -> Void
-    @State private var store: StoreOf<PaymentFeature>
-
-    init(orderId: String, onViewOrder: @escaping (String) -> Void, onContinueShopping: @escaping () -> Void) {
-        self.orderId = orderId
-        self.onViewOrder = onViewOrder
-        self.onContinueShopping = onContinueShopping
-        _store = State(initialValue: Store(initialState: PaymentFeature.State(orderId: orderId)) { PaymentFeature() })
+    init(
+        _ initialState: R.State,
+        _ reducer: @autoclosure @escaping () -> R,
+        @ViewBuilder content: @escaping (StoreOf<R>) -> Content
+    ) {
+        _store = State(initialValue: Store(initialState: initialState) { reducer() })
+        self.content = content
     }
 
     var body: some View {
-        PaymentView(store: store, onViewOrder: onViewOrder, onContinueShopping: onContinueShopping)
+        content(store)
     }
 }
 
