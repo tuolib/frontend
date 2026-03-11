@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - ToastManager
 
-@Observable
+@MainActor @Observable
 final class ToastManager {
     static let shared = ToastManager()
 

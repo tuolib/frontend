@@ -1,0 +1,15 @@
+# Xcode
+xcuserdata/
+*.xcscmblueprint
+*.xccheckout
+
+# SPM
+.build/
+Package.resolved
+
+# macOS
+.DS_Store
+
+# Build artifacts
+DerivedData/
+build/

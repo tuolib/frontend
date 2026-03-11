@@ -1,7 +1,7 @@
 import Foundation
 import ComposableArchitecture
 
-struct PaginationState<Item: Equatable & Identifiable & Sendable>: Equatable, Sendable {
+struct PaginationState<Item: Equatable & Identifiable & Sendable>: Equatable, Sendable where Item.ID: Sendable {
     var items: IdentifiedArrayOf<Item> = []
     var page: Int = 1
     var totalPages: Int = 1
