@@ -4,7 +4,6 @@ import ComposableArchitecture
 struct ProductDetailView: View {
     @Bindable var store: StoreOf<ProductDetailFeature>
     var onCartTap: () -> Void
-    var onBuyNow: (() -> Void)?
 
     var body: some View {
         Group {
@@ -35,6 +34,9 @@ struct ProductDetailView: View {
             }
         }
         .onAppear { store.send(.onAppear) }
+        .onChange(of: store.buyNowComplete) { _, complete in
+            if complete { onCartTap() }
+        }
     }
 
     // MARK: - Detail Content
@@ -176,13 +178,12 @@ struct ProductDetailView: View {
 
             LoadingButton(
                 title: "Buy Now",
-                isLoading: false,
+                isLoading: store.isAddingToCart,
                 style: .primary
             ) {
                 store.send(.buyNow)
-                onBuyNow?()
             }
-            .disabled(store.selectedSku == nil || store.currentStock == 0)
+            .disabled(store.selectedSku == nil || store.currentStock == 0 || store.isAddingToCart)
         }
         .padding(.horizontal, ShopDimens.spacingLG)
         .padding(.vertical, ShopDimens.spacingMD)

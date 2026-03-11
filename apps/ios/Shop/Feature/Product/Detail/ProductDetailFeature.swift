@@ -12,6 +12,7 @@ struct ProductDetailFeature {
         var isLoading = false
         var hasError = false
         var isAddingToCart = false
+        var buyNowComplete = false
 
         /// Extract attribute dimensions from SKUs
         /// e.g. ["颜色": ["黑色","白色"], "内存": ["128GB","256GB"]]
@@ -75,6 +76,7 @@ struct ProductDetailFeature {
         case addToCart
         case addToCartResponse(Result<VoidResult, Error>)
         case buyNow
+        case buyNowResponse(Result<VoidResult, Error>)
     }
 
     @Dependency(\.productClient) var productClient
@@ -157,8 +159,26 @@ struct ProductDetailFeature {
                 }
 
             case .buyNow:
-                // Handled by parent via delegate or navigation callback
+                guard let sku = state.selectedSku else { return .none }
+                state.isAddingToCart = true
+                return .run { [skuId = sku.id] send in
+                    let result = await Result {
+                        try await cartClient.add(skuId, 1)
+                        return VoidResult()
+                    }
+                    await send(.buyNowResponse(result))
+                }
+
+            case .buyNowResponse(.success):
+                state.isAddingToCart = false
+                state.buyNowComplete = true
                 return .none
+
+            case .buyNowResponse(.failure):
+                state.isAddingToCart = false
+                return .run { _ in
+                    await ToastManager.shared.show("Failed to add to cart", type: .error)
+                }
             }
         }
     }

@@ -169,9 +169,6 @@ struct MainTabView: View {
                 },
                 onCartTap: {
                     selectedTab = .cart
-                },
-                onBuyNow: {
-                    appendRoute(.orderCreate)
                 }
             )
 
