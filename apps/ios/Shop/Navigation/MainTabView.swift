@@ -206,8 +206,7 @@ struct MainTabView: View {
                     OrderCreateFeature()
                 },
                 onPayment: { orderId in
-                    // Replace checkout page with payment (don't stack)
-                    replaceLastRoute(with: .payment(orderId: orderId))
+                    appendRoute(.payment(orderId: orderId))
                 }
             )
 

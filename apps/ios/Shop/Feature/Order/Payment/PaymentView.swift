@@ -28,7 +28,7 @@ struct PaymentView: View {
         .background(Color.shopBackground)
         .navigationTitle(store.paymentSuccess ? "" : "Payment")
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(store.paymentSuccess)
+        .navigationBarBackButtonHidden()
         .onAppear { store.send(.onAppear) }
     }
 
