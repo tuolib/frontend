@@ -64,15 +64,31 @@ struct MainTabView: View {
 
             // Menu Tab
             NavigationStack(path: $menuPath) {
-                MenuPlaceholderView()
-                    .navigationDestination(for: AppRoute.self) { route in
-                        routeView(route)
+                MenuView(
+                    store: Store(initialState: MenuFeature.State()) {
+                        MenuFeature()
+                    },
+                    onCategoryTap: { id, name in
+                        menuPath.append(AppRoute.productList(categoryId: id, categoryName: name))
                     }
+                )
+                .navigationDestination(for: AppRoute.self) { route in
+                    routeView(route)
+                }
             }
             .tabItem { Label(AppTab.menu.title, systemImage: AppTab.menu.icon) }
             .tag(AppTab.menu)
         }
         .tint(.shopTeal)
+    }
+
+    private func appendRoute(_ route: AppRoute) {
+        switch selectedTab {
+        case .home: homePath.append(route)
+        case .profile: profilePath.append(route)
+        case .cart: cartPath.append(route)
+        case .menu: menuPath.append(route)
+        }
     }
 
     @ViewBuilder
@@ -91,8 +107,35 @@ struct MainTabView: View {
                     RegisterFeature()
                 }
             )
-        case .productList, .productDetail, .search,
-             .orderCreate, .orderList, .orderDetail,
+        case .search:
+            SearchView(
+                store: Store(initialState: SearchFeature.State()) {
+                    SearchFeature()
+                },
+                onProductTap: { id in
+                    appendRoute(.productDetail(id: id))
+                }
+            )
+
+        case let .productList(categoryId, categoryName):
+            ProductListView(
+                store: Store(initialState: ProductListFeature.State(
+                    categoryId: categoryId,
+                    categoryName: categoryName
+                )) {
+                    ProductListFeature()
+                },
+                onProductTap: { id in
+                    appendRoute(.productDetail(id: id))
+                }
+            )
+
+        case .productDetail:
+            // Placeholder for Phase 5
+            Text("Product Detail — Coming in Phase 5")
+                .foregroundStyle(Color.shopTextSecondary)
+
+        case .orderCreate, .orderList, .orderDetail,
              .payment, .addressManage:
             // Placeholder for future phases
             Text("Coming soon")
@@ -173,24 +216,6 @@ private struct CartPlaceholderView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.shopBackground)
         .navigationTitle("Cart")
-    }
-}
-
-private struct MenuPlaceholderView: View {
-    var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "line.3.horizontal")
-                .font(.system(size: 48))
-                .foregroundStyle(Color.shopAccent)
-            Text("Menu")
-                .font(ShopFonts.title)
-                .foregroundStyle(Color.shopText)
-            Text("Coming in Phase 4")
-                .font(ShopFonts.subheadline)
-                .foregroundStyle(Color.shopTextSecondary)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.shopBackground)
     }
 }
 
