@@ -2,6 +2,7 @@ import Foundation
 import OSLog
 
 private let logger = Logger(subsystem: "com.example.shop", category: "API")
+private let bodyLogger = Logger(subsystem: "com.example.shop", category: "API.Body")
 
 struct EmptyBody: Encodable, Sendable {}
 
@@ -154,18 +155,23 @@ struct APIClient: Sendable {
     // MARK: - OSLog
 
     private func logRequest(_ endpoint: Endpoint, urlRequest: URLRequest) {
-        let body = urlRequest.httpBody.flatMap { String(data: $0, encoding: .utf8) } ?? "{}"
-        logger.debug("→ POST \(endpoint.path)\n  Body: \(body)")
+        logger.info("→ POST \(endpoint.path)")
+        if let data = urlRequest.httpBody, !data.isEmpty {
+            let body = String(data: data, encoding: .utf8) ?? "{}"
+            bodyLogger.debug("  ⬆ \(endpoint.path) \(body)")
+        }
     }
 
     private func logResponse(_ endpoint: Endpoint, response: URLResponse, data: Data) {
         let status = (response as? HTTPURLResponse)?.statusCode ?? 0
         let size = data.count
         if status >= 400 {
-            let body = String(data: data.prefix(500), encoding: .utf8) ?? "?"
-            logger.error("← \(status) \(endpoint.path) (\(size)B)\n  \(body)")
+            logger.error("← \(status) \(endpoint.path) (\(size)B)")
         } else {
-            logger.debug("← \(status) \(endpoint.path) (\(size)B)")
+            logger.info("← \(status) \(endpoint.path) (\(size)B)")
         }
+        // Response body logged separately via API.Body category — filter in Xcode console
+        let text = String(data: data.prefix(1024), encoding: .utf8) ?? "?"
+        bodyLogger.debug("  ⬇ \(endpoint.path) \(text)")
     }
 }
