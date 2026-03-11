@@ -12,9 +12,6 @@ struct MainTabView: View {
     @State private var menuPath = NavigationPath()
     @State private var cartStore = Store(initialState: CartFeature.State()) { CartFeature() }
     @State private var profileStore = Store(initialState: ProfileFeature.State()) { ProfileFeature() }
-    // Stores created in navigation callbacks to survive NavigationStack re-renders
-    @State private var orderCreateStore: StoreOf<OrderCreateFeature>?
-    @State private var paymentStore: StoreOf<PaymentFeature>?
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -78,9 +75,6 @@ struct MainTabView: View {
                         cartPath.append(AppRoute.productDetail(id: id))
                     },
                     onCheckout: {
-                        orderCreateStore = Store(initialState: OrderCreateFeature.State()) {
-                            OrderCreateFeature()
-                        }
                         cartPath.append(AppRoute.orderCreate)
                     }
                 )
@@ -207,17 +201,11 @@ struct MainTabView: View {
             )
 
         case .orderCreate:
-            if let store = orderCreateStore {
-                OrderCreateView(
-                    store: store,
-                    onPayment: { orderId in
-                        paymentStore = Store(initialState: PaymentFeature.State(
-                            orderId: orderId
-                        )) { PaymentFeature() }
-                        appendRoute(.payment(orderId: orderId))
-                    }
-                )
-            }
+            OrderCreateContainer(
+                onPayment: { orderId in
+                    appendRoute(.payment(orderId: orderId))
+                }
+            )
 
         case .orderList:
             OrderListView(
@@ -228,9 +216,6 @@ struct MainTabView: View {
                     appendRoute(.orderDetail(id: id))
                 },
                 onPayment: { orderId in
-                    paymentStore = Store(initialState: PaymentFeature.State(orderId: orderId)) {
-                        PaymentFeature()
-                    }
                     appendRoute(.payment(orderId: orderId))
                 }
             )
@@ -241,9 +226,6 @@ struct MainTabView: View {
                     OrderDetailFeature()
                 },
                 onPayment: { orderId in
-                    paymentStore = Store(initialState: PaymentFeature.State(orderId: orderId)) {
-                        PaymentFeature()
-                    }
                     appendRoute(.payment(orderId: orderId))
                 },
                 onProductTap: { productId in
@@ -252,22 +234,20 @@ struct MainTabView: View {
             )
 
         case let .payment(orderId):
-            if let store = paymentStore, store.orderId == orderId {
-                PaymentView(
-                    store: store,
-                    onViewOrder: { orderId in
-                        popToRoot()
-                        selectedTab = .profile
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                            profilePath.append(AppRoute.orderDetail(id: orderId))
-                        }
-                    },
-                    onContinueShopping: {
-                        popToRoot()
-                        selectedTab = .home
+            PaymentContainer(
+                orderId: orderId,
+                onViewOrder: { orderId in
+                    popToRoot()
+                    selectedTab = .profile
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        profilePath.append(AppRoute.orderDetail(id: orderId))
                     }
-                )
-            }
+                },
+                onContinueShopping: {
+                    popToRoot()
+                    selectedTab = .home
+                }
+            )
 
         case .addressManage:
             AddressView(
@@ -276,6 +256,36 @@ struct MainTabView: View {
                 }
             )
         }
+    }
+}
+
+// MARK: - Container Views
+// Own their Store as @State so NavigationStack re-renders don't recreate them.
+
+private struct OrderCreateContainer: View {
+    let onPayment: (String) -> Void
+    @State private var store = Store(initialState: OrderCreateFeature.State()) { OrderCreateFeature() }
+
+    var body: some View {
+        OrderCreateView(store: store, onPayment: onPayment)
+    }
+}
+
+private struct PaymentContainer: View {
+    let orderId: String
+    let onViewOrder: (String) -> Void
+    let onContinueShopping: () -> Void
+    @State private var store: StoreOf<PaymentFeature>
+
+    init(orderId: String, onViewOrder: @escaping (String) -> Void, onContinueShopping: @escaping () -> Void) {
+        self.orderId = orderId
+        self.onViewOrder = onViewOrder
+        self.onContinueShopping = onContinueShopping
+        _store = State(initialValue: Store(initialState: PaymentFeature.State(orderId: orderId)) { PaymentFeature() })
+    }
+
+    var body: some View {
+        PaymentView(store: store, onViewOrder: onViewOrder, onContinueShopping: onContinueShopping)
     }
 }
 
