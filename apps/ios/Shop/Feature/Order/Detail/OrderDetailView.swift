@@ -14,6 +14,13 @@ struct OrderDetailView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else if let order = store.order {
                 orderContent(order)
+            } else {
+                EmptyStateView(
+                    icon: "exclamationmark.triangle",
+                    title: "Failed to load order",
+                    actionTitle: "Retry",
+                    action: { store.send(.onAppear) }
+                )
             }
         }
         .background(Color.shopBackground)

@@ -18,10 +18,10 @@ struct Order: Codable, Equatable, Identifiable, Sendable {
     let orderNo: String
     let status: String
     let totalAmount: String
-    let discountAmount: String
+    let discountAmount: String?
     let payAmount: String
     let remark: String?
-    let expiresAt: String
+    let expiresAt: String?
     let paidAt: String?
     let shippedAt: String?
     let deliveredAt: String?
@@ -47,7 +47,7 @@ struct Order: Codable, Equatable, Identifiable, Sendable {
     }
 
     var discountAmountValue: Double {
-        Double(discountAmount) ?? 0
+        Double(discountAmount ?? "0") ?? 0
     }
 }
 
