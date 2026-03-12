@@ -53,7 +53,9 @@ struct ProductListFeature {
 
             case .productsLoaded(.failure):
                 state.pagination.handleError()
-                return .none
+                return .run { _ in
+                    await ToastManager.shared.show("Failed to load products", type: .error)
+                }
             }
         }
     }

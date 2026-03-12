@@ -106,23 +106,33 @@ struct APIClient: Sendable {
         let (data, response) = try await session.data(for: urlRequest)
         logResponse(endpoint, response: response, data: data)
 
-        // 401 auto-refresh retry (once)
+        // 401 auto-refresh retry (once) — use rawRequestVoid to avoid infinite loop
         if let httpResponse = response as? HTTPURLResponse,
            httpResponse.statusCode == 401, needsAuth {
             logger.info("↻ 401 retrying after token refresh: \(endpoint.path)")
             try await authManager.refreshAccessToken()
-            return try await requestVoid(endpoint, body: body, needsAuth: true)
+            return try await rawRequestVoid(endpoint, body: body, needsAuth: true)
         }
 
-        let apiResponse = try JSONDecoder.shop.decode(APIResponse<AnyCodable>.self, from: data)
+        try decodeVoidResponse(data)
+    }
 
-        guard apiResponse.success else {
-            throw APIError(
-                code: apiResponse.code,
-                errorCode: apiResponse.meta?.code,
-                message: apiResponse.message
-            )
+    /// Raw void request — no 401 retry, used after token refresh
+    func rawRequestVoid(
+        _ endpoint: Endpoint,
+        body: some Encodable & Sendable = EmptyBody(),
+        needsAuth: Bool = false
+    ) async throws {
+        var urlRequest = buildRequest(endpoint, body: body)
+
+        if needsAuth {
+            let token = try await authManager.validAccessToken()
+            urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
+
+        let (data, response) = try await session.data(for: urlRequest)
+        logResponse(endpoint, response: response, data: data)
+        try decodeVoidResponse(data)
     }
 
     // MARK: - Private
@@ -134,6 +144,18 @@ struct APIClient: Sendable {
         urlRequest.httpBody = try? JSONEncoder().encode(body)
         logRequest(endpoint, urlRequest: urlRequest)
         return urlRequest
+    }
+
+    private func decodeVoidResponse(_ data: Data) throws {
+        let apiResponse = try JSONDecoder.shop.decode(APIResponse<AnyCodable>.self, from: data)
+
+        guard apiResponse.success else {
+            throw APIError(
+                code: apiResponse.code,
+                errorCode: apiResponse.meta?.code,
+                message: apiResponse.message
+            )
+        }
     }
 
     private func decodeResponse<T: Decodable>(_ data: Data) throws -> T {

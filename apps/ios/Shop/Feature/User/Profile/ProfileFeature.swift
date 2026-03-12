@@ -32,42 +32,13 @@ struct ProfileFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                if state.hasLoaded {
-                    // Silently refresh without showing loading spinner
-                    return .merge(
-                        .run { send in
-                            let result = await Result { try await userClient.profile() }
-                            await send(.profileLoaded(result))
-                        },
-                        .run { send in
-                            let result = await Result { try await orderClient.list(1, 3, nil) }
-                            await send(.recentOrdersLoaded(result))
-                        }
-                    )
+                if !state.hasLoaded {
+                    state.isLoading = true
                 }
-                state.isLoading = true
-                return .merge(
-                    .run { send in
-                        let result = await Result { try await userClient.profile() }
-                        await send(.profileLoaded(result))
-                    },
-                    .run { send in
-                        let result = await Result { try await orderClient.list(1, 3, nil) }
-                        await send(.recentOrdersLoaded(result))
-                    }
-                )
+                return loadProfile()
 
             case .refresh:
-                return .merge(
-                    .run { send in
-                        let result = await Result { try await userClient.profile() }
-                        await send(.profileLoaded(result))
-                    },
-                    .run { send in
-                        let result = await Result { try await orderClient.list(1, 3, nil) }
-                        await send(.recentOrdersLoaded(result))
-                    }
-                )
+                return loadProfile()
 
             case let .profileLoaded(.success(user)):
                 state.isLoading = false
@@ -78,14 +49,18 @@ struct ProfileFeature {
             case .profileLoaded(.failure):
                 state.isLoading = false
                 state.hasLoaded = true
-                return .none
+                return .run { _ in
+                    await ToastManager.shared.show("Failed to load profile", type: .error)
+                }
 
             case let .recentOrdersLoaded(.success(result)):
                 state.recentOrders = result.items
                 return .none
 
             case .recentOrdersLoaded(.failure):
-                return .none
+                return .run { _ in
+                    await ToastManager.shared.show("Failed to load orders", type: .error)
+                }
 
             case .showLogoutConfirmation:
                 state.showLogoutConfirm = true
@@ -113,5 +88,18 @@ struct ProfileFeature {
                 return .none
             }
         }
+    }
+
+    private func loadProfile() -> Effect<Action> {
+        .merge(
+            .run { send in
+                let result = await Result { try await userClient.profile() }
+                await send(.profileLoaded(result))
+            },
+            .run { send in
+                let result = await Result { try await orderClient.list(1, 3, nil) }
+                await send(.recentOrdersLoaded(result))
+            }
+        )
     }
 }

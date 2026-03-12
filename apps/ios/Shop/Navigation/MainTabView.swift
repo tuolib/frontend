@@ -237,7 +237,8 @@ struct MainTabView: View {
                     onViewOrder: { orderId in
                         popToRoot()
                         selectedTab = .profile
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        Task { @MainActor in
+                            try? await Task.sleep(for: .milliseconds(100))
                             profilePath.append(AppRoute.orderDetail(id: orderId))
                         }
                     },

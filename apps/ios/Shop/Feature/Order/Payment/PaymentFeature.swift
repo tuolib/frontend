@@ -1,6 +1,12 @@
 import Foundation
 import ComposableArchitecture
 
+private let iso8601Formatter: ISO8601DateFormatter = {
+    let formatter = ISO8601DateFormatter()
+    formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+    return formatter
+}()
+
 @Reducer
 struct PaymentFeature {
     @ObservableState
@@ -15,7 +21,7 @@ struct PaymentFeature {
 
         var expireDate: Date? {
             guard let expiresAt = order?.expiresAt else { return nil }
-            return ISO8601DateFormatter().date(from: expiresAt)
+            return iso8601Formatter.date(from: expiresAt)
         }
 
         var isExpired: Bool {

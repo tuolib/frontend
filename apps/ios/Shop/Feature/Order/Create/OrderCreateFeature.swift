@@ -185,11 +185,6 @@ struct OrderCreateFeature {
                 } else {
                     state.addresses.append(address)
                 }
-                if address.isDefault {
-                    for i in state.addresses.indices where state.addresses[i].id != address.id {
-                        // Server handles default toggling, just reload
-                    }
-                }
                 if state.selectedAddressId == nil {
                     state.selectedAddressId = address.id
                 }
