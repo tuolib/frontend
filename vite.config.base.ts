@@ -4,26 +4,24 @@ import { loadEnv } from 'vite';
 import legacy from '@vitejs/plugin-legacy';
 import type { Plugin, PluginOption, UserConfig } from 'vite';
 
+interface CodeSplittingGroup {
+  test: RegExp;
+  name: string;
+}
+
 interface AppConfigOptions {
   port: number;
   root: string;
   plugins: PluginOption[];
-  manualChunks?: (id: string) => string | undefined;
+  codeSplittingGroups?: CodeSplittingGroup[];
   /** 传入 browserslist targets 启用 legacy 插件，false 则禁用 */
   legacyTargets?: string[] | false;
 }
 
-function defaultManualChunks(id: string): string | undefined {
-  if (id.includes('node_modules')) {
-    if (id.includes('/react-dom/') || id.includes('/react/') || id.includes('/react-router/')) {
-      return 'vendor-react';
-    }
-    if (id.includes('/ky/') || id.includes('/zustand/')) {
-      return 'vendor-utils';
-    }
-  }
-  return undefined;
-}
+const defaultCodeSplittingGroups: CodeSplittingGroup[] = [
+  { test: /node_modules\/(react-dom|react|react-router)\//, name: 'vendor-react' },
+  { test: /node_modules\/(ky|zustand)\//, name: 'vendor-utils' },
+];
 
 function buildTimePlugin(): Plugin {
   return {
@@ -56,7 +54,7 @@ function versionPlugin(): Plugin {
   };
 }
 
-export function createAppConfig({ port, root, plugins, manualChunks, legacyTargets }: AppConfigOptions): UserConfig {
+export function createAppConfig({ port, root, plugins, codeSplittingGroups, legacyTargets }: AppConfigOptions): UserConfig {
   const env = loadEnv('development', path.resolve(root, '../..'), 'VITE_');
   const apiTarget = env.VITE_API_PROXY_TARGET || 'http://localhost:3000';
 
@@ -86,12 +84,13 @@ export function createAppConfig({ port, root, plugins, manualChunks, legacyTarge
       },
     },
     build: {
-      target: targets ? ['es2015', ...targets] : undefined,
       outDir: 'dist',
       sourcemap: true,
-      rollupOptions: {
+      rolldownOptions: {
         output: {
-          manualChunks: manualChunks ?? defaultManualChunks,
+          codeSplitting: {
+            groups: codeSplittingGroups ?? defaultCodeSplittingGroups,
+          },
         },
       },
     },
